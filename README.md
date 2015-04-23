@@ -1,4 +1,4 @@
-** Minimum Description Lenght Discretizer **
+***Minimum Description Lenght Discretizer***
 
 This method implements Fayyad's discretizer [1] based on Minimum Description Length Principle (MDLP) in order to treat non discrete datasets from a distributed perspective. We have developed a distributed version from the original one performing some important changes.
 
@@ -33,7 +33,7 @@ We have demonstrated that our method performs 300 times faster than the sequenti
 
 Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-23S7rc2VcsY/edit?usp=sharing
 
-*** References ***
+**References**
 
 [1] Fayyad, U., & Irani, K. (1993).
 "Multi-interval discretization of continuous-valued attributes for classification learning."
