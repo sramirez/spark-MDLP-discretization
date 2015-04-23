@@ -16,13 +16,13 @@ This method implements Fayyad's discretizer [1] based on Minimum Description Len
 	println("*** Discretization method: Fayyad discretizer (MDLP)")
 	println("*** Number of bins: " + nBins)			
 
-	val discretizer = MDLPDiscretizer.train(train,
+	val discretizer = MDLPDiscretizer.train(data, // RDD[LabeledPoint]
 			categoricalFeat, // continuous features 
 			nBins) // max number of values per feature
   	discretizer
 		    
-	val reduced = data.map(i => LabeledPoint(i.label, discretizer.transform(i.features)))
-  	reduced.first()
+	val discrete = data.map(i => LabeledPoint(i.label, discretizer.transform(i.features)))
+  	discrete.first()
 
 This software has been proved with two large real-world datasets such as:
 
