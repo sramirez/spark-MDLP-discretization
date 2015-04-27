@@ -55,32 +55,31 @@ class DiscretizerModel (val thresholds: Array[(Int, Seq[Float])]) extends Vector
       case v: SparseVector =>
         var newValues = Array.empty[Double]
         var j = 0
-        for (i <- 0 until v.indices.length){
-          val ival = v.indices(i)
-          j = thresholds.indexWhere({case (idx, _) => ival < idx}, j)
-          val (iind, th) = if (j == -1) (-1, Seq.empty) else thresholds(j)
-          if (iind == ival) {
-            newValues = assignDiscreteValue(v.values(i), th).toDouble +: newValues
+        for (i <- v.indices){
+          val tmpj = thresholds.indexWhere({case (idx, _) => i == idx}, j)
+          if (tmpj != -1) {
+            newValues = assignDiscreteValue(v(i), thresholds(tmpj)._2).toDouble +: newValues
+            j = tmpj
           } else {                  
             newValues = v.values(i) +: newValues
           }
         }
         // the `index` array inside sparse vector object will not be changed
-        Vectors.sparse(v.size, v.indices, newValues)
+        Vectors.sparse(v.size, v.indices, newValues.reverse)
         
         case v: DenseVector =>
           var newValues = Array.empty[Double]
           var j = 0
           for (i <- 0 until v.values.length){
-            j = thresholds.indexWhere({case (idx, _) => i < idx}, j)
-            val (iind, th) = if (j == -1) (-1, Seq.empty) else thresholds(j)
-            if (iind == i) {
-              newValues = assignDiscreteValue(v.values(i), th).toDouble +: newValues
+            val tmpj = thresholds.indexWhere({case (idx, _) => i == idx}, j)
+            if (tmpj != -1) {
+              newValues = assignDiscreteValue(v.values(i), thresholds(tmpj)._2).toDouble +: newValues
+              j = tmpj
             } else {                  
               newValues = v.values(i) +: newValues
             }
           }          
-          Vectors.dense(newValues)
+          Vectors.dense(newValues.reverse)
     }    
   }
 
@@ -96,33 +95,32 @@ class DiscretizerModel (val thresholds: Array[(Int, Seq[Float])]) extends Vector
       case v: SparseVector =>
         var newValues = Array.empty[Double]
         var j = 0
-        for (i <- 0 until v.indices.length){
-          val ival = v.indices(i)
-          j = bc_thresholds.value.indexWhere({case (idx, _) => ival < idx}, j)
-          val (iind, th) = if (j == -1) (-1, Seq.empty) else bc_thresholds.value(j)
-          if (iind == ival) {
-            newValues = assignDiscreteValue(v.values(i), th).toDouble +: newValues
+        for (i <- v.indices){
+          val tmpj = bc_thresholds.value.indexWhere({case (idx, _) => i == idx}, j)
+          if (tmpj != -1) {
+            newValues = assignDiscreteValue(v(i), bc_thresholds.value(tmpj)._2).toDouble +: newValues
+            j = tmpj
           } else {                  
             newValues = v.values(i) +: newValues
           }
         }
         // the `index` array inside sparse vector object will not be changed,
         // so we can re-use it to save memory.
-        Vectors.sparse(v.size, v.indices, newValues)
+        Vectors.sparse(v.size, v.indices, newValues.reverse)
         
         case v: DenseVector =>
           var newValues = Array.empty[Double]
           var j = 0
           for (i <- 0 until v.values.length){
-            j = bc_thresholds.value.indexWhere({case (idx, _) => i < idx}, j)
-            val (iind, th) = if (j == -1) (-1, Seq.empty) else bc_thresholds.value(j)
-            if (iind == i) {
-              newValues = assignDiscreteValue(v.values(i), th).toDouble +: newValues
+            val tmpj = bc_thresholds.value.indexWhere({case (idx, _) => i == idx}, j)
+            if (tmpj != -1) {
+              newValues = assignDiscreteValue(v.values(i), bc_thresholds.value(tmpj)._2).toDouble +: newValues
+              j = tmpj
             } else {                  
               newValues = v.values(i) +: newValues
             }
           }          
-          Vectors.dense(newValues)
+          Vectors.dense(newValues.reverse)
     }    
   }
 
@@ -138,3 +136,4 @@ class DiscretizerModel (val thresholds: Array[(Int, Seq[Float])]) extends Vector
   }
 
 }
+
