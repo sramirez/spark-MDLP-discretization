@@ -20,12 +20,16 @@ Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-
 
 ## Example: 
 
+	import org.apache.spark.mllib.feature.MDLPDiscretizer
+	
   	val categoricalFeat: Option[Seq[Int]] = None
 	val nBins = 25
-
+	
 	println("*** Discretization method: Fayyad discretizer (MDLP)")
 	println("*** Number of bins: " + nBins)			
 
+	// Data must be cached in order to improve the performance
+	
 	val discretizer = MDLPDiscretizer.train(data, // RDD[LabeledPoint]
 			categoricalFeat, // continuous features 
 			nBins) // max number of values per feature
