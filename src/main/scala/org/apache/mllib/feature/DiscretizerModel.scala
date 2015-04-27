@@ -136,4 +136,3 @@ class DiscretizerModel (val thresholds: Array[(Int, Seq[Float])]) extends Vector
   }
 
 }
-
