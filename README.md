@@ -37,6 +37,10 @@ Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-
 		    
 	val discrete = data.map(i => LabeledPoint(i.label, discretizer.transform(i.features)))
   	discrete.first()
+  	
+## Important notes:
+
+MDLP uses *elementsByPartition* parameter to group candidate-boundary points by attribute in order to perform a independent and distributed computation of entropy for each input attribute. In most of cases, a default value of 10K is enough to compute the entropy in an independent way, thus removing iterativity implicit when we manage features with many boundary points. Log messages inform when it is present a "big" feature (| boundary | > *elementsByPartition*), which can deteriorate the performance of the algorithm. To solve this problem, it is recommended to increment the *elementsByPartition*'s value to 100K, or to reduce the precision of data in problems with floating-point values. 
 
 ##References
 
