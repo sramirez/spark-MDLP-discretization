@@ -16,12 +16,17 @@ Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-
 
 ## Example: 
 
+	import org.apache.spark.mllib.feature.MDLPDiscretizer
+	
   	val categoricalFeat: Option[Seq[Int]] = None
 	val nBins = 25
 	val maxByPart = 10000
-	println("*** Discretization method: Fayyad discretizer (MDLP)")
-	println("*** Number of bins: " + nBins)			
 
+	println("*** Discretization method: Fayyad discretizer (MDLP)")
+	println("*** Number of bins: " + nBins)
+
+	// Data must be cached in order to improve the performance
+	
 	val discretizer = MDLPDiscretizer.train(data, // RDD[LabeledPoint]
 			categoricalFeat, // continuous features 
 			nBins, // max number of thresholds by feature
@@ -30,6 +35,10 @@ Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-
 		    
 	val discrete = data.map(i => LabeledPoint(i.label, discretizer.transform(i.features)))
   	discrete.first()
+  	
+## Important notes:
+
+MDLP uses *maxByPart* parameter to group boundary points by feature in order to perform an independent computation of entropy per attribute. In most of cases, a default value of 10K is enough to compute the entropy in a parallel way, thus removing iterativity implicit when we manage features with many boundary points. Log messages inform when there is a "big" feature (| boundary | > *maxByPart*) in our algorithm, which can deteriorate the performance of the algorithm. To solve this problem, it is recommended to increment the *maxByPart*'s value to 100K, or to reduce the precision of data in problems with floating-point values. 
 
 ##References
 
