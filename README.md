@@ -15,6 +15,8 @@ This software has been proved with two large real-world datasets such as:
 * kddb dataset: http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#kdd2010%20%28bridge%20to%20algebra%29. 20M instances and almost 30M of attributes.
 
 Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-23S7rc2VcsY/edit?usp=sharing
+Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Rego, V. Bolón, A. Alonso-Betanzos, J.M. Benitez, F. Herrera.  "Distributed Entropy Minimization Discretizer for Big Data Analysis under Apache Spark".
+IEEE BigDataSE Conference, Helsinki, August, 2015.  
 
 ## Example: 
 
