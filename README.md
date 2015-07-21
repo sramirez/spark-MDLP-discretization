@@ -3,6 +3,8 @@ Minimum Description Lenght Discretizer
 
 This method implements Fayyad's discretizer [1] based on Minimum Description Length Principle (MDLP) in order to treat non discrete datasets from a distributed perspective. We have developed a distributed version from the original one performing some important changes.
 
+Spark package: http://spark-packages.org/package/sramirez/spark-MDLP-discretization
+
 ## Improvements:
 
 * Support for sparse data.
