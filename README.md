@@ -3,6 +3,8 @@ Minimum Description Lenght Discretizer
 
 This method implements Fayyad's discretizer [1] based on Minimum Description Length Principle (MDLP) in order to treat non discrete datasets from a distributed perspective. We have developed a distributed version from the original one performing some important changes.
 
+Spark package: http://spark-packages.org/package/sramirez/spark-MDLP-discretization
+
 ## Improvements:
 
 * Support for sparse data.
@@ -12,7 +14,12 @@ This method implements Fayyad's discretizer [1] based on Minimum Description Len
 This software has been proved with two large real-world datasets such as:
 
 * A dataset selected for the GECCO-2014 in Vancouver, July 13th, 2014 competition, which comes from the Protein Structure Prediction field (http://cruncher.ncl.ac.uk/bdcomp/). We have created a oversampling version of this dataset with 64 million instances, 631 attributes, 2 classes.
+* kddb dataset: http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/binary.html#kdd2010%20%28bridge%20to%20algebra%29. 20M instances and almost 30M of attributes.
+
 Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-23S7rc2VcsY/edit?usp=sharing
+
+Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Rego, V. Bolón, A. Alonso-Betanzos, J.M. Benitez, F. Herrera.  "Distributed Entropy Minimization Discretizer for Big Data Analysis under Apache Spark".
+IEEE BigDataSE Conference, Helsinki, August, 2015.  
 
 ## Example: 
 
