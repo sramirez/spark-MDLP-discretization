@@ -487,7 +487,7 @@ object MDLPDiscretizer {
       input: RDD[LabeledPoint],
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
-      maxByPart: Int = 10000) = {
+      maxByPart: Int = 100000) = {
     new MDLPDiscretizer(input).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
   }
 }
