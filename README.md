@@ -18,8 +18,7 @@ This software has been proved with two large real-world datasets such as:
 
 Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-23S7rc2VcsY/edit?usp=sharing
 
-Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Rego, V. Bolón, A. Alonso-Betanzos, J.M. Benitez, F. Herrera.  "Distributed Entropy Minimization Discretizer for Big Data Analysis under Apache Spark".
-IEEE BigDataSE Conference, Helsinki, August, 2015.  
+Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Rego, V. Bolón, A. Alonso-Betanzos, J.M. Benitez, F. Herrera. "Data Discretization: Taxonomy and Big Data Challenge", WIRES Data Mining and Knowledge Discovery. In press, 2015.  
 
 ## Example: 
 
@@ -51,3 +50,6 @@ MDLP uses *maxByPart* parameter to group boundary points by feature in order to 
 
 [1] Fayyad, U., & Irani, K. (1993).
 "Multi-interval discretization of continuous-valued attributes for classification learning."
+
+
+Please, for any comment, contribution or question refer to: https://issues.apache.org/jira/browse/SPARK-6509.
