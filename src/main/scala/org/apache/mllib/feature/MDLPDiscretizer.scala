@@ -42,7 +42,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
 
   private val log2 = { x: Double => math.log(x) / math.log(2) }  
   private def entropy(freqs: Seq[Long], n: Long) = {
-    //val n = freqs.reduce(_ + _)
+    // val n = freqs.reduce(_ + _)
     freqs.aggregate(0.0)({ case (h, q) =>
       h + (if (q == 0) 0  else (q.toDouble / n) * (math.log(q.toDouble / n) / math.log(2)))
     }, { case (h1, h2) => h1 + h2 }) * -1
@@ -153,11 +153,12 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     stack.enqueue(((Float.NegativeInfinity, Float.PositiveInfinity), None))
     var result = Seq.empty[Float]
+    val maxPoints = maxBins + 1
 
-    while(stack.length > 0 && result.size < maxBins){
+    while(stack.length > 0 && result.size < maxPoints){
       val (bounds, lastThresh) = stack.dequeue
       // Filter the candidates between the last limits added to the stack
-      var cands = candidates.filter({ case (th, _) => th > bounds._1 && th <= bounds._2 })
+      var cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
       val nCands = cands.count
       if (nCands > 0) {
         cands = cands.coalesce(partitions(nCands))
@@ -171,7 +172,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         }
       }
     }
-    (Float.PositiveInfinity +: result).sorted
+    result.sorted
   }
   
   /**
@@ -189,12 +190,13 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     // Insert first in the stack (recursive iteration)
     stack.enqueue(((Float.NegativeInfinity, Float.PositiveInfinity), None))
     var result = Seq.empty[Float]
+    val maxPoints = maxBins + 1
 
-    while(stack.length > 0 && result.size < maxBins){
+    while(stack.length > 0 && result.size < maxPoints){
       val (bounds, lastThresh) = stack.dequeue
       // Filter the candidates between the last limits added to the stack
       val newCandidates = candidates.filter({ case (th, _) => 
-          th > bounds._1 && th <= bounds._2 
+          th > bounds._1 && th < bounds._2 
         })      
       if (newCandidates.size > 0) {
         evalThresholds(newCandidates, lastThresh, nLabels) match {
@@ -206,7 +208,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         }
       }
     }
-    (Float.PositiveInfinity +: result).sorted
+    result.sorted
   }
 
   /**
@@ -456,13 +458,12 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
     val thrs = smallThresholds.union(bigThRDD).collect()
-      //.sortByKey() // Important!
-      //.collect
     
     // Update the full list features with the thresholds calculated
-    val base = Array.empty[Float]
-    val thresholds = Array.fill(nFeatures)(base)   
-    thrs.foreach({case (k, vth) => thresholds(k) = vth.toArray})    
+    val thresholds = Array.fill(nFeatures)(Array.empty[Float])   // Nominal values (empty)
+    continuousVars.map(f => thresholds(f) = Array(Float.PositiveInfinity)) // Not processed continuous attributes
+    thrs.foreach({case (k, vth) => 
+      thresholds(k) = if(arr.length > 0) vth.toArray else Array(Float.PositiveInfinity)}) // Continuous attributes (> 0 cut point)    
     logInfo("Number of features with thresholds computed: " + thrs.length)
     
     new DiscretizerModel(thresholds)
