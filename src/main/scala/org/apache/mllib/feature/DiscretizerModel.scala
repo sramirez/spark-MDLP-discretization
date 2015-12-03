@@ -20,6 +20,7 @@ package org.apache.spark.mllib.feature
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg._
+import scala.collection.immutable.TreeSet
 
 /**
  * Generic a discretizer model that transform data given a list of thresholds by feature.
@@ -41,7 +42,7 @@ class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTrans
     data match {
       case v: SparseVector =>
         val newValues = for (i <- 0 until v.indices.length) 
-          yield assignDiscreteValue(v.values(i), thresholds(v.indices(i))).toDouble
+          yield assignDiscreteValue(v.values(i).toFloat, thresholds(v.indices(i))).toDouble
         
         // the `index` array inside sparse vector object will not be changed,
         // so we can re-use it to save memory.
@@ -49,7 +50,7 @@ class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTrans
         
         case v: DenseVector =>
           val newValues = for (i <- 0 until v.values.length)
-            yield assignDiscreteValue(v(i), thresholds(i)).toDouble         
+            yield assignDiscreteValue(v(i).toFloat, thresholds(i)).toDouble         
           Vectors.dense(newValues.toArray)
     }    
   } 
@@ -62,10 +63,10 @@ class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTrans
    */
   override def transform(data: RDD[Vector]) = {
     val bc_thresholds = data.context.broadcast(thresholds)    
-    val result = data.map {
+    data.map {
       case v: SparseVector =>
         val newValues = for (i <- 0 until v.indices.length) 
-          yield assignDiscreteValue(v.values(i), bc_thresholds.value(v.indices(i))).toDouble
+          yield assignDiscreteValue(v.values(i).toFloat, bc_thresholds.value(v.indices(i))).toDouble
         
         // the `index` array inside sparse vector object will not be changed,
         // so we can re-use it to save memory.
@@ -73,11 +74,19 @@ class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTrans
         
         case v: DenseVector =>
           val newValues = for (i <- 0 until v.values.length)
-            yield assignDiscreteValue(v(i), bc_thresholds.value(i)).toDouble         
+            yield assignDiscreteValue(v(i).toFloat, bc_thresholds.value(i)).toDouble         
           Vectors.dense(newValues.toArray)
-    }  
-    bc_thresholds.unpersist()
-    result
+    }
+  }
+  
+  private def binarySearch[A <% Ordered[A]](a: Array[A], v: A) = {
+    def recurse(low: Int, high: Int): Int = (low + high) / 2 match {
+      case _ if high < low => high + 1
+      case mid if a(mid) > v => recurse(low, mid - 1)
+      case mid if a(mid) < v => recurse(mid + 1, high)
+      case mid => mid
+    }
+    recurse(0, a.size - 1)
   }
 
   /**
@@ -88,8 +97,12 @@ class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTrans
    * 
    * Note: The last threshold must be always Positive Infinity
    */
-  private def assignDiscreteValue(value: Double, thresholds: Seq[Float]) = {
-    if(thresholds.isEmpty) value else thresholds.indexWhere{value <= _} + 1
+  private def assignDiscreteValue(value: Float, thresholds: Array[Float]) = {
+    if(thresholds.length > 0) {
+      binarySearch(thresholds, value)
+    } else {
+      value
+    }
   }
 
 }
