@@ -7,6 +7,7 @@ Spark package: http://spark-packages.org/package/sramirez/spark-MDLP-discretizat
 
 ## Improvements:
 
+* Version for ml library.
 * Support for sparse data.
 * Multi-attribute processing. The whole process is carried out in a single step when the number of boundary points per attribute fits well in one partition (<= 100K boundary points per attribute).
 * Support for attributes with a huge number of boundary points (> 100K boundary points per attribute). Rare case.
@@ -20,7 +21,21 @@ Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-
 
 Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Rego, V. Bolón, A. Alonso-Betanzos, J.M. Benitez, F. Herrera. "Data Discretization: Taxonomy and Big Data Challenge", WIRES Data Mining and Knowledge Discovery. In press, 2015.  
 
-## Example: 
+## Example (ml):
+
+import org.apache.spark.ml.feature._
+
+val discretizer = new MDLPDiscretizer()
+      .setMaxBins(10)
+      .setMaxByPart(10000)
+      .setInputCol("features")
+      .setLabelCol("class")
+      .setOutputCol("buckedFeatures")
+      
+val result = discretizer.fit(df).transform(df)
+    
+
+## Example (MLLIB): 
 
 	import org.apache.spark.mllib.feature.MDLPDiscretizer
 	

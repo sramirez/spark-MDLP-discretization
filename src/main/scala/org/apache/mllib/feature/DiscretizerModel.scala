@@ -61,7 +61,7 @@ class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTrans
    * @param data RDD with continuous-valued vectors.
    * @return RDD with discretized data (from 1 to n).
    */
-  override def transform(data: RDD[Vector]) = {
+  def transformRDD(data: RDD[Vector]) = {
     val bc_thresholds = data.context.broadcast(thresholds)    
     data.map {
       case v: SparseVector =>
