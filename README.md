@@ -23,16 +23,16 @@ Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Re
 
 ## Example (ml):
 
-import org.apache.spark.ml.feature._
+	import org.apache.spark.ml.feature._
 
-val discretizer = new MDLPDiscretizer()
-      .setMaxBins(10)
-      .setMaxByPart(10000)
-      .setInputCol("features")
-      .setLabelCol("class")
-      .setOutputCol("buckedFeatures")
+	val discretizer = new MDLPDiscretizer()
+      		.setMaxBins(10)
+      		.setMaxByPart(10000)
+      		.setInputCol("features")
+      		.setLabelCol("class")
+      		.setOutputCol("buckedFeatures")
       
-val result = discretizer.fit(df).transform(df)
+	val result = discretizer.fit(df).transform(df)
     
 
 ## Example (MLLIB): 
