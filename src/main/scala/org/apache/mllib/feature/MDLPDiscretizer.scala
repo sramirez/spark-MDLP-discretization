@@ -172,7 +172,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         }
       }
     }
-    result.sorted
+    result.sorted :+ Float.PositiveInfinity
   }
   
   /**
@@ -208,7 +208,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         }
       }
     }
-    result.sorted
+    result.sorted :+ Float.PositiveInfinity
   }
 
   /**
