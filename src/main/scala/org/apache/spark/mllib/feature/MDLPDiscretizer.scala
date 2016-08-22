@@ -93,7 +93,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     val bcFirsts = points.context.broadcast(firstElements)      
 
     points.mapPartitionsWithIndex({ (index, it) =>      
-      if(it.hasNext) {  
+      if (it.hasNext) {
         var ((lastK, lastX), lastFreqs) = it.next()
         var result = Seq.empty[((Int, Float), Array[Long])]
         var accumFreqs = lastFreqs      
@@ -139,7 +139,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
    * @param maxBins Maximum number of points to select
    * @param elementsByPart Maximum number of elements to evaluate in each partition.
    * @return Sequence of threshold values.
-   * 
    */
   private def getThresholds(
       candidates: RDD[(Float, Array[Long])],
@@ -182,7 +181,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
    * @param candidates RDD of candidates points (point, class histogram).
    * @param maxBins Maximum number of points to select.
    * @return Sequence of threshold values.
-   * 
    */
   private def getThresholds(candidates: Array[(Float, Array[Long])], maxBins: Int) = {
 
@@ -218,7 +216,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
    * @param candidates RDD of candidate points (point, class histogram).
    * @param lastSelected Last selected threshold.
    * @return The minimum-entropy candidate.
-   * 
    */
   private def evalThresholds(
       candidates: RDD[(Float, Array[Long])],
@@ -378,7 +375,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     val continuousVars = processContinuousAttributes(contFeat, nFeatures)
     logInfo("Number of continuous attributes: " + continuousVars.distinct.length)
     logInfo("Total number of attributes: " + nFeatures)      
-    if(continuousVars.isEmpty) logWarning("Discretization aborted. " +
+    if (continuousVars.isEmpty) logWarning("Discretization aborted. " +
       "No continous attribute in the dataset")
     
     // Generate pairs ((feature, point), class histogram)

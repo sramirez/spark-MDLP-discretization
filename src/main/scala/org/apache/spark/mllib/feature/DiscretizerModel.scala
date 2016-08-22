@@ -21,7 +21,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.mllib.linalg._
 
 /**
- * Generic a discretizer model that transform data given a list of thresholds by feature.
+ * Generic discretizer model that transforms data given a list of thresholds by feature.
  * 
  * @param thresholds Thresholds defined for each feature (must be sorted).
  *  

@@ -50,13 +50,12 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
   /** @group getParam */
   def getMaxBins: Int = getOrDefault(maxBins)
   
-    /**
+  /**
    * Maximum number of elements to evaluate in each partition. 
    * If this parameter is bigger then the evaluation phase will be sequentially performed. 
    * Must be >= 10,000.
    * default: 10,000
-      *
-      * @group param
+   * @group param
    */
   val maxByPart = new IntParam(this, "maxByPart", "Maximum number of elements per partition" +
     "to considere in each evaluation process. Must be >= 10,000.",
@@ -70,7 +69,7 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
 
 /**
  * :: Experimental ::
- * MDLPDiscretizer trains a model to discretize vectors using a matrix of buckets (different values for aech feature).
+ * MDLPDiscretizer trains a model to discretize vectors using a matrix of buckets (different values for each feature).
  */
 @Experimental
 class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerModel] with MDLPDiscretizerParams

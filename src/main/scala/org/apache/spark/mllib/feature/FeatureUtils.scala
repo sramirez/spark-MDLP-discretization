@@ -24,12 +24,11 @@ import org.apache.spark.mllib.linalg._
 import scala.collection.mutable
 
 /**
- * Feature utils object for selector methods.
- *  
+ * Feature utils for selector methods.
  */
-
 @Experimental
 object FeatureUtils {
+
   /**
    * Returns a vector with features filtered.
    * Preserves the order of filtered features the same as their indices are stored.
