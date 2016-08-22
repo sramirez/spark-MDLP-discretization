@@ -18,7 +18,6 @@
 package org.apache.spark.ml.feature
 
 import org.apache.hadoop.fs.Path
-
 import org.apache.spark.annotation.{Experimental, Since}
 import org.apache.spark.ml._
 import org.apache.spark.ml.param._
@@ -28,7 +27,7 @@ import org.apache.spark.mllib.feature
 import org.apache.spark.mllib.linalg._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types.{StructField, StructType, DoubleType}
+import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.ml.attribute._
 
@@ -40,7 +39,8 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
   /**
    * Maximum number of buckets into which data points are grouped. 
    * Must be >= 2. default: 2
-   * @group param
+    *
+    * @group param
    */
   val maxBins = new IntParam(this, "maxBins", "Maximum number of bins" +
     "into which data points are grouped. Must be >= 2.",
@@ -55,7 +55,8 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
    * If this parameter is bigger then the evaluation phase will be sequentially performed. 
    * Must be >= 10,000.
    * default: 10,000
-   * @group param
+      *
+      * @group param
    */
   val maxByPart = new IntParam(this, "maxByPart", "Maximum number of elements per partition" +
     "to considere in each evaluation process. Must be >= 10,000.",
@@ -161,7 +162,7 @@ class DiscretizerModel private[ml] (
   override def transformSchema(schema: StructType): StructType = {
     validateParams()
     val buckets = splits.map(_.sliding(2).map(bucket => bucket.mkString(", ")).toArray)
-    val featureAttributes: Seq[attribute.Attribute] = for(i <- 0 until splits.length) yield new NominalAttribute(
+    val featureAttributes: Seq[attribute.Attribute] = for(i <- splits.indices) yield new NominalAttribute(
         isOrdinal = Some(true),
         values = Some(buckets(i)))
     val newAttributeGroup = new AttributeGroup($(outputCol), featureAttributes.toArray)
