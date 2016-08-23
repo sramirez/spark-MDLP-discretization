@@ -28,7 +28,7 @@ import org.apache.spark.mllib.linalg._
  * Note: checking the second sorting condition can be much more time-consuming. 
  * We omit this condition.
  */
-class DiscretizerModel (val thresholds: Array[Array[Float]]) extends VectorTransformer {
+class DiscretizerModel(val thresholds: Array[Array[Float]]) extends VectorTransformer {
   
   /**
    * Discretizes values in a given dataset using thresholds.
