@@ -17,12 +17,15 @@ object ProjectBuild extends Build {
 	publishMavenStyle := true,
 	licenses += "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"),
 	credentials += Credentials(Path.userHome / ".ivy2" / ".sbtcredentials"),
-	// dependencies for unit tests
+
 	libraryDependencies ++= Seq(
-	"org.scalatest" %% "scalatest" % "2.2.4" % "test",
-	"junit" % "junit" % "4.12" % "test",
-	"org.apache.commons" % "commons-lang3" % "3.4" % "test"
-	)))
+		"joda-time" % "joda-time" % "2.9.4",
+		// dependencies for unit tests
+		"org.scalatest" %% "scalatest" % "2.2.4" % "test",
+		"junit" % "junit" % "4.12" % "test",
+		"org.apache.commons" % "commons-lang3" % "3.4" % "test"
+		)
+	))
 
 }
 
