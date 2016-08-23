@@ -1,4 +1,4 @@
-package org.apache.spark.ml
+package org.apache.spark.ml.feature
 
 import org.apache.log4j.{Level, LogManager}
 import org.apache.spark.{SparkConf, SparkContext}
