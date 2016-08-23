@@ -1,17 +1,11 @@
 package org.apache.spark.ml.feature
 
-import org.apache.log4j.{Level, LogManager}
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.scalatest.junit.JUnitRunner
-import SparkTestSuite.{FILE_PREFIX, SPARK_CTX}
-import org.apache.spark.sql.Row
-import org.apache.spark.sql.types._
-import org.apache.spark.ml.feature.{DiscretizerModel, MDLPDiscretizer, StringIndexer, VectorAssembler}
-import org.apache.spark.rdd.RDD
 import MDLPDiscretizerSuite.CLEAN_SUFFIX
+import TestHelper._
 
 object MDLPDiscretizerSuite {
   val CLEAN_SUFFIX: String = "_CLEAN"
@@ -33,7 +27,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
   /** Do entropy based binning of cars data from UC Irvine repository. */
   test("Run MDLPD on single mpg column in cars data (maxBins = 10") {
 
-    val df = readCarsData()
+    val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df, Array("mpg"), "origin", 10)
 
     assertResult("16.1, 21.05, 30.95, Infinity") {
@@ -44,7 +38,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
   /** Its an error if maxBins is less than 2 */
   test("Run MDLPD on single mpg column in cars data (maxBins = 2") {
 
-    val df = readCarsData()
+    val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df, Array("mpg"), "origin", 2)
 
     assertResult("16.1, 21.05, 30.95, Infinity") {
@@ -59,7 +53,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     */
   test("Run MDLPD on all columns in cars data (maxBins = 100, label=origin") {
 
-    val df = readCarsData()
+    val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df,
       Array("mpg", "cylinders", "cubicinches", "horsepower", "weightlbs", "time to sixty", "year"),
       "origin", 100)
@@ -79,7 +73,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
   test("Run MDLPD on all columns in cars data (maxBins = 100, label=brand") {
 
-    val df = readCarsData()
+    val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df,
       Array("mpg", "cylinders", "cubicinches", "horsepower", "weightlbs", "time to sixty", "year"),
       "brand", 100)
@@ -120,27 +114,4 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     discretizer.fit(processedDf) //.transform(df)
   }
 
-  /** @return the cars data as a dataframe */
-  def readCarsData(): DataFrame = {
-    val cars = SPARK_CTX.textFile(FILE_PREFIX + "cars.data")
-    val nullable = true
-
-    // mpg, cylinders, cubicinches, horsepower, weightlbs, time to sixty, year, brand, origin
-    val schema = StructType(List(
-      StructField("mpg", DoubleType, nullable),
-      StructField("cylinders", IntegerType, nullable),
-      StructField("cubicinches", IntegerType, nullable),
-      StructField("horsepower", DoubleType, nullable),
-      StructField("weightlbs", DoubleType, nullable),
-      StructField("time to sixty", DoubleType, nullable),
-      StructField("year", IntegerType, nullable),
-      StructField("brand", StringType, nullable),
-      StructField("origin", StringType, nullable)
-    ))
-    val rows = cars.map(line => line.split(",").map(elem => elem.trim))
-      .map(x => Row.fromSeq(Seq(x(0).toDouble, x(1).toInt, x(2).toInt, x(3).toDouble, x(4).toDouble, x(5).toDouble, x(6).toInt, x(7), x(8))))
-    //println(rows)
-
-    sqlContext.createDataFrame(rows, schema)
-  }
 }
