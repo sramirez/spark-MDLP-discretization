@@ -1,0 +1,891 @@
+No,Braund; Mr. Owen Harris,male,22,A/5 21171,7.25,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Cumings; Mrs. John Bradley (Florence Briggs Thayer),female,38,PC 17599,71.2833,C85,1,C,1,0,2015-04-22T00:00:00
+Yes,Heikkinen; Miss. Laina,female,26,STON/O2. 3101282,7.925,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Futrelle; Mrs. Jacques Heath (Lily May Peel),female,35,113803,53.1,C123,1,S,1,0,2015-04-22T00:00:00
+No,Allen; Mr. William Henry,male,35,373450,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Moran; Mr. James,male,?,330877,8.4583,?,3,Q,0,0,2015-04-22T00:00:00
+No,McCarthy; Mr. Timothy J,male,54,17463,51.8625,E46,1,S,0,0,2015-04-22T00:00:00
+No,Palsson; Master. Gosta Leonard,male,2,349909,21.075,?,3,S,3,0,2016-11-09T00:00:00
+Yes,Johnson; Mrs. Oscar W (Elisabeth Vilhelmina Berg),female,27,347742,11.1333,?,3,S,0,0,2016-03-09T00:00:00
+Yes,Nasser; Mrs. Nicholas (Adele Achem),female,14,237736,30.0708,?,2,C,1,0,2015-04-22T00:00:00
+Yes,Sandstrom; Miss. Marguerite Rut,female,4,PP 9549,16.7,G6,3,S,1,0,2016-11-09T00:00:00
+Yes,Bonnell; Miss. Elizabeth,female,58,113783,26.55,C103,1,S,0,0,2015-04-22T00:00:00
+No,Saundercock; Mr. William Henry,male,20,A/5. 2151,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Andersson; Mr. Anders Johan,male,39,347082,31.275,?,3,S,1,0,2017-05-19T00:00:00
+No,Vestrom; Miss. Hulda Amanda Adolfina,female,14,350406,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hewlett; Mrs. (Mary D Kingcome) ,female,55,248706,16,?,2,S,0,0,2015-04-22T00:00:00
+No,Rice; Master. Eugene,male,2,382652,29.125,?,3,Q,4,0,2016-11-09T00:00:00
+Yes,Williams; Mr. Charles Eugene,male,?,244373,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Vander Planke; Mrs. Julius (Emelia Maria Vandemoortele),female,31,345763,18,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Masselmani; Mrs. Fatima,female,?,2649,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Fynney; Mr. Joseph J,male,35,239865,26,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Beesley; Mr. Lawrence,male,34,248698,13,D56,2,S,0,0,2015-04-22T00:00:00
+Yes,McGowan; Miss. Anna \"Annie\",female,15,330923,8.0292,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Sloper; Mr. William Thompson,male,28,113788,35.5,A6,1,S,0,0,2015-04-22T00:00:00
+No,Palsson; Miss. Torborg Danira,female,8,349909,21.075,?,3,S,3,0,2016-11-09T00:00:00
+Yes,Asplund; Mrs. Carl Oscar (Selma Augusta Emilia Johansson),female,38,347077,31.3875,?,3,S,1,0,2017-05-19T00:00:00
+No,Emir; Mr. Farred Chehab,male,?,2631,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Fortune; Mr. Charles Alexander,male,19,19950,263,C23 C25 C27,1,S,3,0,2016-03-09T00:00:00
+Yes,O'Dwyer; Miss. Ellen \"Nellie\",female,?,330959,7.8792,?,3,Q,0,0,2015-04-22T00:00:00
+No,Todoroff; Mr. Lalio,male,?,349216,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Uruchurtu; Don. Manuel E,male,40,PC 17601,27.7208,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Spencer; Mrs. William Augustus (Marie Eugenie),female,?,PC 17569,146.5208,B78,1,C,1,0,2015-04-22T00:00:00
+Yes,Glynn; Miss. Mary Agatha,female,?,335677,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Wheadon; Mr. Edward H,male,66,C.A. 24579,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Meyer; Mr. Edgar Joseph,male,28,PC 17604,82.1708,?,1,C,1,0,2015-04-22T00:00:00
+No,Holverson; Mr. Alexander Oskar,male,42,113789,52,?,1,S,1,0,2015-04-22T00:00:00
+Yes,Mamee; Mr. Hanna,male,?,2677,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Cann; Mr. Ernest Charles,male,21,A./5. 2152,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Vander Planke; Miss. Augusta Maria,female,18,345764,18,?,3,S,2,0,2015-04-22T00:00:00
+Yes,Nicola-Yarred; Miss. Jamila,female,14,2651,11.2417,?,3,C,1,0,2015-04-22T00:00:00
+No,Ahlin; Mrs. Johan (Johanna Persdotter Larsson),female,40,7546,9.475,?,3,S,1,0,2015-04-22T00:00:00
+No,Turpin; Mrs. William John Robert (Dorothy Ann Wonnacott),female,27,11668,21,?,2,S,1,0,2015-04-22T00:00:00
+No,Kraeff; Mr. Theodor,male,?,349253,7.8958,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Laroche; Miss. Simonne Marie Anne Andree,female,3,SC/Paris 2123,41.5792,?,2,C,1,0,2016-03-09T00:00:00
+Yes,Devaney; Miss. Margaret Delia,female,19,330958,7.8792,?,3,Q,0,0,2015-04-22T00:00:00
+No,Rogers; Mr. William John,male,?,S.C./A.4. 23567,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Lennon; Mr. Denis,male,?,370371,15.5,?,3,Q,1,0,2015-04-22T00:00:00
+Yes,O'Driscoll; Miss. Bridget,female,?,14311,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Samaan; Mr. Youssef,male,?,2662,21.6792,?,3,C,2,0,2015-04-22T00:00:00
+No,Arnold-Franchi; Mrs. Josef (Josefine Franchi),female,18,349237,17.8,?,3,S,1,0,2015-04-22T00:00:00
+No,Panula; Master. Juha Niilo,male,7,3101295,39.6875,?,3,S,4,0,2016-11-09T00:00:00
+No,Nosworthy; Mr. Richard Cater,male,21,A/4. 39886,7.8,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Harper; Mrs. Henry Sleeper (Myna Haxtun),female,49,PC 17572,76.7292,D33,1,C,1,0,2015-04-22T00:00:00
+Yes,Faunthorpe; Mrs. Lizzie (Elizabeth Anne Wilkinson),female,29,2926,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Ostby; Mr. Engelhart Cornelius,male,65,113509,61.9792,B30,1,C,0,0,2016-11-09T00:00:00
+Yes,Woolner; Mr. Hugh,male,?,19947,35.5,C52,1,S,0,0,2015-04-22T00:00:00
+Yes,Rugg; Miss. Emily,female,21,C.A. 31026,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Novel; Mr. Mansouer,male,28.5,2697,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+Yes,West; Miss. Constance Mirium,female,5,C.A. 34651,27.75,?,2,S,1,0,2016-03-09T00:00:00
+No,Goodwin; Master. William Frederick,male,11,CA 2144,46.9,?,3,S,5,0,2016-03-09T00:00:00
+No,Sirayanian; Mr. Orsen,male,22,2669,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Icard; Miss. Amelie,female,38,113572,80,B28,1,?,0,0,2015-04-22T00:00:00
+No,Harris; Mr. Henry Birkhardt,male,45,36973,83.475,C83,1,S,1,0,2015-04-22T00:00:00
+No,Skoog; Master. Harald,male,4,347088,27.9,?,3,S,3,0,2016-03-09T00:00:00
+No,Stewart; Mr. Albert A,male,?,PC 17605,27.7208,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Moubarek; Master. Gerios,male,?,2661,15.2458,?,3,C,1,0,2016-11-09T00:00:00
+Yes,Nye; Mrs. (Elizabeth Ramell),female,29,C.A. 29395,10.5,F33,2,S,0,0,2015-04-22T00:00:00
+No,Crease; Mr. Ernest James,male,19,S.P. 3464,8.1583,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Andersson; Miss. Erna Alexandra,female,17,3101281,7.925,?,3,S,4,0,2016-03-09T00:00:00
+No,Kink; Mr. Vincenz,male,26,315151,8.6625,?,3,S,2,0,2015-04-22T00:00:00
+No,Jenkin; Mr. Stephen Curnow,male,32,C.A. 33111,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Goodwin; Miss. Lillian Amy,female,16,CA 2144,46.9,?,3,S,5,0,2016-03-09T00:00:00
+No,Hood; Mr. Ambrose Jr,male,21,S.O.C. 14879,73.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Chronopoulos; Mr. Apostolos,male,26,2680,14.4542,?,3,C,1,0,2015-04-22T00:00:00
+Yes,Bing; Mr. Lee,male,32,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+No,Moen; Mr. Sigurd Hansen,male,25,348123,7.65,F G73,3,S,0,0,2015-04-22T00:00:00
+No,Staneff; Mr. Ivan,male,?,349208,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Moutal; Mr. Rahamin Haim,male,?,374746,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Caldwell; Master. Alden Gates,male,0.83,248738,29,?,2,S,0,0,2016-03-09T00:00:00
+Yes,Dowdell; Miss. Elizabeth,female,30,364516,12.475,?,3,S,0,0,2015-04-22T00:00:00
+No,Waelens; Mr. Achille,male,22,345767,9,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Sheerlinck; Mr. Jan Baptist,male,29,345779,9.5,?,3,S,0,0,2015-04-22T00:00:00
+Yes,McDermott; Miss. Brigdet Delia,female,?,330932,7.7875,?,3,Q,0,0,2015-04-22T00:00:00
+No,Carrau; Mr. Francisco M,male,28,113059,47.1,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Ilett; Miss. Bertha,female,17,SO/C 14885,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Backstrom; Mrs. Karl Alfred (Maria Mathilda Gustafsson),female,33,3101278,15.85,?,3,S,3,0,2015-04-22T00:00:00
+No,Ford; Mr. William Neal,male,16,W./C. 6608,34.375,?,3,S,1,0,2017-05-19T00:00:00
+No,Slocovski; Mr. Selman Francis,male,?,SOTON/OQ 392086,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Fortune; Miss. Mabel Helen,female,23,19950,263,C23 C25 C27,1,S,3,0,2016-03-09T00:00:00
+No,Celotti; Mr. Francesco,male,24,343275,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Christmann; Mr. Emil,male,29,343276,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Andreasson; Mr. Paul Edvin,male,20,347466,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+No,Chaffee; Mr. Herbert Fuller,male,46,W.E.P. 5734,61.175,E31,1,S,1,0,2015-04-22T00:00:00
+No,Dean; Mr. Bertram Frank,male,26,C.A. 2315,20.575,?,3,S,1,0,2016-03-09T00:00:00
+No,Coxon; Mr. Daniel,male,59,364500,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Shorney; Mr. Charles Joseph,male,?,374910,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Goldschmidt; Mr. George B,male,71,PC 17754,34.6542,A5,1,C,0,0,2015-04-22T00:00:00
+Yes,Greenfield; Mr. William Bertram,male,23,PC 17759,63.3583,D10 D12,1,C,0,0,2016-11-09T00:00:00
+Yes,Doling; Mrs. John T (Ada Julia Bone),female,34,231919,23,?,2,S,0,0,2016-11-09T00:00:00
+No,Kantor; Mr. Sinai,male,34,244367,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Petranec; Miss. Matilda,female,28,349245,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Petroff; Mr. Pastcho (\"Pentcho\"),male,?,349215,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,White; Mr. Richard Frasar,male,21,35281,77.2875,D26,1,S,0,0,2016-11-09T00:00:00
+No,Johansson; Mr. Gustaf Joel,male,33,7540,8.6542,?,3,S,0,0,2015-04-22T00:00:00
+No,Gustafsson; Mr. Anders Vilhelm,male,37,3101276,7.925,?,3,S,2,0,2015-04-22T00:00:00
+No,Mionoff; Mr. Stoytcho,male,28,349207,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Salkjelsvik; Miss. Anna Kristine,female,21,343120,7.65,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Moss; Mr. Albert Johan,male,?,312991,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Rekic; Mr. Tido,male,38,349249,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Moran; Miss. Bertha,female,?,371110,24.15,?,3,Q,1,0,2015-04-22T00:00:00
+No,Porter; Mr. Walter Chamberlain,male,47,110465,52,C110,1,S,0,0,2015-04-22T00:00:00
+No,Zabour; Miss. Hileni,female,14.5,2665,14.4542,?,3,C,1,0,2015-04-22T00:00:00
+No,Barton; Mr. David John,male,22,324669,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Jussila; Miss. Katriina,female,20,4136,9.825,?,3,S,1,0,2015-04-22T00:00:00
+No,Attalah; Miss. Malake,female,17,2627,14.4583,?,3,C,0,0,2015-04-22T00:00:00
+No,Pekoniemi; Mr. Edvard,male,21,STON/O 2. 3101294,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Connors; Mr. Patrick,male,70.5,370369,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Turpin; Mr. William John Robert,male,29,11668,21,?,2,S,1,0,2015-04-22T00:00:00
+No,Baxter; Mr. Quigg Edmond,male,24,PC 17558,247.5208,B58 B60,1,C,0,0,2016-11-09T00:00:00
+No,Andersson; Miss. Ellis Anna Maria,female,2,347082,31.275,?,3,S,4,0,2016-03-09T00:00:00
+No,Hickman; Mr. Stanley George,male,21,S.O.C. 14879,73.5,?,2,S,2,0,2015-04-22T00:00:00
+No,Moore; Mr. Leonard Charles,male,?,A4. 54510,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Nasser; Mr. Nicholas,male,32.5,237736,30.0708,?,2,C,1,0,2015-04-22T00:00:00
+Yes,Webber; Miss. Susan,female,32.5,27267,13,E101,2,S,0,0,2015-04-22T00:00:00
+No,White; Mr. Percival Wayland,male,54,35281,77.2875,D26,1,S,0,0,2016-11-09T00:00:00
+Yes,Nicola-Yarred; Master. Elias,male,12,2651,11.2417,?,3,C,1,0,2015-04-22T00:00:00
+No,McMahon; Mr. Martin,male,?,370372,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Madsen; Mr. Fridtjof Arne,male,24,C 17369,7.1417,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Peter; Miss. Anna,female,?,2668,22.3583,F E69,3,C,1,0,2016-11-09T00:00:00
+No,Ekstrom; Mr. Johan,male,45,347061,6.975,?,3,S,0,0,2015-04-22T00:00:00
+No,Drazenoic; Mr. Jozef,male,33,349241,7.8958,?,3,C,0,0,2015-04-22T00:00:00
+No,Coelho; Mr. Domingos Fernandeo,male,20,SOTON/O.Q. 3101307,7.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Robins; Mrs. Alexander A (Grace Charity Laury),female,47,A/5. 3337,14.5,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Weisz; Mrs. Leopold (Mathilde Francoise Pede),female,29,228414,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Sobey; Mr. Samuel James Hayden,male,25,C.A. 29178,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Richard; Mr. Emile,male,23,SC/PARIS 2133,15.0458,?,2,C,0,0,2015-04-22T00:00:00
+Yes,Newsom; Miss. Helen Monypeny,female,19,11752,26.2833,D47,1,S,0,0,2016-03-09T00:00:00
+No,Futrelle; Mr. Jacques Heath,male,37,113803,53.1,C123,1,S,1,0,2015-04-22T00:00:00
+No,Osen; Mr. Olaf Elon,male,16,7534,9.2167,?,3,S,0,0,2015-04-22T00:00:00
+No,Giglio; Mr. Victor,male,24,PC 17593,79.2,B86,1,C,0,0,2015-04-22T00:00:00
+No,Boulos; Mrs. Joseph (Sultana),female,?,2678,15.2458,?,3,C,0,0,2016-03-09T00:00:00
+Yes,Nysten; Miss. Anna Sofia,female,22,347081,7.75,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hakkarainen; Mrs. Pekka Pietari (Elin Matilda Dolck),female,24,STON/O2. 3101279,15.85,?,3,S,1,0,2015-04-22T00:00:00
+No,Burke; Mr. Jeremiah,male,19,365222,6.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Andrew; Mr. Edgardo Samuel,male,18,231945,11.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Nicholls; Mr. Joseph Charles,male,19,C.A. 33112,36.75,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Andersson; Mr. August Edvard (\"Wennerstrom\"),male,27,350043,7.7958,?,3,S,0,0,2015-04-22T00:00:00
+No,Ford; Miss. Robina Maggie \"Ruby\",female,9,W./C. 6608,34.375,?,3,S,2,0,2016-03-09T00:00:00
+No,Navratil; Mr. Michel (\"Louis M Hoffman\"),male,36.5,230080,26,F2,2,S,0,0,2016-03-09T00:00:00
+No,Byles; Rev. Thomas Roussel Davids,male,42,244310,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Bateman; Rev. Robert James,male,51,S.O.P. 1166,12.525,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Pears; Mrs. Thomas (Edith Wearne),female,22,113776,66.6,C2,1,S,1,0,2015-04-22T00:00:00
+No,Meo; Mr. Alfonzo,male,55.5,A.5. 11206,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,van Billiard; Mr. Austin Blyler,male,40.5,A/5. 851,14.5,?,3,S,0,0,2016-03-09T00:00:00
+No,Olsen; Mr. Ole Martin,male,?,Fa 265302,7.3125,?,3,S,0,0,2015-04-22T00:00:00
+No,Williams; Mr. Charles Duane,male,51,PC 17597,61.3792,?,1,C,0,0,2016-11-09T00:00:00
+Yes,Gilnagh; Miss. Katherine \"Katie\",female,16,35851,7.7333,?,3,Q,0,0,2015-04-22T00:00:00
+No,Corn; Mr. Harry,male,30,SOTON/OQ 392090,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Smiljanic; Mr. Mile,male,?,315037,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Sage; Master. Thomas Henry,male,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+No,Cribb; Mr. John Hatfield,male,44,371362,16.1,?,3,S,0,0,2016-11-09T00:00:00
+Yes,Watt; Mrs. James (Elizabeth \"Bessie\" Inglis Milne),female,40,C.A. 33595,15.75,?,2,S,0,0,2015-04-22T00:00:00
+No,Bengtsson; Mr. John Viktor,male,26,347068,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Calic; Mr. Jovo,male,17,315093,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Panula; Master. Eino Viljami,male,1,3101295,39.6875,?,3,S,4,0,2016-11-09T00:00:00
+Yes,Goldsmith; Master. Frank John William \"Frankie\",male,9,363291,20.525,?,3,S,0,0,2016-03-09T00:00:00
+Yes,Chibnall; Mrs. (Edith Martha Bowerman),female,?,113505,55,E33,1,S,0,0,2016-11-09T00:00:00
+No,Skoog; Mrs. William (Anna Bernhardina Karlsson),female,45,347088,27.9,?,3,S,1,0,2017-05-19T00:00:00
+No,Baumann; Mr. John D,male,?,PC 17318,25.925,?,1,S,0,0,2015-04-22T00:00:00
+No,Ling; Mr. Lee,male,28,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+No,Van der hoef; Mr. Wyckoff,male,61,111240,33.5,B19,1,S,0,0,2015-04-22T00:00:00
+No,Rice; Master. Arthur,male,4,382652,29.125,?,3,Q,4,0,2016-11-09T00:00:00
+Yes,Johnson; Miss. Eleanor Ileen,female,1,347742,11.1333,?,3,S,1,0,2016-11-09T00:00:00
+No,Sivola; Mr. Antti Wilhelm,male,21,STON/O 2. 3101280,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Smith; Mr. James Clinch,male,56,17764,30.6958,A7,1,C,0,0,2015-04-22T00:00:00
+No,Klasen; Mr. Klas Albin,male,18,350404,7.8542,?,3,S,1,0,2016-11-09T00:00:00
+No,Lefebre; Master. Henry Forbes,male,?,4133,25.4667,?,3,S,3,0,2016-11-09T00:00:00
+No,Isham; Miss. Ann Elizabeth,female,50,PC 17595,28.7125,C49,1,C,0,0,2015-04-22T00:00:00
+No,Hale; Mr. Reginald,male,30,250653,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Leonard; Mr. Lionel,male,36,LINE,0,?,3,S,0,0,2015-04-22T00:00:00
+No,Sage; Miss. Constance Gladys,female,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+No,Pernot; Mr. Rene,male,?,SC/PARIS 2131,15.05,?,2,C,0,0,2015-04-22T00:00:00
+No,Asplund; Master. Clarence Gustaf Hugo,male,9,347077,31.3875,?,3,S,4,0,2016-03-09T00:00:00
+Yes,Becker; Master. Richard F,male,1,230136,39,F4,2,S,2,0,2016-11-09T00:00:00
+Yes,Kink-Heilmann; Miss. Luise Gretchen,female,4,315153,22.025,?,3,S,0,0,2016-03-09T00:00:00
+No,Rood; Mr. Hugh Roscoe,male,?,113767,50,A32,1,S,0,0,2015-04-22T00:00:00
+Yes,O'Brien; Mrs. Thomas (Johanna \"Hannah\" Godfrey),female,?,370365,15.5,?,3,Q,1,0,2015-04-22T00:00:00
+Yes,Romaine; Mr. Charles Hallace (\"Mr C Rolmane\"),male,45,111428,26.55,?,1,S,0,0,2015-04-22T00:00:00
+No,Bourke; Mr. John,male,40,364849,15.5,?,3,Q,1,0,2016-11-09T00:00:00
+No,Turcin; Mr. Stjepan,male,36,349247,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Pinsky; Mrs. (Rosa),female,32,234604,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Carbines; Mr. William,male,19,28424,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Andersen-Jensen; Miss. Carla Christine Nielsine,female,19,350046,7.8542,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Navratil; Master. Michel M,male,3,230080,26,F2,2,S,1,0,2016-11-09T00:00:00
+Yes,Brown; Mrs. James Joseph (Margaret Tobin),female,44,PC 17610,27.7208,B4,1,C,0,0,2015-04-22T00:00:00
+Yes,Lurette; Miss. Elise,female,58,PC 17569,146.5208,B80,1,C,0,0,2015-04-22T00:00:00
+No,Mernagh; Mr. Robert,male,?,368703,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Olsen; Mr. Karl Siegwart Andreas,male,42,4579,8.4042,?,3,S,0,0,2016-11-09T00:00:00
+Yes,Madigan; Miss. Margaret \"Maggie\",female,?,370370,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Yrois; Miss. Henriette (\"Mrs Harbeck\"),female,24,248747,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Vande Walle; Mr. Nestor Cyriel,male,28,345770,9.5,?,3,S,0,0,2015-04-22T00:00:00
+No,Sage; Mr. Frederick,male,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+No,Johanson; Mr. Jakob Alfred,male,34,3101264,6.4958,?,3,S,0,0,2015-04-22T00:00:00
+No,Youseff; Mr. Gerious,male,45.5,2628,7.225,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Cohen; Mr. Gurshon \"Gus\",male,18,A/5 3540,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Strom; Miss. Telma Matilda,female,2,347054,10.4625,G6,3,S,0,0,2016-11-09T00:00:00
+No,Backstrom; Mr. Karl Alfred,male,32,3101278,15.85,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Albimona; Mr. Nassef Cassem,male,26,2699,18.7875,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Carr; Miss. Helen \"Ellen\",female,16,367231,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Blank; Mr. Henry,male,40,112277,31,A31,1,C,0,0,2015-04-22T00:00:00
+No,Ali; Mr. Ahmed,male,24,SOTON/O.Q. 3101311,7.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Cameron; Miss. Clear Annie,female,35,F.C.C. 13528,21,?,2,S,0,0,2015-04-22T00:00:00
+No,Perkin; Mr. John Henry,male,22,A/5 21174,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Givard; Mr. Hans Kristensen,male,30,250646,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Kiernan; Mr. Philip,male,?,367229,7.75,?,3,Q,1,0,2015-04-22T00:00:00
+Yes,Newell; Miss. Madeleine,female,31,35273,113.275,D36,1,C,1,0,2015-04-22T00:00:00
+Yes,Honkanen; Miss. Eliina,female,27,STON/O2. 3101283,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Jacobsohn; Mr. Sidney Samuel,male,42,243847,27,?,2,S,1,0,2015-04-22T00:00:00
+Yes,Bazzani; Miss. Albina,female,32,11813,76.2917,D15,1,C,0,0,2015-04-22T00:00:00
+No,Harris; Mr. Walter,male,30,W/C 14208,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Sunderland; Mr. Victor Francis,male,16,SOTON/OQ 392089,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Bracken; Mr. James H,male,27,220367,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Green; Mr. George Henry,male,51,21440,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Nenkoff; Mr. Christo,male,?,349234,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hoyt; Mr. Frederick Maxfield,male,38,19943,90,C93,1,S,1,0,2015-04-22T00:00:00
+No,Berglund; Mr. Karl Ivar Sven,male,22,PP 4348,9.35,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Mellors; Mr. William John,male,19,SW/PP 751,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Lovell; Mr. John Hall (\"Henry\"),male,20.5,A/5 21173,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Fahlstrom; Mr. Arne Jonas,male,18,236171,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Lefebre; Miss. Mathilde,female,?,4133,25.4667,?,3,S,3,0,2016-11-09T00:00:00
+Yes,Harris; Mrs. Henry Birkhardt (Irene Wallach),female,35,36973,83.475,C83,1,S,1,0,2015-04-22T00:00:00
+No,Larsson; Mr. Bengt Edvin,male,29,347067,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Sjostedt; Mr. Ernst Adolf,male,59,237442,13.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Asplund; Miss. Lillian Gertrud,female,5,347077,31.3875,?,3,S,4,0,2016-03-09T00:00:00
+No,Leyson; Mr. Robert William Norman,male,24,C.A. 29566,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Harknett; Miss. Alice Phoebe,female,?,W./C. 6609,7.55,?,3,S,0,0,2015-04-22T00:00:00
+No,Hold; Mr. Stephen,male,44,26707,26,?,2,S,1,0,2015-04-22T00:00:00
+Yes,Collyer; Miss. Marjorie \"Lottie\",female,8,C.A. 31921,26.25,?,2,S,0,0,2016-03-09T00:00:00
+No,Pengelly; Mr. Frederick William,male,19,28665,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Hunt; Mr. George Henry,male,33,SCO/W 1585,12.275,?,2,S,0,0,2015-04-22T00:00:00
+No,Zabour; Miss. Thamine,female,?,2665,14.4542,?,3,C,1,0,2015-04-22T00:00:00
+Yes,Murphy; Miss. Katherine \"Kate\",female,?,367230,15.5,?,3,Q,1,0,2015-04-22T00:00:00
+No,Coleridge; Mr. Reginald Charles,male,29,W./C. 14263,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Maenpaa; Mr. Matti Alexanteri,male,22,STON/O 2. 3101275,7.125,?,3,S,0,0,2015-04-22T00:00:00
+No,Attalah; Mr. Sleiman,male,30,2694,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Minahan; Dr. William Edward,male,44,19928,90,C78,1,Q,2,0,2015-04-22T00:00:00
+No,Lindahl; Miss. Agda Thorilda Viktoria,female,25,347071,7.775,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hamalainen; Mrs. William (Anna),female,24,250649,14.5,?,2,S,0,0,2016-03-09T00:00:00
+Yes,Beckwith; Mr. Richard Leonard,male,37,11751,52.5542,D35,1,S,1,0,2016-11-09T00:00:00
+No,Carter; Rev. Ernest Courtenay,male,54,244252,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Reed; Mr. James George,male,?,362316,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Strom; Mrs. Wilhelm (Elna Matilda Persson),female,29,347054,10.4625,G6,3,S,1,0,2016-11-09T00:00:00
+No,Stead; Mr. William Thomas,male,62,113514,26.55,C87,1,S,0,0,2015-04-22T00:00:00
+No,Lobb; Mr. William Arthur,male,30,A/5. 3336,16.1,?,3,S,1,0,2015-04-22T00:00:00
+No,Rosblom; Mrs. Viktor (Helena Wilhelmina),female,41,370129,20.2125,?,3,S,0,0,2016-03-09T00:00:00
+Yes,Touma; Mrs. Darwis (Hanne Youssef Razi),female,29,2650,15.2458,?,3,C,0,0,2016-03-09T00:00:00
+Yes,Thorne; Mrs. Gertrude Maybelle,female,?,PC 17585,79.2,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Cherry; Miss. Gladys,female,30,110152,86.5,B77,1,S,0,0,2015-04-22T00:00:00
+Yes,Ward; Miss. Anna,female,35,PC 17755,512.3292,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Parrish; Mrs. (Lutie Davis),female,50,230433,26,?,2,S,0,0,2016-11-09T00:00:00
+No,Smith; Mr. Thomas,male,?,384461,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Asplund; Master. Edvin Rojj Felix,male,3,347077,31.3875,?,3,S,4,0,2016-03-09T00:00:00
+No,Taussig; Mr. Emil,male,52,110413,79.65,E67,1,S,1,0,2016-11-09T00:00:00
+No,Harrison; Mr. William,male,40,112059,0,B94,1,S,0,0,2015-04-22T00:00:00
+No,Henry; Miss. Delia,female,?,382649,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Reeves; Mr. David,male,36,C.A. 17248,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Panula; Mr. Ernesti Arvid,male,16,3101295,39.6875,?,3,S,4,0,2016-11-09T00:00:00
+Yes,Persson; Mr. Ernst Ulrik,male,25,347083,7.775,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Graham; Mrs. William Thompson (Edith Junkins),female,58,PC 17582,153.4625,C125,1,S,0,0,2016-11-09T00:00:00
+Yes,Bissette; Miss. Amelia,female,35,PC 17760,135.6333,C99,1,S,0,0,2015-04-22T00:00:00
+No,Cairns; Mr. Alexander,male,?,113798,31,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Tornquist; Mr. William Henry,male,25,LINE,0,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Mellinger; Mrs. (Elizabeth Anne Maidment),female,41,250644,19.5,?,2,S,0,0,2016-11-09T00:00:00
+No,Natsch; Mr. Charles H,male,37,PC 17596,29.7,C118,1,C,0,0,2016-11-09T00:00:00
+Yes,Healy; Miss. Hanora \"Nora\",female,?,370375,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Andrews; Miss. Kornelia Theodosia,female,63,13502,77.9583,D7,1,S,1,0,2015-04-22T00:00:00
+No,Lindblom; Miss. Augusta Charlotta,female,45,347073,7.75,?,3,S,0,0,2015-04-22T00:00:00
+No,Parkes; Mr. Francis \"Frank\",male,?,239853,0,?,2,S,0,0,2015-04-22T00:00:00
+No,Rice; Master. Eric,male,7,382652,29.125,?,3,Q,4,0,2016-11-09T00:00:00
+Yes,Abbott; Mrs. Stanton (Rosa Hunt),female,35,C.A. 2673,20.25,?,3,S,1,0,2016-11-09T00:00:00
+No,Duane; Mr. Frank,male,65,336439,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Olsson; Mr. Nils Johan Goransson,male,28,347464,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+No,de Pelsmaeker; Mr. Alfons,male,16,345778,9.5,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Dorking; Mr. Edward Arthur,male,19,A/5. 10482,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Smith; Mr. Richard William,male,?,113056,26,A19,1,S,0,0,2015-04-22T00:00:00
+No,Stankovic; Mr. Ivan,male,33,349239,8.6625,?,3,C,0,0,2015-04-22T00:00:00
+Yes,de Mulder; Mr. Theodore,male,30,345774,9.5,?,3,S,0,0,2015-04-22T00:00:00
+No,Naidenoff; Mr. Penko,male,22,349206,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hosono; Mr. Masabumi,male,42,237798,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Connolly; Miss. Kate,female,22,370373,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Barber; Miss. Ellen \"Nellie\",female,26,19877,78.85,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Bishop; Mrs. Dickinson H (Helen Walton),female,19,11967,91.0792,B49,1,C,1,0,2015-04-22T00:00:00
+No,Levy; Mr. Rene Jacques,male,36,SC/Paris 2163,12.875,D,2,C,0,0,2015-04-22T00:00:00
+No,Haas; Miss. Aloisia,female,24,349236,8.85,?,3,S,0,0,2015-04-22T00:00:00
+No,Mineff; Mr. Ivan,male,24,349233,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Lewy; Mr. Ervin G,male,?,PC 17612,27.7208,?,1,C,0,0,2015-04-22T00:00:00
+No,Hanna; Mr. Mansour,male,23.5,2693,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Allison; Miss. Helen Loraine,female,2,113781,151.55,C22 C26,1,S,1,0,2016-03-09T00:00:00
+Yes,Saalfeld; Mr. Adolphe,male,?,19988,30.5,C106,1,S,0,0,2015-04-22T00:00:00
+Yes,Baxter; Mrs. James (Helene DeLaudeniere Chaput),female,50,PC 17558,247.5208,B58 B60,1,C,0,0,2016-11-09T00:00:00
+Yes,Kelly; Miss. Anna Katherine \"Annie Kate\",female,?,9234,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,McCoy; Mr. Bernard,male,?,367226,23.25,?,3,Q,2,0,2015-04-22T00:00:00
+No,Johnson; Mr. William Cahoone Jr,male,19,LINE,0,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Keane; Miss. Nora A,female,?,226593,12.35,E101,2,Q,0,0,2015-04-22T00:00:00
+No,Williams; Mr. Howard Hugh \"Harry\",male,?,A/5 2466,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Allison; Master. Hudson Trevor,male,0.92,113781,151.55,C22 C26,1,S,1,0,2016-03-09T00:00:00
+Yes,Fleming; Miss. Margaret,female,?,17421,110.8833,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Penasco y Castellana; Mrs. Victor de Satode (Maria Josefa Perez de Soto y Vallejo),female,17,PC 17758,108.9,C65,1,C,1,0,2015-04-22T00:00:00
+No,Abelson; Mr. Samuel,male,30,P/PP 3381,24,?,2,C,1,0,2015-04-22T00:00:00
+Yes,Francatelli; Miss. Laura Mabel,female,30,PC 17485,56.9292,E36,1,C,0,0,2015-04-22T00:00:00
+Yes,Hays; Miss. Margaret Bechstein,female,24,11767,83.1583,C54,1,C,0,0,2015-04-22T00:00:00
+Yes,Ryerson; Miss. Emily Borie,female,18,PC 17608,262.375,B57 B59 B63 B66,1,C,2,0,2016-03-09T00:00:00
+No,Lahtinen; Mrs. William (Anna Sylfven),female,26,250651,26,?,2,S,1,0,2016-11-09T00:00:00
+No,Hendekovic; Mr. Ignjac,male,28,349243,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Hart; Mr. Benjamin,male,43,F.C.C. 13529,26.25,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Nilsson; Miss. Helmina Josefina,female,26,347470,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Kantor; Mrs. Sinai (Miriam Sternin),female,24,244367,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Moraweck; Dr. Ernest,male,54,29011,14,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Wick; Miss. Mary Natalie,female,31,36928,164.8667,C7,1,S,0,0,2016-03-09T00:00:00
+Yes,Spedden; Mrs. Frederic Oakley (Margaretta Corning Stone),female,40,16966,134.5,E34,1,C,1,0,2016-11-09T00:00:00
+No,Dennis; Mr. Samuel,male,22,A/5 21172,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Danoff; Mr. Yoto,male,27,349219,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Slayter; Miss. Hilda Mary,female,30,234818,12.35,?,2,Q,0,0,2015-04-22T00:00:00
+Yes,Caldwell; Mrs. Albert Francis (Sylvia Mae Harbaugh),female,22,248738,29,?,2,S,1,0,2016-11-09T00:00:00
+No,Sage; Mr. George John Jr,male,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+Yes,Young; Miss. Marie Grice,female,36,PC 17760,135.6333,C32,1,C,0,0,2015-04-22T00:00:00
+No,Nysveen; Mr. Johan Hansen,male,61,345364,6.2375,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Ball; Mrs. (Ada E Hall),female,36,28551,13,D,2,S,0,0,2015-04-22T00:00:00
+Yes,Goldsmith; Mrs. Frank John (Emily Alice Brown),female,31,363291,20.525,?,3,S,1,0,2016-11-09T00:00:00
+Yes,Hippach; Miss. Jean Gertrude,female,16,111361,57.9792,B18,1,C,0,0,2016-11-09T00:00:00
+Yes,McCoy; Miss. Agnes,female,?,367226,23.25,?,3,Q,2,0,2015-04-22T00:00:00
+No,Partner; Mr. Austen,male,45.5,113043,28.5,C124,1,S,0,0,2015-04-22T00:00:00
+No,Graham; Mr. George Edward,male,38,PC 17582,153.4625,C91,1,S,0,0,2016-11-09T00:00:00
+No,Vander Planke; Mr. Leo Edmondus,male,16,345764,18,?,3,S,2,0,2015-04-22T00:00:00
+Yes,Frauenthal; Mrs. Henry William (Clara Heinsheimer),female,?,PC 17611,133.65,?,1,S,1,0,2015-04-22T00:00:00
+No,Denkoff; Mr. Mitto,male,?,349225,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Pears; Mr. Thomas Clinton,male,29,113776,66.6,C2,1,S,1,0,2015-04-22T00:00:00
+Yes,Burns; Miss. Elizabeth Margaret,female,41,16966,134.5,E40,1,C,0,0,2015-04-22T00:00:00
+Yes,Dahl; Mr. Karl Edwart,male,45,7598,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Blackwell; Mr. Stephen Weart,male,45,113784,35.5,T,1,S,0,0,2015-04-22T00:00:00
+Yes,Navratil; Master. Edmond Roger,male,2,230080,26,F2,2,S,1,0,2016-11-09T00:00:00
+Yes,Fortune; Miss. Alice Elizabeth,female,24,19950,263,C23 C25 C27,1,S,3,0,2016-03-09T00:00:00
+No,Collander; Mr. Erik Gustaf,male,28,248740,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Sedgwick; Mr. Charles Frederick Waddington,male,25,244361,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Fox; Mr. Stanley Hubert,male,36,229236,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Brown; Miss. Amelia \"Mildred\",female,24,248733,13,F33,2,S,0,0,2015-04-22T00:00:00
+Yes,Smith; Miss. Marion Elsie,female,40,31418,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Davison; Mrs. Thomas Henry (Mary E Finck),female,?,386525,16.1,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Coutts; Master. William Loch \"William\",male,3,C.A. 37671,15.9,?,3,S,1,0,2016-11-09T00:00:00
+No,Dimic; Mr. Jovan,male,42,315088,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Odahl; Mr. Nils Martin,male,23,7267,9.225,?,3,S,0,0,2015-04-22T00:00:00
+No,Williams-Lambert; Mr. Fletcher Fellows,male,?,113510,35,C128,1,S,0,0,2015-04-22T00:00:00
+No,Elias; Mr. Tannous,male,15,2695,7.2292,?,3,C,1,0,2016-11-09T00:00:00
+No,Arnold-Franchi; Mr. Josef,male,25,349237,17.8,?,3,S,1,0,2015-04-22T00:00:00
+No,Yousif; Mr. Wazli,male,?,2647,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Vanden Steen; Mr. Leo Peter,male,28,345783,9.5,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Bowerman; Miss. Elsie Edith,female,22,113505,55,E33,1,S,0,0,2016-11-09T00:00:00
+No,Funk; Miss. Annie Clemmer,female,38,237671,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,McGovern; Miss. Mary,female,?,330931,7.8792,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Mockler; Miss. Helen Mary \"Ellie\",female,?,330980,7.8792,?,3,Q,0,0,2015-04-22T00:00:00
+No,Skoog; Mr. Wilhelm,male,40,347088,27.9,?,3,S,1,0,2017-05-19T00:00:00
+No,del Carlo; Mr. Sebastiano,male,29,SC/PARIS 2167,27.7208,?,2,C,1,0,2015-04-22T00:00:00
+No,Barbara; Mrs. (Catherine David),female,45,2691,14.4542,?,3,C,0,0,2016-11-09T00:00:00
+No,Asim; Mr. Adola,male,35,SOTON/O.Q. 3101310,7.05,?,3,S,0,0,2015-04-22T00:00:00
+No,O'Brien; Mr. Thomas,male,?,370365,15.5,?,3,Q,1,0,2015-04-22T00:00:00
+No,Adahl; Mr. Mauritz Nils Martin,male,30,C 7076,7.25,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Warren; Mrs. Frank Manley (Anna Sophia Atkinson),female,60,110813,75.25,D37,1,C,1,0,2015-04-22T00:00:00
+Yes,Moussa; Mrs. (Mantoura Boulos),female,?,2626,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Jermyn; Miss. Annie,female,?,14313,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Aubart; Mme. Leontine Pauline,female,24,PC 17477,69.3,B35,1,C,0,0,2015-04-22T00:00:00
+Yes,Harder; Mr. George Achilles,male,25,11765,55.4417,E50,1,C,1,0,2015-04-22T00:00:00
+No,Wiklund; Mr. Jakob Alfred,male,18,3101267,6.4958,?,3,S,1,0,2015-04-22T00:00:00
+No,Beavan; Mr. William Thomas,male,19,323951,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Ringhini; Mr. Sante,male,22,PC 17760,135.6333,?,1,C,0,0,2015-04-22T00:00:00
+No,Palsson; Miss. Stina Viola,female,3,349909,21.075,?,3,S,3,0,2016-11-09T00:00:00
+Yes,Meyer; Mrs. Edgar Joseph (Leila Saks),female,?,PC 17604,82.1708,?,1,C,1,0,2015-04-22T00:00:00
+Yes,Landergren; Miss. Aurora Adelia,female,22,C 7077,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Widener; Mr. Harry Elkins,male,27,113503,211.5,C82,1,C,0,0,2016-03-09T00:00:00
+No,Betros; Mr. Tannous,male,20,2648,4.0125,?,3,C,0,0,2015-04-22T00:00:00
+No,Gustafsson; Mr. Karl Gideon,male,19,347069,7.775,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Bidois; Miss. Rosalie,female,42,PC 17757,227.525,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Nakid; Miss. Maria (\"Mary\"),female,1,2653,15.7417,?,3,C,0,0,2016-03-09T00:00:00
+No,Tikkanen; Mr. Juho,male,32,STON/O 2. 3101293,7.925,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Holverson; Mrs. Alexander Oskar (Mary Aline Towner),female,35,113789,52,?,1,S,1,0,2015-04-22T00:00:00
+No,Plotcharsky; Mr. Vasil,male,?,349227,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Davies; Mr. Charles Henry,male,18,S.O.C. 14879,73.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Goodwin; Master. Sidney Leonard,male,1,CA 2144,46.9,?,3,S,5,0,2016-03-09T00:00:00
+Yes,Buss; Miss. Kate,female,36,27849,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Sadlier; Mr. Matthew,male,?,367655,7.7292,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Lehmann; Miss. Bertha,female,17,SC 1748,12,?,2,C,0,0,2015-04-22T00:00:00
+Yes,Carter; Mr. William Ernest,male,36,113760,120,B96 B98,1,S,1,0,2016-03-09T00:00:00
+Yes,Jansson; Mr. Carl Olof,male,21,350034,7.7958,?,3,S,0,0,2015-04-22T00:00:00
+No,Gustafsson; Mr. Johan Birger,male,28,3101277,7.925,?,3,S,2,0,2015-04-22T00:00:00
+Yes,Newell; Miss. Marjorie,female,23,35273,113.275,D36,1,C,1,0,2015-04-22T00:00:00
+Yes,Sandstrom; Mrs. Hjalmar (Agnes Charlotta Bengtsson),female,24,PP 9549,16.7,G6,3,S,0,0,2016-03-09T00:00:00
+No,Johansson; Mr. Erik,male,22,350052,7.7958,?,3,S,0,0,2015-04-22T00:00:00
+No,Olsson; Miss. Elina,female,31,350407,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+No,McKane; Mr. Peter David,male,46,28403,26,?,2,S,0,0,2015-04-22T00:00:00
+No,Pain; Dr. Alfred,male,23,244278,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Trout; Mrs. William H (Jessie L),female,28,240929,12.65,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Niskanen; Mr. Juha,male,39,STON/O 2. 3101289,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Adams; Mr. John,male,26,341826,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Jussila; Miss. Mari Aina,female,21,4137,9.825,?,3,S,1,0,2015-04-22T00:00:00
+No,Hakkarainen; Mr. Pekka Pietari,male,28,STON/O2. 3101279,15.85,?,3,S,1,0,2015-04-22T00:00:00
+No,Oreskovic; Miss. Marija,female,20,315096,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Gale; Mr. Shadrach,male,34,28664,21,?,2,S,1,0,2015-04-22T00:00:00
+No,Widegren; Mr. Carl/Charles Peter,male,51,347064,7.75,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Richards; Master. William Rowe,male,3,29106,18.75,?,2,S,1,0,2016-11-09T00:00:00
+No,Birkeland; Mr. Hans Martin Monsen,male,21,312992,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Lefebre; Miss. Ida,female,?,4133,25.4667,?,3,S,3,0,2016-11-09T00:00:00
+No,Sdycoff; Mr. Todor,male,?,349222,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Hart; Mr. Henry,male,?,394140,6.8583,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Minahan; Miss. Daisy E,female,33,19928,90,C78,1,Q,1,0,2015-04-22T00:00:00
+No,Cunningham; Mr. Alfred Fleming,male,?,239853,0,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Sundman; Mr. Johan Julian,male,44,STON/O 2. 3101269,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Meek; Mrs. Thomas (Annie Louise Rowley),female,?,343095,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Drew; Mrs. James Vivian (Lulu Thorne Christian),female,34,28220,32.5,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Silven; Miss. Lyyli Karoliina,female,18,250652,13,?,2,S,0,0,2016-03-09T00:00:00
+No,Matthews; Mr. William John,male,30,28228,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Van Impe; Miss. Catharina,female,10,345773,24.15,?,3,S,0,0,2016-03-09T00:00:00
+No,Gheorgheff; Mr. Stanio,male,?,349254,7.8958,?,3,C,0,0,2015-04-22T00:00:00
+No,Charters; Mr. David,male,21,A/5. 13032,7.7333,?,3,Q,0,0,2015-04-22T00:00:00
+No,Zimmerman; Mr. Leo,male,29,315082,7.875,?,3,S,0,0,2015-04-22T00:00:00
+No,Danbom; Mrs. Ernst Gilbert (Anna Sigrid Maria Brogren),female,28,347080,14.4,?,3,S,1,0,2016-11-09T00:00:00
+No,Rosblom; Mr. Viktor Richard,male,18,370129,20.2125,?,3,S,1,0,2016-11-09T00:00:00
+No,Wiseman; Mr. Phillippe,male,?,A/4. 34244,7.25,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Clarke; Mrs. Charles V (Ada Maria Winfield),female,28,2003,26,?,2,S,1,0,2015-04-22T00:00:00
+Yes,Phillips; Miss. Kate Florence (\"Mrs Kate Louise Phillips Marshall\"),female,19,250655,26,?,2,S,0,0,2015-04-22T00:00:00
+No,Flynn; Mr. James,male,?,364851,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Pickard; Mr. Berk (Berk Trembisky),male,32,SOTON/O.Q. 392078,8.05,E10,3,S,0,0,2015-04-22T00:00:00
+Yes,Bjornstrom-Steffansson; Mr. Mauritz Hakan,male,28,110564,26.55,C52,1,S,0,0,2015-04-22T00:00:00
+Yes,Thorneycroft; Mrs. Percival (Florence Kate White),female,?,376564,16.1,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Louch; Mrs. Charles Alexander (Alice Adelaide Slow),female,42,SC/AH 3085,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Kallio; Mr. Nikolai Erland,male,17,STON/O 2. 3101274,7.125,?,3,S,0,0,2015-04-22T00:00:00
+No,Silvey; Mr. William Baird,male,50,13507,55.9,E44,1,S,1,0,2015-04-22T00:00:00
+Yes,Carter; Miss. Lucile Polk,female,14,113760,120,B96 B98,1,S,1,0,2016-03-09T00:00:00
+No,Ford; Miss. Doolina Margaret \"Daisy\",female,21,W./C. 6608,34.375,?,3,S,2,0,2016-03-09T00:00:00
+Yes,Richards; Mrs. Sidney (Emily Hocking),female,24,29106,18.75,?,2,S,2,0,2017-05-19T00:00:00
+No,Fortune; Mr. Mark,male,64,19950,263,C23 C25 C27,1,S,1,0,2017-05-19T00:00:00
+No,Kvillner; Mr. Johan Henrik Johannesson,male,31,C.A. 18723,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Hart; Mrs. Benjamin (Esther Ada Bloomfield),female,45,F.C.C. 13529,26.25,?,2,S,1,0,2016-11-09T00:00:00
+No,Hampe; Mr. Leon,male,20,345769,9.5,?,3,S,0,0,2015-04-22T00:00:00
+No,Petterson; Mr. Johan Emil,male,25,347076,7.775,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Reynaldo; Ms. Encarnacion,female,28,230434,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Johannesen-Bratthammer; Mr. Bernt,male,?,65306,8.1125,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Dodge; Master. Washington,male,4,33638,81.8583,A34,1,S,0,0,2016-03-09T00:00:00
+Yes,Mellinger; Miss. Madeleine Violet,female,13,250644,19.5,?,2,S,0,0,2016-11-09T00:00:00
+Yes,Seward; Mr. Frederic Kimber,male,34,113794,26.55,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Baclini; Miss. Marie Catherine,female,5,2666,19.2583,?,3,C,2,0,2016-11-09T00:00:00
+Yes,Peuchen; Major. Arthur Godfrey,male,52,113786,30.5,C104,1,S,0,0,2015-04-22T00:00:00
+No,West; Mr. Edwy Arthur,male,36,C.A. 34651,27.75,?,2,S,1,0,2016-03-09T00:00:00
+No,Hagland; Mr. Ingvald Olai Olsen,male,?,65303,19.9667,?,3,S,1,0,2015-04-22T00:00:00
+No,Foreman; Mr. Benjamin Laventall,male,30,113051,27.75,C111,1,C,0,0,2015-04-22T00:00:00
+Yes,Goldenberg; Mr. Samuel L,male,49,17453,89.1042,C92,1,C,1,0,2015-04-22T00:00:00
+No,Peduzzi; Mr. Joseph,male,?,A/5 2817,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Jalsevac; Mr. Ivan,male,29,349240,7.8958,?,3,C,0,0,2015-04-22T00:00:00
+No,Millet; Mr. Francis Davis,male,65,13509,26.55,E38,1,S,0,0,2015-04-22T00:00:00
+Yes,Kenyon; Mrs. Frederick R (Marion),female,?,17464,51.8625,D21,1,S,1,0,2015-04-22T00:00:00
+Yes,Toomey; Miss. Ellen,female,50,F.C.C. 13531,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,O'Connor; Mr. Maurice,male,?,371060,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Anderson; Mr. Harry,male,48,19952,26.55,E12,1,S,0,0,2015-04-22T00:00:00
+No,Morley; Mr. William,male,34,364506,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Gee; Mr. Arthur H,male,47,111320,38.5,E63,1,S,0,0,2015-04-22T00:00:00
+No,Milling; Mr. Jacob Christian,male,48,234360,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Maisner; Mr. Simon,male,?,A/S 2816,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Goncalves; Mr. Manuel Estanslas,male,38,SOTON/O.Q. 3101306,7.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Campbell; Mr. William,male,?,239853,0,?,2,S,0,0,2015-04-22T00:00:00
+No,Smart; Mr. John Montgomery,male,56,113792,26.55,?,1,S,0,0,2015-04-22T00:00:00
+No,Scanlan; Mr. James,male,?,36209,7.725,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Baclini; Miss. Helene Barbara,female,0.75,2666,19.2583,?,3,C,2,0,2016-11-09T00:00:00
+No,Keefe; Mr. Arthur,male,?,323592,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Cacic; Mr. Luka,male,38,315089,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+Yes,West; Mrs. Edwy Arthur (Ada Mary Worth),female,33,C.A. 34651,27.75,?,2,S,1,0,2016-03-09T00:00:00
+Yes,Jerwan; Mrs. Amin S (Marie Marthe Thuillard),female,23,SC/AH Basle 541,13.7917,D,2,C,0,0,2015-04-22T00:00:00
+No,Strandberg; Miss. Ida Sofia,female,22,7553,9.8375,?,3,S,0,0,2015-04-22T00:00:00
+No,Clifford; Mr. George Quincy,male,?,110465,52,A14,1,S,0,0,2015-04-22T00:00:00
+No,Renouf; Mr. Peter Henry,male,34,31027,21,?,2,S,1,0,2015-04-22T00:00:00
+No,Braund; Mr. Lewis Richard,male,29,3460,7.0458,?,3,S,1,0,2015-04-22T00:00:00
+No,Karlsson; Mr. Nils August,male,22,350060,7.5208,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hirvonen; Miss. Hildur E,female,2,3101298,12.2875,?,3,S,0,0,2016-11-09T00:00:00
+No,Goodwin; Master. Harold Victor,male,9,CA 2144,46.9,?,3,S,5,0,2016-03-09T00:00:00
+No,Frost; Mr. Anthony Wood \"Archie\",male,?,239854,0,?,2,S,0,0,2015-04-22T00:00:00
+No,Rouse; Mr. Richard Henry,male,50,A/5 3594,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Turkula; Mrs. (Hedwig),female,63,4134,9.5875,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Bishop; Mr. Dickinson H,male,25,11967,91.0792,B49,1,C,1,0,2015-04-22T00:00:00
+No,Lefebre; Miss. Jeannie,female,?,4133,25.4667,?,3,S,3,0,2016-11-09T00:00:00
+Yes,Hoyt; Mrs. Frederick Maxfield (Jane Anne Forby),female,35,19943,90,C93,1,S,1,0,2015-04-22T00:00:00
+No,Kent; Mr. Edward Austin,male,58,11771,29.7,B37,1,C,0,0,2015-04-22T00:00:00
+No,Somerton; Mr. Francis William,male,30,A.5. 18509,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Coutts; Master. Eden Leslie \"Neville\",male,9,C.A. 37671,15.9,?,3,S,1,0,2016-11-09T00:00:00
+No,Hagland; Mr. Konrad Mathias Reiersen,male,?,65304,19.9667,?,3,S,1,0,2015-04-22T00:00:00
+No,Windelov; Mr. Einar,male,21,SOTON/OQ 3101317,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Molson; Mr. Harry Markland,male,55,113787,30.5,C30,1,S,0,0,2015-04-22T00:00:00
+No,Artagaveytia; Mr. Ramon,male,71,PC 17609,49.5042,?,1,C,0,0,2015-04-22T00:00:00
+No,Stanley; Mr. Edward Roland,male,21,A/4 45380,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Yousseff; Mr. Gerious,male,?,2627,14.4583,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Eustis; Miss. Elizabeth Mussey,female,54,36947,78.2667,D20,1,C,1,0,2015-04-22T00:00:00
+No,Shellard; Mr. Frederick William,male,?,C.A. 6212,15.1,?,3,S,0,0,2015-04-22T00:00:00
+No,Allison; Mrs. Hudson J C (Bessie Waldo Daniels),female,25,113781,151.55,C22 C26,1,S,1,0,2016-03-09T00:00:00
+No,Svensson; Mr. Olof,male,24,350035,7.7958,?,3,S,0,0,2015-04-22T00:00:00
+No,Calic; Mr. Petar,male,17,315086,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Canavan; Miss. Mary,female,21,364846,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,O'Sullivan; Miss. Bridget Mary,female,?,330909,7.6292,?,3,Q,0,0,2015-04-22T00:00:00
+No,Laitinen; Miss. Kristina Sofia,female,37,4135,9.5875,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Maioni; Miss. Roberta,female,16,110152,86.5,B79,1,S,0,0,2015-04-22T00:00:00
+No,Penasco y Castellana; Mr. Victor de Satode,male,18,PC 17758,108.9,C65,1,C,1,0,2015-04-22T00:00:00
+Yes,Quick; Mrs. Frederick Charles (Jane Richards),female,33,26360,26,?,2,S,0,0,2016-03-09T00:00:00
+Yes,Bradley; Mr. George (\"George Arthur Brayton\"),male,?,111427,26.55,?,1,S,0,0,2015-04-22T00:00:00
+No,Olsen; Mr. Henry Margido,male,28,C 4001,22.525,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Lang; Mr. Fang,male,26,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Daly; Mr. Eugene Patrick,male,29,382651,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Webber; Mr. James,male,?,SOTON/OQ 3101316,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,McGough; Mr. James Robert,male,36,PC 17473,26.2875,E25,1,S,0,0,2015-04-22T00:00:00
+Yes,Rothschild; Mrs. Martin (Elizabeth L. Barrett),female,54,PC 17603,59.4,?,1,C,1,0,2015-04-22T00:00:00
+No,Coleff; Mr. Satio,male,24,349209,7.4958,?,3,S,0,0,2015-04-22T00:00:00
+No,Walker; Mr. William Anderson,male,47,36967,34.0208,D46,1,S,0,0,2015-04-22T00:00:00
+Yes,Lemore; Mrs. (Amelia Milley),female,34,C.A. 34260,10.5,F33,2,S,0,0,2015-04-22T00:00:00
+No,Ryan; Mr. Patrick,male,?,371110,24.15,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Angle; Mrs. William A (Florence \"Mary\" Agnes Hughes),female,36,226875,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Pavlovic; Mr. Stefo,male,32,349242,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Perreault; Miss. Anne,female,30,12749,93.5,B73,1,S,0,0,2015-04-22T00:00:00
+No,Vovk; Mr. Janko,male,22,349252,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Lahoud; Mr. Sarkis,male,?,2624,7.225,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Hippach; Mrs. Louis Albert (Ida Sophia Fischer),female,44,111361,57.9792,B18,1,C,0,0,2016-11-09T00:00:00
+No,Kassem; Mr. Fared,male,?,2700,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Farrell; Mr. James,male,40.5,367232,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Ridsdale; Miss. Lucy,female,50,W./C. 14258,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Farthing; Mr. John,male,?,PC 17483,221.7792,C95,1,S,0,0,2015-04-22T00:00:00
+No,Salonen; Mr. Johan Werner,male,39,3101296,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Hocking; Mr. Richard George,male,23,29104,11.5,?,2,S,2,0,2016-11-09T00:00:00
+Yes,Quick; Miss. Phyllis May,female,2,26360,26,?,2,S,1,0,2016-11-09T00:00:00
+No,Toufik; Mr. Nakli,male,?,2641,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Elias; Mr. Joseph Jr,male,17,2690,7.2292,?,3,C,1,0,2016-11-09T00:00:00
+Yes,Peter; Mrs. Catherine (Catherine Rizk),female,?,2668,22.3583,?,3,C,0,0,2016-03-09T00:00:00
+No,Cacic; Miss. Marija,female,30,315084,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hart; Miss. Eva Miriam,female,7,F.C.C. 13529,26.25,?,2,S,0,0,2016-03-09T00:00:00
+No,Butt; Major. Archibald Willingham,male,45,113050,26.55,B38,1,S,0,0,2015-04-22T00:00:00
+Yes,LeRoy; Miss. Bertha,female,30,PC 17761,106.425,?,1,C,0,0,2015-04-22T00:00:00
+No,Risien; Mr. Samuel Beard,male,?,364498,14.5,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Frolicher; Miss. Hedwig Margaritha,female,22,13568,49.5,B39,1,C,0,0,2016-03-09T00:00:00
+Yes,Crosby; Miss. Harriet R,female,36,WE/P 5735,71,B22,1,S,0,0,2016-03-09T00:00:00
+No,Andersson; Miss. Ingeborg Constanzia,female,9,347082,31.275,?,3,S,4,0,2016-03-09T00:00:00
+No,Andersson; Miss. Sigrid Elisabeth,female,11,347082,31.275,?,3,S,4,0,2016-03-09T00:00:00
+Yes,Beane; Mr. Edward,male,32,2908,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Douglas; Mr. Walter Donald,male,50,PC 17761,106.425,C86,1,C,1,0,2015-04-22T00:00:00
+No,Nicholson; Mr. Arthur Ernest,male,64,693,26,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Beane; Mrs. Edward (Ethel Clarke),female,19,2908,26,?,2,S,1,0,2015-04-22T00:00:00
+Yes,Padro y Manent; Mr. Julian,male,?,SC/PARIS 2146,13.8625,?,2,C,0,0,2015-04-22T00:00:00
+No,Goldsmith; Mr. Frank John,male,33,363291,20.525,?,3,S,1,0,2016-11-09T00:00:00
+Yes,Davies; Master. John Morgan Jr,male,8,C.A. 33112,36.75,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Thayer; Mr. John Borland Jr,male,17,17421,110.8833,C70,1,C,0,0,2016-03-09T00:00:00
+No,Sharp; Mr. Percival James R,male,27,244358,26,?,2,S,0,0,2015-04-22T00:00:00
+No,O'Brien; Mr. Timothy,male,?,330979,7.8292,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Leeni; Mr. Fahim (\"Philip Zenni\"),male,22,2620,7.225,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Ohman; Miss. Velin,female,22,347085,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Wright; Mr. George,male,62,113807,26.55,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Duff Gordon; Lady. (Lucille Christiana Sutherland) (\"Mrs Morgan\"),female,48,11755,39.6,A16,1,C,1,0,2015-04-22T00:00:00
+No,Robbins; Mr. Victor,male,?,PC 17757,227.525,?,1,C,0,0,2015-04-22T00:00:00
+Yes,Taussig; Mrs. Emil (Tillie Mandelbaum),female,39,110413,79.65,E67,1,S,1,0,2016-11-09T00:00:00
+Yes,de Messemaeker; Mrs. Guillaume Joseph (Emma),female,36,345572,17.4,?,3,S,1,0,2015-04-22T00:00:00
+No,Morrow; Mr. Thomas Rowan,male,?,372622,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Sivic; Mr. Husein,male,40,349251,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Norman; Mr. Robert Douglas,male,28,218629,13.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Simmons; Mr. John,male,?,SOTON/OQ 392082,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Meanwell; Miss. (Marion Ogden),female,?,SOTON/O.Q. 392087,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Davies; Mr. Alfred J,male,24,A/4 48871,24.15,?,3,S,2,0,2015-04-22T00:00:00
+No,Stoytcheff; Mr. Ilia,male,19,349205,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Palsson; Mrs. Nils (Alma Cornelia Berglund),female,29,349909,21.075,?,3,S,0,0,2017-05-19T00:00:00
+No,Doharr; Mr. Tannous,male,?,2686,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Jonsson; Mr. Carl,male,32,350417,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Harris; Mr. George,male,62,S.W./PP 752,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Appleton; Mrs. Edward Dale (Charlotte Lamson),female,53,11769,51.4792,C101,1,S,2,0,2015-04-22T00:00:00
+Yes,Flynn; Mr. John Irwin (\"Irving\"),male,36,PC 17474,26.3875,E25,1,S,0,0,2015-04-22T00:00:00
+Yes,Kelly; Miss. Mary,female,?,14312,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Rush; Mr. Alfred George John,male,16,A/4. 20589,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Patchett; Mr. George,male,19,358585,14.5,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Garside; Miss. Ethel,female,34,243880,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Silvey; Mrs. William Baird (Alice Munger),female,39,13507,55.9,E44,1,S,1,0,2015-04-22T00:00:00
+No,Caram; Mrs. Joseph (Maria Elias),female,?,2689,14.4583,?,3,C,1,0,2015-04-22T00:00:00
+Yes,Jussila; Mr. Eiriik,male,32,STON/O 2. 3101286,7.925,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Christy; Miss. Julie Rachel,female,25,237789,30,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Thayer; Mrs. John Borland (Marian Longstreth Morris),female,39,17421,110.8833,C68,1,C,1,0,2016-11-09T00:00:00
+No,Downton; Mr. William James,male,54,28403,26,?,2,S,0,0,2015-04-22T00:00:00
+No,Ross; Mr. John Hugo,male,36,13049,40.125,A10,1,C,0,0,2015-04-22T00:00:00
+No,Paulner; Mr. Uscher,male,?,3411,8.7125,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Taussig; Miss. Ruth,female,18,110413,79.65,E68,1,S,0,0,2016-03-09T00:00:00
+No,Jarvis; Mr. John Denzil,male,47,237565,15,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Frolicher-Stehli; Mr. Maxmillian,male,60,13567,79.2,B41,1,C,1,0,2016-11-09T00:00:00
+No,Gilinski; Mr. Eliezer,male,22,14973,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Murdlin; Mr. Joseph,male,?,A./5. 3235,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Rintamaki; Mr. Matti,male,35,STON/O 2. 3101273,7.125,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Stephenson; Mrs. Walter Bertram (Martha Eustis),female,52,36947,78.2667,D20,1,C,1,0,2015-04-22T00:00:00
+No,Elsbury; Mr. William James,male,47,A/5 3902,7.25,?,3,S,0,0,2015-04-22T00:00:00
+No,Bourke; Miss. Mary,female,?,364848,7.75,?,3,Q,0,0,2016-03-09T00:00:00
+No,Chapman; Mr. John Henry,male,37,SC/AH 29037,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Van Impe; Mr. Jean Baptiste,male,36,345773,24.15,?,3,S,1,0,2016-11-09T00:00:00
+Yes,Leitch; Miss. Jessie Wills,female,?,248727,33,?,2,S,0,0,2015-04-22T00:00:00
+No,Johnson; Mr. Alfred,male,49,LINE,0,?,3,S,0,0,2015-04-22T00:00:00
+No,Boulos; Mr. Hanna,male,?,2664,7.225,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Duff Gordon; Sir. Cosmo Edmund (\"Mr Morgan\"),male,49,PC 17485,56.9292,A20,1,C,1,0,2015-04-22T00:00:00
+Yes,Jacobsohn; Mrs. Sidney Samuel (Amy Frances Christy),female,24,243847,27,?,2,S,2,0,2016-11-09T00:00:00
+No,Slabenoff; Mr. Petco,male,?,349214,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Harrington; Mr. Charles H,male,?,113796,42.4,?,1,S,0,0,2015-04-22T00:00:00
+No,Torber; Mr. Ernst William,male,44,364511,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Homer; Mr. Harry (\"Mr E Haven\"),male,35,111426,26.55,?,1,C,0,0,2015-04-22T00:00:00
+No,Lindell; Mr. Edvard Bengtsson,male,36,349910,15.55,?,3,S,1,0,2015-04-22T00:00:00
+No,Karaic; Mr. Milan,male,30,349246,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Daniel; Mr. Robert Williams,male,27,113804,30.5,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Laroche; Mrs. Joseph (Juliette Marie Louise Lafargue),female,22,SC/Paris 2123,41.5792,?,2,C,1,0,2016-03-09T00:00:00
+Yes,Shutes; Miss. Elizabeth W,female,40,PC 17582,153.4625,C125,1,S,0,0,2015-04-22T00:00:00
+No,Andersson; Mrs. Anders Johan (Alfrida Konstantia Brogren),female,39,347082,31.275,?,3,S,1,0,2017-05-19T00:00:00
+No,Jardin; Mr. Jose Neto,male,?,SOTON/O.Q. 3101305,7.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Murphy; Miss. Margaret Jane,female,?,367230,15.5,?,3,Q,1,0,2015-04-22T00:00:00
+No,Horgan; Mr. John,male,?,370377,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Brocklebank; Mr. William Alfred,male,35,364512,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Herman; Miss. Alice,female,24,220845,65,?,2,S,1,0,2016-03-09T00:00:00
+No,Danbom; Mr. Ernst Gilbert,male,34,347080,14.4,?,3,S,1,0,2016-11-09T00:00:00
+No,Lobb; Mrs. William Arthur (Cordelia K Stanlick),female,26,A/5. 3336,16.1,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Becker; Miss. Marion Louise,female,4,230136,39,F4,2,S,2,0,2016-11-09T00:00:00
+No,Gavey; Mr. Lawrence,male,26,31028,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Yasbeck; Mr. Antoni,male,27,2659,14.4542,?,3,C,1,0,2015-04-22T00:00:00
+Yes,Kimball; Mr. Edwin Nelson Jr,male,42,11753,52.5542,D19,1,S,1,0,2015-04-22T00:00:00
+Yes,Nakid; Mr. Sahid,male,20,2653,15.7417,?,3,C,1,0,2016-11-09T00:00:00
+No,Hansen; Mr. Henry Damsgaard,male,21,350029,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+No,Bowen; Mr. David John \"Dai\",male,21,54636,16.1,?,3,S,0,0,2015-04-22T00:00:00
+No,Sutton; Mr. Frederick,male,61,36963,32.3208,D50,1,S,0,0,2015-04-22T00:00:00
+No,Kirkland; Rev. Charles Leonard,male,57,219533,12.35,?,2,Q,0,0,2015-04-22T00:00:00
+Yes,Longley; Miss. Gretchen Fiske,female,21,13502,77.9583,D9,1,S,0,0,2015-04-22T00:00:00
+No,Bostandyeff; Mr. Guentcho,male,26,349224,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,O'Connell; Mr. Patrick D,male,?,334912,7.7333,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Barkworth; Mr. Algernon Henry Wilson,male,80,27042,30,A23,1,S,0,0,2015-04-22T00:00:00
+No,Lundahl; Mr. Johan Svensson,male,51,347743,7.0542,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Stahelin-Maeglin; Dr. Max,male,32,13214,30.5,B50,1,C,0,0,2015-04-22T00:00:00
+No,Parr; Mr. William Henry Marsh,male,?,112052,0,?,1,S,0,0,2015-04-22T00:00:00
+No,Skoog; Miss. Mabel,female,9,347088,27.9,?,3,S,3,0,2016-03-09T00:00:00
+Yes,Davis; Miss. Mary,female,28,237668,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Leinonen; Mr. Antti Gustaf,male,32,STON/O 2. 3101292,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Collyer; Mr. Harvey,male,31,C.A. 31921,26.25,?,2,S,1,0,2016-11-09T00:00:00
+No,Panula; Mrs. Juha (Maria Emilia Ojala),female,41,3101295,39.6875,?,3,S,0,0,2017-05-19T00:00:00
+No,Thorneycroft; Mr. Percival,male,?,376564,16.1,?,3,S,1,0,2015-04-22T00:00:00
+No,Jensen; Mr. Hans Peder,male,20,350050,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Sagesser; Mlle. Emma,female,24,PC 17477,69.3,B35,1,C,0,0,2015-04-22T00:00:00
+No,Skoog; Miss. Margit Elizabeth,female,2,347088,27.9,?,3,S,3,0,2016-03-09T00:00:00
+Yes,Foo; Mr. Choong,male,?,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Baclini; Miss. Eugenie,female,0.75,2666,19.2583,?,3,C,2,0,2016-11-09T00:00:00
+Yes,Harper; Mr. Henry Sleeper,male,48,PC 17572,76.7292,D33,1,C,1,0,2015-04-22T00:00:00
+No,Cor; Mr. Liudevit,male,19,349231,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Simonius-Blumer; Col. Oberst Alfons,male,56,13213,35.5,A26,1,C,0,0,2015-04-22T00:00:00
+No,Willey; Mr. Edward,male,?,S.O./P.P. 751,7.55,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Stanley; Miss. Amy Zillah Elsie,female,23,CA. 2314,7.55,?,3,S,0,0,2015-04-22T00:00:00
+No,Mitkoff; Mr. Mito,male,?,349221,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Doling; Miss. Elsie,female,18,231919,23,?,2,S,0,0,2016-11-09T00:00:00
+No,Kalvik; Mr. Johannes Halvorsen,male,21,8475,8.4333,?,3,S,0,0,2015-04-22T00:00:00
+Yes,O'Leary; Miss. Hanora \"Norah\",female,?,330919,7.8292,?,3,Q,0,0,2015-04-22T00:00:00
+No,Hegarty; Miss. Hanora \"Nora\",female,18,365226,6.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Hickman; Mr. Leonard Mark,male,24,S.O.C. 14879,73.5,?,2,S,2,0,2015-04-22T00:00:00
+No,Radeff; Mr. Alexander,male,?,349223,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Bourke; Mrs. John (Catherine),female,32,364849,15.5,?,3,Q,1,0,2016-11-09T00:00:00
+No,Eitemiller; Mr. George Floyd,male,23,29751,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Newell; Mr. Arthur Webster,male,58,35273,113.275,D48,1,C,0,0,2016-03-09T00:00:00
+Yes,Frauenthal; Dr. Henry William,male,50,PC 17611,133.65,?,1,S,2,0,2015-04-22T00:00:00
+No,Badt; Mr. Mohamed,male,40,2623,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Colley; Mr. Edward Pomeroy,male,47,5727,25.5875,E58,1,S,0,0,2015-04-22T00:00:00
+No,Coleff; Mr. Peju,male,36,349210,7.4958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Lindqvist; Mr. Eino William,male,20,STON/O 2. 3101285,7.925,?,3,S,1,0,2015-04-22T00:00:00
+No,Hickman; Mr. Lewis,male,32,S.O.C. 14879,73.5,?,2,S,2,0,2015-04-22T00:00:00
+No,Butler; Mr. Reginald Fenton,male,25,234686,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Rommetvedt; Mr. Knud Paust,male,?,312993,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Cook; Mr. Jacob,male,43,A/5 3536,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Taylor; Mrs. Elmer Zebley (Juliet Cummins Wright),female,?,19996,52,C126,1,S,1,0,2015-04-22T00:00:00
+Yes,Brown; Mrs. Thomas William Solomon (Elizabeth Catherine Ford),female,40,29750,39,?,2,S,1,0,2016-11-09T00:00:00
+No,Davidson; Mr. Thornton,male,31,F.C. 12750,52,B71,1,S,1,0,2015-04-22T00:00:00
+No,Mitchell; Mr. Henry Michael,male,70,C.A. 24580,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Wilhelms; Mr. Charles,male,31,244270,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Watson; Mr. Ennis Hastings,male,?,239856,0,?,2,S,0,0,2015-04-22T00:00:00
+No,Edvardsson; Mr. Gustaf Hjalmar,male,18,349912,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Sawyer; Mr. Frederick Charles,male,24.5,342826,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Turja; Miss. Anna Sofia,female,18,4138,9.8417,?,3,S,0,0,2015-04-22T00:00:00
+No,Goodwin; Mrs. Frederick (Augusta Tyler),female,43,CA 2144,46.9,?,3,S,1,0,2017-05-19T00:00:00
+Yes,Cardeza; Mr. Thomas Drake Martinez,male,36,PC 17755,512.3292,B51 B53 B55,1,C,0,0,2016-11-09T00:00:00
+No,Peters; Miss. Katie,female,?,330935,8.1375,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Hassab; Mr. Hammad,male,27,PC 17572,76.7292,D49,1,C,0,0,2015-04-22T00:00:00
+No,Olsvigen; Mr. Thor Anderson,male,20,6563,9.225,?,3,S,0,0,2015-04-22T00:00:00
+No,Goodwin; Mr. Charles Edward,male,14,CA 2144,46.9,?,3,S,5,0,2016-03-09T00:00:00
+No,Brown; Mr. Thomas William Solomon,male,60,29750,39,?,2,S,1,0,2016-11-09T00:00:00
+No,Laroche; Mr. Joseph Philippe Lemercier,male,25,SC/Paris 2123,41.5792,?,2,C,1,0,2016-03-09T00:00:00
+No,Panula; Mr. Jaako Arnold,male,14,3101295,39.6875,?,3,S,4,0,2016-11-09T00:00:00
+No,Dakic; Mr. Branko,male,19,349228,10.1708,?,3,S,0,0,2015-04-22T00:00:00
+No,Fischer; Mr. Eberhard Thelander,male,18,350036,7.7958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Madill; Miss. Georgette Alexandra,female,15,24160,211.3375,B5,1,S,0,0,2016-11-09T00:00:00
+Yes,Dick; Mr. Albert Adrian,male,31,17474,57,B20,1,S,1,0,2015-04-22T00:00:00
+Yes,Karun; Miss. Manca,female,4,349256,13.4167,?,3,C,0,0,2016-11-09T00:00:00
+Yes,Lam; Mr. Ali,male,?,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+No,Saad; Mr. Khalil,male,25,2672,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Weir; Col. John,male,60,113800,26.55,?,1,S,0,0,2015-04-22T00:00:00
+No,Chapman; Mr. Charles Henry,male,52,248731,13.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Kelly; Mr. James,male,44,363592,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Mullens; Miss. Katherine \"Katie\",female,?,35852,7.7333,?,3,Q,0,0,2015-04-22T00:00:00
+No,Thayer; Mr. John Borland,male,49,17421,110.8833,C68,1,C,1,0,2016-11-09T00:00:00
+No,Humblen; Mr. Adolf Mathias Nicolai Olsen,male,42,348121,7.65,F G63,3,S,0,0,2015-04-22T00:00:00
+Yes,Astor; Mrs. John Jacob (Madeleine Talmadge Force),female,18,PC 17757,227.525,C62 C64,1,C,1,0,2015-04-22T00:00:00
+Yes,Silverthorne; Mr. Spencer Victor,male,35,PC 17475,26.2875,E24,1,S,0,0,2015-04-22T00:00:00
+No,Barbara; Miss. Saiide,female,18,2691,14.4542,?,3,C,0,0,2016-11-09T00:00:00
+No,Gallagher; Mr. Martin,male,25,36864,7.7417,?,3,Q,0,0,2015-04-22T00:00:00
+No,Hansen; Mr. Henrik Juul,male,26,350025,7.8542,?,3,S,1,0,2015-04-22T00:00:00
+No,Morley; Mr. Henry Samuel (\"Mr Henry Marshall\"),male,39,250655,26,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Kelly; Mrs. Florence \"Fannie\",female,45,223596,13.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Calderhead; Mr. Edward Pennington,male,42,PC 17476,26.2875,E24,1,S,0,0,2015-04-22T00:00:00
+Yes,Cleaver; Miss. Alice,female,22,113781,151.55,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Moubarek; Master. Halim Gonios (\"William George\"),male,?,2661,15.2458,?,3,C,1,0,2016-11-09T00:00:00
+Yes,Mayne; Mlle. Berthe Antonine (\"Mrs de Villiers\"),female,24,PC 17482,49.5042,C90,1,C,0,0,2015-04-22T00:00:00
+No,Klaber; Mr. Herman,male,?,113028,26.55,C124,1,S,0,0,2015-04-22T00:00:00
+Yes,Taylor; Mr. Elmer Zebley,male,48,19996,52,C126,1,S,1,0,2015-04-22T00:00:00
+No,Larsson; Mr. August Viktor,male,29,7545,9.4833,?,3,S,0,0,2015-04-22T00:00:00
+No,Greenberg; Mr. Samuel,male,52,250647,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Soholt; Mr. Peter Andreas Lauritz Andersen,male,19,348124,7.65,F G73,3,S,0,0,2015-04-22T00:00:00
+Yes,Endres; Miss. Caroline Louise,female,38,PC 17757,227.525,C45,1,C,0,0,2015-04-22T00:00:00
+Yes,Troutt; Miss. Edwina Celia \"Winnie\",female,27,34218,10.5,E101,2,S,0,0,2015-04-22T00:00:00
+No,McEvoy; Mr. Michael,male,?,36568,15.5,?,3,Q,0,0,2015-04-22T00:00:00
+No,Johnson; Mr. Malkolm Joackim,male,33,347062,7.775,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Harper; Miss. Annie Jessie \"Nina\",female,6,248727,33,?,2,S,0,0,2016-11-09T00:00:00
+No,Jensen; Mr. Svend Lauritz,male,17,350048,7.0542,?,3,S,1,0,2015-04-22T00:00:00
+No,Gillespie; Mr. William Henry,male,34,12233,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Hodges; Mr. Henry Price,male,50,250643,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Chambers; Mr. Norman Campbell,male,27,113806,53.1,E8,1,S,1,0,2015-04-22T00:00:00
+No,Oreskovic; Mr. Luka,male,20,315094,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Renouf; Mrs. Peter Henry (Lillian Jefferys),female,30,31027,21,?,2,S,3,0,2015-04-22T00:00:00
+Yes,Mannion; Miss. Margareth,female,?,36866,7.7375,?,3,Q,0,0,2015-04-22T00:00:00
+No,Bryhl; Mr. Kurt Arnold Gottfrid,male,25,236853,26,?,2,S,1,0,2015-04-22T00:00:00
+No,Ilmakangas; Miss. Pieta Sofia,female,25,STON/O2. 3101271,7.925,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Allen; Miss. Elisabeth Walton,female,29,24160,211.3375,B5,1,S,0,0,2015-04-22T00:00:00
+No,Hassan; Mr. Houssein G N,male,11,2699,18.7875,?,3,C,0,0,2015-04-22T00:00:00
+No,Knight; Mr. Robert J,male,?,239855,0,?,2,S,0,0,2015-04-22T00:00:00
+No,Berriman; Mr. William John,male,23,28425,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Troupiansky; Mr. Moses Aaron,male,23,233639,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Williams; Mr. Leslie,male,28.5,54636,16.1,?,3,S,0,0,2015-04-22T00:00:00
+No,Ford; Mrs. Edward (Margaret Ann Watson),female,48,W./C. 6608,34.375,?,3,S,1,0,2017-05-19T00:00:00
+Yes,Lesurer; Mr. Gustave J,male,35,PC 17755,512.3292,B101,1,C,0,0,2015-04-22T00:00:00
+No,Ivanoff; Mr. Kanio,male,?,349201,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Nankoff; Mr. Minko,male,?,349218,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hawksford; Mr. Walter James,male,?,16988,30,D45,1,S,0,0,2015-04-22T00:00:00
+No,Cavendish; Mr. Tyrell William,male,36,19877,78.85,C46,1,S,1,0,2015-04-22T00:00:00
+Yes,Ryerson; Miss. Susan Parker \"Suzette\",female,21,PC 17608,262.375,B57 B59 B63 B66,1,C,2,0,2016-03-09T00:00:00
+No,McNamee; Mr. Neal,male,24,376566,16.1,?,3,S,1,0,2015-04-22T00:00:00
+Yes,Stranden; Mr. Juho,male,31,STON/O 2. 3101288,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Crosby; Capt. Edward Gifford,male,70,WE/P 5735,71,B22,1,S,1,0,2016-11-09T00:00:00
+No,Abbott; Mr. Rossmore Edward,male,16,C.A. 2673,20.25,?,3,S,1,0,2016-11-09T00:00:00
+Yes,Sinkkonen; Miss. Anna,female,30,250648,13,?,2,S,0,0,2015-04-22T00:00:00
+No,Marvin; Mr. Daniel Warner,male,19,113773,53.1,D30,1,S,1,0,2015-04-22T00:00:00
+No,Connaghton; Mr. Michael,male,31,335097,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Wells; Miss. Joan,female,4,29103,23,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Moor; Master. Meier,male,6,392096,12.475,E121,3,S,0,0,2016-11-09T00:00:00
+No,Vande Velde; Mr. Johannes Joseph,male,33,345780,9.5,?,3,S,0,0,2015-04-22T00:00:00
+No,Jonkoff; Mr. Lalio,male,23,349204,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Herman; Mrs. Samuel (Jane Laver),female,48,220845,65,?,2,S,1,0,2016-03-09T00:00:00
+Yes,Hamalainen; Master. Viljo,male,0.67,250649,14.5,?,2,S,1,0,2016-11-09T00:00:00
+No,Carlsson; Mr. August Sigfrid,male,28,350042,7.7958,?,3,S,0,0,2015-04-22T00:00:00
+No,Bailey; Mr. Percy Andrew,male,18,29108,11.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Theobald; Mr. Thomas Leonard,male,34,363294,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Rothes; the Countess. of (Lucy Noel Martha Dyer-Edwards),female,33,110152,86.5,B77,1,S,0,0,2015-04-22T00:00:00
+No,Garfirth; Mr. John,male,?,358585,14.5,?,3,S,0,0,2015-04-22T00:00:00
+No,Nirva; Mr. Iisakki Antino Aijo,male,41,SOTON/O2 3101272,7.125,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Barah; Mr. Hanna Assi,male,20,2663,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Carter; Mrs. William Ernest (Lucile Polk),female,36,113760,120,B96 B98,1,S,1,0,2016-03-09T00:00:00
+No,Eklund; Mr. Hans Linus,male,16,347074,7.775,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Hogeboom; Mrs. John C (Anna Andrews),female,51,13502,77.9583,D11,1,S,1,0,2015-04-22T00:00:00
+No,Brewe; Dr. Arthur Jackson,male,?,112379,39.6,?,1,C,0,0,2015-04-22T00:00:00
+No,Mangan; Miss. Mary,female,30.5,364850,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Moran; Mr. Daniel J,male,?,371110,24.15,?,3,Q,1,0,2015-04-22T00:00:00
+No,Gronnestad; Mr. Daniel Danielsen,male,32,8471,8.3625,?,3,S,0,0,2015-04-22T00:00:00
+No,Lievens; Mr. Rene Aime,male,24,345781,9.5,?,3,S,0,0,2015-04-22T00:00:00
+No,Jensen; Mr. Niels Peder,male,48,350047,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+No,Mack; Mrs. (Mary),female,57,S.O./P.P. 3,10.5,E77,2,S,0,0,2015-04-22T00:00:00
+No,Elias; Mr. Dibo,male,?,2674,7.225,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Hocking; Mrs. Elizabeth (Eliza Needs),female,54,29105,23,?,2,S,1,0,2017-05-19T00:00:00
+No,Myhrman; Mr. Pehr Fabian Oliver Malkolm,male,18,347078,7.75,?,3,S,0,0,2015-04-22T00:00:00
+No,Tobin; Mr. Roger,male,?,383121,7.75,F38,3,Q,0,0,2015-04-22T00:00:00
+Yes,Emanuel; Miss. Virginia Ethel,female,5,364516,12.475,?,3,S,0,0,2015-04-22T00:00:00
+No,Kilgannon; Mr. Thomas J,male,?,36865,7.7375,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Robert; Mrs. Edward Scott (Elisabeth Walton McMillan),female,43,24160,211.3375,B3,1,S,0,0,2016-11-09T00:00:00
+Yes,Ayoub; Miss. Banoura,female,13,2687,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+Yes,Dick; Mrs. Albert Adrian (Vera Gillespie),female,17,17474,57,B20,1,S,1,0,2015-04-22T00:00:00
+No,Long; Mr. Milton Clyde,male,29,113501,30,D6,1,S,0,0,2015-04-22T00:00:00
+No,Johnston; Mr. Andrew G,male,?,W./C. 6607,23.45,?,3,S,1,0,2016-03-09T00:00:00
+No,Ali; Mr. William,male,25,SOTON/O.Q. 3101312,7.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Harmer; Mr. Abraham (David Lishin),male,25,374887,7.25,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Sjoblom; Miss. Anna Sofia,female,18,3101265,7.4958,?,3,S,0,0,2015-04-22T00:00:00
+No,Rice; Master. George Hugh,male,8,382652,29.125,?,3,Q,4,0,2016-11-09T00:00:00
+Yes,Dean; Master. Bertram Vere,male,1,C.A. 2315,20.575,?,3,S,1,0,2016-03-09T00:00:00
+No,Guggenheim; Mr. Benjamin,male,46,PC 17593,79.2,B82 B84,1,C,0,0,2015-04-22T00:00:00
+No,Keane; Mr. Andrew \"Andy\",male,?,12460,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+No,Gaskell; Mr. Alfred,male,16,239865,26,?,2,S,0,0,2015-04-22T00:00:00
+No,Sage; Miss. Stella Anna,female,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+No,Hoyt; Mr. William Fisher,male,?,PC 17600,30.6958,?,1,C,0,0,2015-04-22T00:00:00
+No,Dantcheff; Mr. Ristiu,male,25,349203,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Otter; Mr. Richard,male,39,28213,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Leader; Dr. Alice (Farnham),female,49,17465,25.9292,D17,1,S,0,0,2015-04-22T00:00:00
+Yes,Osman; Mrs. Mara,female,31,349244,8.6833,?,3,S,0,0,2015-04-22T00:00:00
+No,Ibrahim Shawah; Mr. Yousseff,male,30,2685,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Van Impe; Mrs. Jean Baptiste (Rosalie Paula Govaert),female,30,345773,24.15,?,3,S,1,0,2016-11-09T00:00:00
+No,Ponesell; Mr. Martin,male,34,250647,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Collyer; Mrs. Harvey (Charlotte Annie Tate),female,31,C.A. 31921,26.25,?,2,S,1,0,2016-11-09T00:00:00
+Yes,Carter; Master. William Thornton II,male,11,113760,120,B96 B98,1,S,1,0,2016-03-09T00:00:00
+Yes,Thomas; Master. Assad Alexander,male,0.42,2625,8.5167,?,3,C,0,0,2016-11-09T00:00:00
+Yes,Hedman; Mr. Oskar Arvid,male,27,347089,6.975,?,3,S,0,0,2015-04-22T00:00:00
+No,Johansson; Mr. Karl Johan,male,31,347063,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Andrews; Mr. Thomas Jr,male,39,112050,0,A36,1,S,0,0,2015-04-22T00:00:00
+No,Pettersson; Miss. Ellen Natalia,female,18,347087,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Meyer; Mr. August,male,39,248723,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Chambers; Mrs. Norman Campbell (Bertha Griggs),female,33,113806,53.1,E8,1,S,1,0,2015-04-22T00:00:00
+No,Alexander; Mr. William,male,26,3474,7.8875,?,3,S,0,0,2015-04-22T00:00:00
+No,Lester; Mr. James,male,39,A/4 48871,24.15,?,3,S,0,0,2015-04-22T00:00:00
+No,Slemen; Mr. Richard James,male,35,28206,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Andersson; Miss. Ebba Iris Alfrida,female,6,347082,31.275,?,3,S,4,0,2016-03-09T00:00:00
+No,Tomlin; Mr. Ernest Portage,male,30.5,364499,8.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Fry; Mr. Richard,male,?,112058,0,B102,1,S,0,0,2015-04-22T00:00:00
+No,Heininen; Miss. Wendla Maria,female,23,STON/O2. 3101290,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Mallet; Mr. Albert,male,31,S.C./PARIS 2079,37.0042,?,2,C,1,0,2016-11-09T00:00:00
+No,Holm; Mr. John Fredrik Alexander,male,43,C 7075,6.45,?,3,S,0,0,2015-04-22T00:00:00
+No,Skoog; Master. Karl Thorsten,male,10,347088,27.9,?,3,S,3,0,2016-03-09T00:00:00
+Yes,Hays; Mrs. Charles Melville (Clara Jennings Gregg),female,52,12749,93.5,B69,1,S,1,0,2016-11-09T00:00:00
+Yes,Lulic; Mr. Nikola,male,27,315098,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Reuchlin; Jonkheer. John George,male,38,19972,0,?,1,S,0,0,2015-04-22T00:00:00
+Yes,Moor; Mrs. (Beila),female,27,392096,12.475,E121,3,S,0,0,2016-11-09T00:00:00
+No,Panula; Master. Urho Abraham,male,2,3101295,39.6875,?,3,S,4,0,2016-11-09T00:00:00
+No,Flynn; Mr. John,male,?,368323,6.95,?,3,Q,0,0,2015-04-22T00:00:00
+No,Lam; Mr. Len,male,?,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Mallet; Master. Andre,male,1,S.C./PARIS 2079,37.0042,?,2,C,0,0,2016-03-09T00:00:00
+Yes,McCormack; Mr. Thomas Joseph,male,?,367228,7.75,?,3,Q,0,0,2015-04-22T00:00:00
+Yes,Stone; Mrs. George Nelson (Martha Evelyn),female,62,113572,80,B28,1,?,0,0,2015-04-22T00:00:00
+Yes,Yasbeck; Mrs. Antoni (Selini Alexander),female,15,2659,14.4542,?,3,C,1,0,2015-04-22T00:00:00
+Yes,Richards; Master. George Sibley,male,0.83,29106,18.75,?,2,S,1,0,2016-11-09T00:00:00
+No,Saad; Mr. Amin,male,?,2671,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Augustsson; Mr. Albert,male,23,347468,7.8542,?,3,S,0,0,2015-04-22T00:00:00
+No,Allum; Mr. Owen George,male,18,2223,8.3,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Compton; Miss. Sara Rebecca,female,39,PC 17756,83.1583,E49,1,C,1,0,2016-11-09T00:00:00
+No,Pasic; Mr. Jakob,male,21,315097,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Sirota; Mr. Maurice,male,?,392092,8.05,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Chip; Mr. Chang,male,32,1601,56.4958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Marechal; Mr. Pierre,male,?,11774,29.7,C47,1,C,0,0,2015-04-22T00:00:00
+No,Alhomaki; Mr. Ilmari Rudolf,male,20,SOTON/O2 3101287,7.925,?,3,S,0,0,2015-04-22T00:00:00
+No,Mudd; Mr. Thomas Charles,male,16,S.O./P.P. 3,10.5,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Serepeca; Miss. Augusta,female,30,113798,31,?,1,C,0,0,2015-04-22T00:00:00
+No,Lemberopolous; Mr. Peter L,male,34.5,2683,6.4375,?,3,C,0,0,2015-04-22T00:00:00
+No,Culumovic; Mr. Jeso,male,17,315090,8.6625,?,3,S,0,0,2015-04-22T00:00:00
+No,Abbing; Mr. Anthony,male,42,C.A. 5547,7.55,?,3,S,0,0,2015-04-22T00:00:00
+No,Sage; Mr. Douglas Bullen,male,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+No,Markoff; Mr. Marin,male,35,349213,7.8958,?,3,C,0,0,2015-04-22T00:00:00
+No,Harper; Rev. John,male,28,248727,33,?,2,S,0,0,2016-11-09T00:00:00
+Yes,Goldenberg; Mrs. Samuel L (Edwiga Grabowska),female,?,17453,89.1042,C92,1,C,1,0,2015-04-22T00:00:00
+No,Andersson; Master. Sigvard Harald Elias,male,4,347082,31.275,?,3,S,4,0,2016-03-09T00:00:00
+No,Svensson; Mr. Johan,male,74,347060,7.775,?,3,S,0,0,2015-04-22T00:00:00
+No,Boulos; Miss. Nourelain,female,9,2678,15.2458,?,3,C,1,0,2016-11-09T00:00:00
+Yes,Lines; Miss. Mary Conover,female,16,PC 17592,39.4,D28,1,S,0,0,2016-11-09T00:00:00
+No,Carter; Mrs. Ernest Courtenay (Lilian Hughes),female,44,244252,26,?,2,S,1,0,2015-04-22T00:00:00
+Yes,Aks; Mrs. Sam (Leah Rosen),female,18,392091,9.35,?,3,S,0,0,2016-11-09T00:00:00
+Yes,Wick; Mrs. George Dennick (Mary Hitchcock),female,45,36928,164.8667,?,1,S,1,0,2016-11-09T00:00:00
+Yes,Daly; Mr. Peter Denis ,male,51,113055,26.55,E17,1,S,0,0,2015-04-22T00:00:00
+Yes,Baclini; Mrs. Solomon (Latifa Qurban),female,24,2666,19.2583,?,3,C,0,0,2017-05-19T00:00:00
+No,Razi; Mr. Raihed,male,?,2629,7.2292,?,3,C,0,0,2015-04-22T00:00:00
+No,Hansen; Mr. Claus Peter,male,41,350026,14.1083,?,3,S,2,0,2015-04-22T00:00:00
+No,Giles; Mr. Frederick Edward,male,21,28134,11.5,?,2,S,1,0,2015-04-22T00:00:00
+Yes,Swift; Mrs. Frederick Joel (Margaret Welles Barron),female,48,17466,25.9292,D17,1,S,0,0,2015-04-22T00:00:00
+No,Sage; Miss. Dorothy Edith \"Dolly\",female,?,CA. 2343,69.55,?,3,S,8,0,2016-03-09T00:00:00
+No,Gill; Mr. John William,male,24,233866,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Bystrom; Mrs. (Karolina),female,42,236852,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Duran y More; Miss. Asuncion,female,27,SC/PARIS 2149,13.8583,?,2,C,1,0,2015-04-22T00:00:00
+No,Roebling; Mr. Washington Augustus II,male,31,PC 17590,50.4958,A24,1,S,0,0,2015-04-22T00:00:00
+No,van Melkebeke; Mr. Philemon,male,?,345777,9.5,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Johnson; Master. Harold Theodor,male,4,347742,11.1333,?,3,S,1,0,2016-11-09T00:00:00
+No,Balkic; Mr. Cerin,male,26,349248,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Beckwith; Mrs. Richard Leonard (Sallie Monypeny),female,47,11751,52.5542,D35,1,S,1,0,2016-11-09T00:00:00
+No,Carlsson; Mr. Frans Olof,male,33,695,5,B51 B53 B55,1,S,0,0,2015-04-22T00:00:00
+No,Vander Cruyssen; Mr. Victor,male,47,345765,9,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Abelson; Mrs. Samuel (Hannah Wizosky),female,28,P/PP 3381,24,?,2,C,1,0,2015-04-22T00:00:00
+Yes,Najib; Miss. Adele Kiamie \"Jane\",female,15,2667,7.225,?,3,C,0,0,2015-04-22T00:00:00
+No,Gustafsson; Mr. Alfred Ossian,male,20,7534,9.8458,?,3,S,0,0,2015-04-22T00:00:00
+No,Petroff; Mr. Nedelio,male,19,349212,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Laleff; Mr. Kristo,male,?,349217,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+Yes,Potter; Mrs. Thomas Jr (Lily Alexenia Wilson),female,56,11767,83.1583,C50,1,C,0,0,2016-11-09T00:00:00
+Yes,Shelley; Mrs. William (Imanita Parrish Hall),female,25,230433,26,?,2,S,0,0,2016-11-09T00:00:00
+No,Markun; Mr. Johann,male,33,349257,7.8958,?,3,S,0,0,2015-04-22T00:00:00
+No,Dahlberg; Miss. Gerda Ulrika,female,22,7552,10.5167,?,3,S,0,0,2015-04-22T00:00:00
+No,Banfield; Mr. Frederick James,male,28,C.A./SOTON 34068,10.5,?,2,S,0,0,2015-04-22T00:00:00
+No,Sutehall; Mr. Henry Jr,male,25,SOTON/OQ 392076,7.05,?,3,S,0,0,2015-04-22T00:00:00
+No,Rice; Mrs. William (Margaret Norton),female,39,382652,29.125,?,3,Q,0,0,2017-05-19T00:00:00
+No,Montvila; Rev. Juozas,male,27,211536,13,?,2,S,0,0,2015-04-22T00:00:00
+Yes,Graham; Miss. Margaret Edith,female,19,112053,30,B42,1,S,0,0,2015-04-22T00:00:00
+No,Johnston; Miss. Catherine Helen \"Carrie\",female,?,W./C. 6607,23.45,?,3,S,1,0,2016-03-09T00:00:00
+Yes,Behr; Mr. Karl Howell,male,26,111369,30,C148,1,C,0,0,2015-04-22T00:00:00
+No,Dooley; Mr. Patrick,male,32,370376,7.75,?,3,Q,0,0,?

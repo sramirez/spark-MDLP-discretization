@@ -1,4 +1,4 @@
-Minimum Description Lenght Discretizer
+Minimum Description Length Discretizer
 ========================================
 
 This method implements Fayyad's discretizer [1] based on Minimum Description Length Principle (MDLP) in order to treat non discrete datasets from a distributed perspective. We have developed a distributed version from the original one performing some important changes.
@@ -23,40 +23,40 @@ Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Re
 
 ## Example (ml):
 
-	import org.apache.spark.ml.feature._
+    import org.apache.spark.ml.feature._
 
-	val discretizer = new MDLPDiscretizer()
-      		.setMaxBins(10)
-      		.setMaxByPart(10000)
-      		.setInputCol("features")
-      		.setLabelCol("class")
-      		.setOutputCol("buckedFeatures")
+    val discretizer = new MDLPDiscretizer()
+        .setMaxBins(10)
+        .setMaxByPart(10000)
+        .setInputCol("features")
+        .setLabelCol("class")
+        .setOutputCol("buckedFeatures")
       
-	val result = discretizer.fit(df).transform(df)
+    val result = discretizer.fit(df).transform(df)
     
 
 ## Example (MLLIB): 
 
-	import org.apache.spark.mllib.feature.MDLPDiscretizer
-	
-  	val categoricalFeat: Option[Seq[Int]] = None
-	val nBins = 25
-	val maxByPart = 10000
+    import org.apache.spark.mllib.feature.MDLPDiscretizer
 
-	println("*** Discretization method: Fayyad discretizer (MDLP)")
-	println("*** Number of bins: " + nBins)
+    val categoricalFeat: Option[Seq[Int]] = None
+    val nBins = 25
+    val maxByPart = 10000
 
-	// Data must be cached in order to improve the performance
-	
-	val discretizer = MDLPDiscretizer.train(data, // RDD[LabeledPoint]
-			categoricalFeat, // continuous features 
-			nBins, // max number of thresholds by feature
-			maxByPart) // max elements per partition
-  	discretizer
-		    
-	val discrete = data.map(i => LabeledPoint(i.label, discretizer.transform(i.features)))
-  	discrete.first()
-  	
+    println("*** Discretization method: Fayyad discretizer (MDLP)")
+    println("*** Number of bins: " + nBins)
+
+    // Data must be cached in order to improve the performance
+
+    val discretizer = MDLPDiscretizer.train(data, // RDD[LabeledPoint]
+        categoricalFeat, // continuous features
+        nBins, // max number of thresholds by feature
+        maxByPart) // max elements per partition
+    discretizer
+
+    val discrete = data.map(i => LabeledPoint(i.label, discretizer.transform(i.features)))
+    discrete.first()
+
 ## Important notes:
 
 MDLP uses *maxByPart* parameter to group boundary points by feature in order to perform an independent computation of entropy per attribute. In most of cases, a default value of 10K is enough to compute the entropy in a parallel way, thus removing iterativity implicit when we manage features with many boundary points. Log messages inform when there is a "big" feature (| boundary | > *maxByPart*) in our algorithm, which can deteriorate the performance of the algorithm. To solve this problem, it is recommended to increment the *maxByPart*'s value to 100K, or to reduce the precision of data in problems with floating-point values. 
