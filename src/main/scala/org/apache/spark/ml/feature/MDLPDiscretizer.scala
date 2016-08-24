@@ -104,6 +104,27 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
     val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
+
+  /**
+    * The bucketizers must have more than one bucket. So [-Inf, Inf] is replaced with [-Inf, 0, Inf].
+    * @return a sequence of Bucketizer that have been fit to the dataset
+    */
+  def fitToBucketizers(dataset: DataFrame): Seq[Bucketizer] = {
+    transformSchema(dataset.schema, logging = true)
+    val input = dataset.select($(labelCol), $(inputCol)).map {
+      case Row(label: Double, features: Vector) =>
+        LabeledPoint(label, features)
+    }
+    val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart))
+
+    discretizer.thresholds.map(threshes => {
+      // The Bucketizer splits cannot have only a single bin, so 0 is added to satisfy that unfortunate requirement.
+      val splits = if (threshes.length > 2) threshes.map(_.toDouble)
+        else Array(Double.NegativeInfinity, 0.0, Double.PositiveInfinity)
+      val bucketizer = new Bucketizer(uid).setSplits(splits)
+      copyValues(bucketizer)
+    })
+  }
   
   override def transformSchema(schema: StructType): StructType = {
     validateParams()

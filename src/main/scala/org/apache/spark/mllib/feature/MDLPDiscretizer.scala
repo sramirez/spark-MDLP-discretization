@@ -456,7 +456,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
     val thrs = smallThresholds.union(bigThRDD).collect()
-    print("thresholds = " + thrs)
     
     // Update the full list features with the thresholds calculated
     val thresholds = Array.fill(nFeatures)(Array.empty[Float])   // Nominal values (empty)
@@ -466,6 +465,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     thrs.foreach({case (k, vth) => 
       thresholds(k) = if (arr.length > 0) vth.toArray else Array(Float.PositiveInfinity)})
     logInfo("Number of features with thresholds computed: " + thrs.length)
+    println("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
     
     new DiscretizerModel(thresholds)
   }

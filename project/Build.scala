@@ -9,7 +9,7 @@ object ProjectBuild extends Build {
     settings = Project.defaultSettings ++ Seq(
       	name := "spark-MDLP-discretization",
 	version := "0.2",
-	organization := "org.apache",
+	organization := "org.apache.spark",
 	scalaVersion := "2.11.6",
 	spName := "apache/spark-MDLP-discretization",
 	sparkVersion := "1.6.2",
