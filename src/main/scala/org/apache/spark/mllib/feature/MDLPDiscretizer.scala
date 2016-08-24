@@ -465,7 +465,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     thrs.foreach({case (k, vth) => 
       thresholds(k) = if (arr.length > 0) vth.toArray else Array(Float.PositiveInfinity)})
     logInfo("Number of features with thresholds computed: " + thrs.length)
-    println("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
+    logDebug("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
     
     new DiscretizerModel(thresholds)
   }
