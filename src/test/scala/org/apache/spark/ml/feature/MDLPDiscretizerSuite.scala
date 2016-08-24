@@ -42,7 +42,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df, Array("mpg"), "origin", 2)
 
-    assertResult("-Infinity, 16.1, 21.05, Infinity") {
+    assertResult("-Infinity, 21.05, Infinity") {
       model.splits(0).mkString(", ")
     }
   }

@@ -1,3 +1,5 @@
+/bin/
+=======
 # Created by .ignore support plugin (hsz.mobi)
 ### Scala template
 *.class
@@ -17,4 +19,3 @@ project/plugins/project/
 # Scala-IDE specific
 .scala_dependencies
 .worksheet
-
