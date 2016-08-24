@@ -93,7 +93,8 @@ class DiscretizerModel(val thresholds: Array[Array[Float]]) extends VectorTransf
    * @param value Value to be discretized.
    * @param thresholds Thresholds used to assign a discrete value
    * 
-   * Note: The last threshold must be always Positive Infinity
+   * Note: The first threshold mut be -Infinity and the
+    * last threshold must be always Positive Infinity.
    */
   private def assignDiscreteValue(value: Float, thresholds: Array[Float]) = {
     if (thresholds.length > 0) {

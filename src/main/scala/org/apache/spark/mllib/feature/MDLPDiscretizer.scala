@@ -143,7 +143,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
   private def getThresholds(
       candidates: RDD[(Float, Array[Long])],
       maxBins: Int, 
-      elementsByPart: Int) = {
+      elementsByPart: Int): Seq[Float] = {
 
     // Get the number of partitions according to the maximum size established by partition
     val partitions = { x: Long => math.ceil(x.toFloat / elementsByPart).toInt }    
@@ -151,7 +151,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     // Insert the extreme values in the stack (recursive iteration)
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     stack.enqueue(((Float.NegativeInfinity, Float.PositiveInfinity), None))
-    var result = Seq.empty[Float]
+    var result = Seq(Float.NegativeInfinity)
     val maxPoints = maxBins + 1
 
     while(stack.nonEmpty && result.size < maxPoints){
@@ -171,6 +171,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         }
       }
     }
+
     result.sorted :+ Float.PositiveInfinity
   }
   
@@ -187,7 +188,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     // Insert first in the stack (recursive iteration)
     stack.enqueue(((Float.NegativeInfinity, Float.PositiveInfinity), None))
-    var result = Seq.empty[Float]
+    var result = Seq(Float.NegativeInfinity)
     val maxPoints = maxBins + 1
 
     while(stack.nonEmpty && result.size < maxPoints){
@@ -455,6 +456,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
     val thrs = smallThresholds.union(bigThRDD).collect()
+    print("thresholds = " + thrs)
     
     // Update the full list features with the thresholds calculated
     val thresholds = Array.fill(nFeatures)(Array.empty[Float])   // Nominal values (empty)
@@ -462,7 +464,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     continuousVars.foreach(f => thresholds(f) = Array(Float.PositiveInfinity))
     // Continuous attributes (> 0 cut point)
     thrs.foreach({case (k, vth) => 
-      thresholds(k) = if(arr.length > 0) vth.toArray else Array(Float.PositiveInfinity)})
+      thresholds(k) = if (arr.length > 0) vth.toArray else Array(Float.PositiveInfinity)})
     logInfo("Number of features with thresholds computed: " + thrs.length)
     
     new DiscretizerModel(thresholds)

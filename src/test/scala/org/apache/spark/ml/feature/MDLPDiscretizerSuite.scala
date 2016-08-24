@@ -31,7 +31,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df, Array("mpg"), "origin", 10)
 
-    assertResult("16.1, 21.05, 30.95, Infinity") {
+    assertResult("-Infinity, 16.1, 21.05, 30.95, Infinity") {
       model.splits(0).mkString(", ")
     }
   }
@@ -42,7 +42,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df, Array("mpg"), "origin", 2)
 
-    assertResult("16.1, 21.05, 30.95, Infinity") {
+    assertResult("-Infinity, 16.1, 21.05, Infinity") {
       model.splits(0).mkString(", ")
     }
   }
@@ -60,13 +60,13 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       "origin", 100)
 
     assertResult(
-      """16.1, 21.05, 30.95, Infinity;
-        |5.5, Infinity;
-        |97.5, 169.5, Infinity;
-        |78.5, 134.0, Infinity;
-        |2379.5, 2959.5, Infinity;
-        |13.5, 19.5, Infinity;
-        |1980.5, Infinity
+      """-Infinity, 16.1, 21.05, 30.95, Infinity;
+        |-Infinity, 5.5, Infinity;
+        |-Infinity, 97.5, 169.5, Infinity;
+        |-Infinity, 78.5, 134.0, Infinity;
+        |-Infinity, 2379.5, 2959.5, Infinity;
+        |-Infinity, 13.5, 19.5, Infinity;
+        |-Infinity, 1980.5, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -80,13 +80,13 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       "brand", 100)
 
     assertResult(
-      """21.05, Infinity;
-        |5.5, Infinity;
-        |120.5, 134.5, Infinity;
-        |78.5, Infinity;
-        |2550.5, Infinity;
-        |Infinity;
-        |Infinity
+      """-Infinity, 21.05, Infinity;
+        |-Infinity, 5.5, Infinity;
+        |-Infinity, 120.5, 134.5, Infinity;
+        |-Infinity, 78.5, Infinity;
+        |-Infinity, 2550.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -98,7 +98,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val df = readTitanicData(sqlContext)
     val model = getDiscretizerModel(df, Array("age"), "pclass")
 
-    assertResult("34.75, Infinity") {
+    assertResult("-Infinity, 34.75, Infinity") {
       model.splits(0).mkString(", ")
     }
   }
@@ -109,12 +109,12 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"), "survived")
 
     assertResult(
-      """Infinity;
-        |10.48125, 74.375, Infinity;
-        |2.5, Infinity;
-        |Infinity;
-        |Infinity;
-        |1.44359817E12, Infinity
+      """-Infinity, Infinity;
+        |-Infinity, 10.48125, 74.375, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 1.44359817E12, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
         model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -130,12 +130,12 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"), "embarked")
 
     assertResult(
-      """Infinity;
-        |6.6229, 6.9624996, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
-        |1.5, 2.5, Infinity;
-        |Infinity;
-        |Infinity;
-        |Infinity
+      """-Infinity, Infinity;
+        |-Infinity, 6.6229, 6.9624996, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
+        |-Infinity, 1.5, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -147,12 +147,12 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"), "sex")
 
     assertResult(
-      """Infinity;
-        |9.54375, Infinity;
-        |Infinity;
-        |0.5, Infinity;
-        |Infinity;
-        |1.44359817E12, Infinity
+      """-Infinity, Infinity;
+        |-Infinity, 9.54375, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 0.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 1.44359817E12, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -167,12 +167,12 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"), "cabin")
 
     assertResult(
-      """Infinity;
-        |Infinity;
-        |Infinity;
-        |Infinity;
-        |Infinity;
-        |Infinity
+      """-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -185,11 +185,11 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "parch", "grad date"), "sibsp")
 
     assertResult(
-      """14.75, Infinity;
-        |13.825001, 28.2, 41.9896, 44.65, 47.0, 51.67085, 152.50626, Infinity;
-        |2.5, Infinity;
-        |Infinity;
-        |1.44359817E12, Infinity
+      """-Infinity, 14.75, Infinity;
+        |-Infinity, 13.825001, 28.2, 41.9896, 44.65, 47.0, 51.67085, 152.50626, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 1.44359817E12, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
