@@ -227,10 +227,10 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val finalCandidates = result.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
         val k1 = leftFreqs.count(_ != 0)
-        val s1 = leftFreqs.sum
+        val s1 = if (k1 > 0) leftFreqs.sum else 0
         val hs1 = entropy(leftFreqs, s1)
         val k2 = rightFreqs.count(_ != 0)
-        val s2 = rightFreqs.sum
+        val s2 = if (k2 > 0) rightFreqs.sum else 0
         val hs2 = entropy(rightFreqs, s2)
         val weightedHs = (s1 * hs1 + s2 * hs2) / s
         val gain = hs - weightedHs
