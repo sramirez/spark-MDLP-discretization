@@ -162,7 +162,7 @@ class DiscretizerModel private[ml] (
   /**
    * Transform a vector to the discrete space determined by the splits.
    * NOTE: Vectors to be transformed must be the same length
-   * as the source vectors given to [[MDLPDiscretizer.fit]].
+   * as the source vectors given to MDLPDiscretizer.fit.
    */
   override def transform(dataset: DataFrame): DataFrame = {
     transformSchema(dataset.schema, logging = true)

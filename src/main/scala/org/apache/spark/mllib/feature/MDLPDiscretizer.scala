@@ -141,14 +141,14 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
         data.flatMap({ case LabeledPoint(label, dv: DenseVector) =>
             val c = Array.fill[Long](nLabels)(0L)
             c(bLabels2Int.value(label)) = 1L
-            for(i <- dv.values.indices) yield ((i, dv(i).toFloat), c)
+            for (i <- dv.values.indices) yield ((i, dv(i).toFloat), c)
         })
       case false =>
         sc.broadcast(continuousVars)
         data.flatMap{ case LabeledPoint(label, sv: SparseVector) =>
           val c = Array.fill[Long](nLabels)(0L)
           c(bLabels2Int.value(label)) = 1L
-          for(i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
+          for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
         }
     }
     

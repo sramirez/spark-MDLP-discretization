@@ -8,7 +8,7 @@ object ProjectBuild extends Build {
     base = file("."),
     settings = Project.defaultSettings ++ Seq(
       	name := "spark-MDLP-discretization",
-	version := "0.2",
+	version := "0.2-SNAPSHOT",
 	organization := "org.apache.spark",
 	scalaVersion := "2.11.6",
 	spName := "apache/spark-MDLP-discretization",
