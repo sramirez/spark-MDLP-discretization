@@ -148,7 +148,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
     assertResult(
       """-Infinity, Infinity;
-        |-Infinity, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
+        |-Infinity, 6.6229, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
         |-Infinity, 1.5, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
