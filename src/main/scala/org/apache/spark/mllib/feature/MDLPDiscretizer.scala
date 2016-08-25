@@ -354,10 +354,13 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
       elementsByPart: Int,
       maxBins: Int) = {
     
-    if (data.getStorageLevel == StorageLevel.NONE) {
+    if (data.getStorageLevel == StorageLevel.NONE)
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
-    }
+    
+    if (!data.filter(_.label == null).isEmpty())
+      logError("Some null values have been found in the output column."
+          + " This problem must be fixed before continuing with discretization.")
 
     // Basic info. about the dataset
     val sc = data.context; val nInstances = data.count
