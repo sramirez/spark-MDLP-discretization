@@ -88,18 +88,12 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
       entropyFreqs = (cand, freq, leftAccum.clone, rightTotal) +: entropyFreqs
     }
 
-    // calculate h(S)
-    // s: number of elements
-    // k: number of distinct classes
-    // hs: entropy
-    val s = totals.sum
-    val hs = entropy(totals.toSeq, s)
-    val k = totals.count(_ != 0)
+    val bucketInfo = new BucketInfo(totals)
 
     // select best threshold according to the criteria
     val finalCandidates = entropyFreqs.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val (criterionValue, weightedHs) = calcCriterionValue(s, hs, k, leftFreqs, rightFreqs)
+        val (criterionValue, weightedHs) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
         var criterion = criterionValue > stoppingCriterion
 
         lastSelected match {

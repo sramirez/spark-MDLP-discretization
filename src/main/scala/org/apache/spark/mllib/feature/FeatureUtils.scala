@@ -28,6 +28,24 @@ import scala.collection.mutable
 @Experimental
 object FeatureUtils {
 
+
+  private val LOG2 = math.log(2)
+
+  /** @return log base 2 of x */
+  val log2 = { x: Double => math.log(x) / LOG2 }
+
+  /**
+    * @param frequencies sequence of integer frequencies.
+    * @param n the sum of all the frequencies in the list.
+    * @return the total entropy
+    */
+  def entropy(frequencies: Seq[Long], n: Long) = {
+    -frequencies.aggregate(0.0)(
+      { case (h, q) => h + (if (q == 0) 0 else (q.toDouble / n) * log2(q.toDouble / n))},
+      { case (h1, h2) => h1 + h2 }
+    )
+  }
+
   /**
    * Returns a vector with features filtered.
    * Preserves the order of filtered features the same as their indices are stored.

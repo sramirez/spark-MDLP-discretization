@@ -71,7 +71,6 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
     result.sorted :+ Float.PositiveInfinity
   }
 
-
   /**
     * Compute entropy minimization for candidate points in a range,
     * and select the best one according to the MDLP criterion (RDD version).
@@ -112,18 +111,12 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
       entropyFreqs.iterator
     })
 
-    // calculate h(S)
-    // s: number of elements
-    // k: number of distinct classes
-    // hs: entropy
-    val s  = totals.sum
-    val hs = entropy(totals.toSeq, s)
-    val k  = totals.count(_ != 0)
+    val bucketInfo = new BucketInfo(totals)
 
     // select the best threshold according to MDLP
     val finalCandidates = result.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val (criterionValue, weightedHs) = calcCriterionValue(s, hs, k, leftFreqs, rightFreqs)
+        val (criterionValue, weightedHs) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
         var criterion = criterionValue > stoppingCriterion
         lastSelected match {
           case None =>
