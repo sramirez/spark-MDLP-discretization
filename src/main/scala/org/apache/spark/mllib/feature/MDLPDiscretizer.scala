@@ -268,7 +268,6 @@ object MDLPDiscretizer {
    * @param maxByPart Maximum number of elements by partition.
    * @param stoppingCriterion the threshold used to determine when stop recursive splitting of buckets.
    * @return A DiscretizerModel with the subsequent thresholds.
-   * 
    */
   def train(
       input: RDD[LabeledPoint],
