@@ -24,7 +24,7 @@ import org.apache.spark.Logging
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg._
-import MDLPDiscretizer.LOG2
+import MDLPDiscretizer._
 
 
 /**
@@ -39,20 +39,9 @@ import MDLPDiscretizer.LOG2
  */
 class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable with Logging {
 
-  private def entropy(freqs: Seq[Long], n: Long) = {
-    // val n = freqs.reduce(_ + _)
-    freqs.aggregate(0.0)({ case (h, q) =>
-      h + (if (q == 0) 0  else (q.toDouble / n) * LOG2(q.toDouble / n))
-    }, { case (h1, h2) => h1 + h2 }) * -1
-  }
-  
-  private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
-    (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
-  }
-  private val maxLimitBins = Byte.MaxValue - Byte.MinValue + 1
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
-  
+
   /**
    * Get information about the attributes before performing discretization.
    * 
@@ -266,8 +255,8 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         val hs2 = entropy(rightFreqs, s2)
         val weightedHs = (s1 * hs1 + s2 * hs2) / s
         val gain = hs - weightedHs
-        val delta = LOG2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
-        var criterion = (gain - (LOG2(s - 1) + delta) / s) > -1e-5
+        val delta = log2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
+        var criterion = (gain - (log2(s - 1) + delta) / s) > -1e-5
         lastSelected match {
           case None =>
           case Some(last) => criterion = criterion && (cand != last)
@@ -325,8 +314,8 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         val hs2 = entropy(rightFreqs, s2)
         val weightedHs = (s1 * hs1 + s2 * hs2) / s
         val gain = hs - weightedHs
-        val delta = LOG2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
-        var criterion = (gain - (LOG2(s - 1) + delta) / s) > -1e-5
+        val delta = log2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
+        var criterion = (gain - (log2(s - 1) + delta) / s) > -1e-5
         
         lastSelected match {
             case None =>
@@ -471,10 +460,28 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
 /** Companion object for static members */
 object MDLPDiscretizer {
 
-  private val LOG_2 = math.log(2)
+  private val LOG2 = math.log(2)
 
   /** @return log base 2 of x */
-  private val LOG2 = { x: Double => math.log(x) / LOG_2 }
+  private val log2 = { x: Double => math.log(x) / LOG2 }
+
+  /**
+    *
+    * @param freqs sequence of integer frequencies.
+    * @param n the sum of all the frequencies in the list.
+    * @return the total entropy
+    */
+  private def entropy(freqs: Seq[Long], n: Long) = {
+    -freqs.aggregate(0.0)(
+      { case (h, q) => h + (if (q == 0) 0 else (q.toDouble / n) * log2(q.toDouble / n))},
+      { case (h1, h2) => h1 + h2 }
+    )
+  }
+
+  private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
+    (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
+  }
+
 
   /**
    * Train a entropy minimization discretizer given an RDD of LabeledPoints.
