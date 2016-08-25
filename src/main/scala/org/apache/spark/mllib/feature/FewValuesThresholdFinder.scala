@@ -1,16 +1,14 @@
 package org.apache.spark.mllib.feature
 
-import org.apache.spark.Logging
-import org.apache.spark.mllib.feature.FeatureUtils._
-
 import scala.collection.mutable
 
-
 /**
+  * Use this version when the feature to discretize has relatively few unique values.
   * @param nLabels the number of class labels
   * @param stoppingCriterion influences when to stop recursive splits
   */
-class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double) extends Serializable with Logging {
+class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
+  extends ThresholdFinder  {
 
   /**
     * Evaluates boundary points and selects the most relevant candidates (sequential version).
@@ -84,16 +82,8 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double) extends 
     // select best threshold according to the criteria
     val finalCandidates = entropyFreqs.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val k1 = leftFreqs.count(_ != 0)
-        val s1 = if (k1 > 0) leftFreqs.sum else 0
-        val hs1 = entropy(leftFreqs, s1)
-        val k2 = rightFreqs.count(_ != 0)
-        val s2 = if (k2 > 0) rightFreqs.sum else 0
-        val hs2 = entropy(rightFreqs, s2)
-        val weightedHs = (s1 * hs1 + s2 * hs2) / s
-        val gain = hs - weightedHs
-        val delta = log2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
-        var criterion = (gain - (log2(s - 1) + delta) / s) > stoppingCriterion
+        val (criterionValue, weightedHs) = calcCriterionValue(s, hs, k, leftFreqs, rightFreqs)
+        var criterion = criterionValue > stoppingCriterion
 
         lastSelected match {
           case None =>

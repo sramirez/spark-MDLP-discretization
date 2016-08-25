@@ -1,18 +1,16 @@
 package org.apache.spark.mllib.feature
 
 import org.apache.spark.rdd.RDD
-
 import scala.collection.mutable
-import FeatureUtils._
-import org.apache.spark.Logging
 
 
 /**
+  * Use this version when the feature to discretize has more values that will fix in a partition (see maxByPart param).
   * @param nLabels the number of class labels
   * @param stoppingCriterion influences when to stop recursive splits
   */
-class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double) extends Serializable with Logging {
-
+class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
+  extends ThresholdFinder {
 
   /**
     * Evaluate boundary points and select the most relevant. This version is used when
@@ -65,9 +63,8 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double) extends
     * @param lastSelected Last selected threshold.
     * @return The minimum-entropy candidate.
     */
-  private def evalThresholds(
-                              candidates: RDD[(Float, Array[Long])],
-                              lastSelected : Option[Float]) = {
+  private def evalThresholds(candidates: RDD[(Float, Array[Long])],
+                             lastSelected : Option[Float]) = {
 
     val sc = candidates.sparkContext
 
@@ -109,16 +106,8 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double) extends
     // select the best threshold according to MDLP
     val finalCandidates = result.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val k1 = leftFreqs.count(_ != 0)
-        val s1 = if (k1 > 0) leftFreqs.sum else 0
-        val hs1 = entropy(leftFreqs, s1)
-        val k2 = rightFreqs.count(_ != 0)
-        val s2 = if (k2 > 0) rightFreqs.sum else 0
-        val hs2 = entropy(rightFreqs, s2)
-        val weightedHs = (s1 * hs1 + s2 * hs2) / s
-        val gain = hs - weightedHs
-        val delta = log2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
-        var criterion = (gain - (log2(s - 1) + delta) / s) > stoppingCriterion
+        val (criterionValue, weightedHs) = calcCriterionValue(s, hs, k, leftFreqs, rightFreqs)
+        var criterion = criterionValue > stoppingCriterion
         lastSelected match {
           case None =>
           case Some(last) => criterion = criterion && (cand != last)
