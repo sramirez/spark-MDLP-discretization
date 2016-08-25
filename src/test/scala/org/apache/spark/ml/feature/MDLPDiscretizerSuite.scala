@@ -47,12 +47,8 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /**
-    * Do entropy based binning of cars data for all the numeric columns using origin as target.
-    * The algorithm may produce different splits for individual columns when several features are discretized
-    * at once because of the interaction between features.
-    */
-  test("Run MDLPD on all columns in cars data (maxBins = 100, label = origin)") {
+  /** Do entropy based binning of cars data for all the numeric columns using origin as target. */
+  test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100)") {
 
     val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df,
@@ -72,7 +68,28 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  test("Run MDLPD on all columns in cars data (maxBins = 100, label = brand)") {
+  /** Simulate big data by lowering the maxByPart value to 100. */
+  test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100, maxByPart = 100)") {
+
+    val df = readCarsData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("mpg", "cylinders", "cubicinches", "horsepower", "weightlbs", "time to sixty", "year"),
+      "origin", maxBins = 100, maxByPart = 100)
+
+    assertResult(
+      """-Infinity, 16.1, 21.05, 30.95, Infinity;
+        |-Infinity, 5.5, Infinity;
+        |-Infinity, 97.5, 169.5, Infinity;
+        |-Infinity, 78.5, 134.0, Infinity;
+        |-Infinity, 2379.5, 2959.5, Infinity;
+        |-Infinity, 13.5, 19.5, Infinity;
+        |-Infinity, 1980.5, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  test("Run MDLPD on all columns in cars data (label = brand, maxBins = 100)") {
 
     val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df,
@@ -121,7 +138,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
   }
 
   /**
-    * If the label has actuall null values, this throws an NPE.
+    * If the label has actual null values, this throws an NPE.
     * Nulls are currently represented with "?"
     */
   test("Run MDLPD on all columns in titanic data (label = embarked)") {
@@ -131,7 +148,26 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
     assertResult(
       """-Infinity, Infinity;
-        |-Infinity, 6.6229, 6.9624996, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
+        |-Infinity, 6.6229, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
+        |-Infinity, 1.5, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  /** Simulate big data by lowering the maxByPart value to 100. */
+  test("Run MDLPD on all columns in titanic data (label = embarked, maxByPart = 100)") {
+
+    val df = readTitanicData(sqlContext)
+    val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"),
+      "embarked", maxBins = 100, maxByPart = 100)
+
+    assertResult(
+      """-Infinity, Infinity;
+        |-Infinity, 6.6229, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 56.7125, Infinity;
         |-Infinity, 1.5, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
@@ -158,8 +194,27 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+  /** Simulate big data by lowering the maxByPart value to 100. */
+  test("Run MDLPD on all columns in titanic data (label = sex, maxByPart = 100)") {
+
+    val df = readTitanicData(sqlContext)
+    val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"),
+      "sex", maxBins = 100, maxByPart = 100)
+
+    assertResult(
+      """-Infinity, Infinity;
+        |-Infinity, 9.54375, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 0.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 1.44359817E12, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   /**
-    * Aparently, all numeric columns are fairly random with respect to cabin.
+    * Apparently, all numeric columns are fairly random with respect to cabin.
     */
   test("Run MDLPD on all columns in titanic data (label = cabin)") {
 
@@ -199,7 +254,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
   def getDiscretizerModel(df: DataFrame, inputCols: Array[String],
-                          labelColumn: String, maxBins: Int = 100): DiscretizerModel = {
+                          labelColumn: String, maxBins: Int = 100, maxByPart: Int = 10000): DiscretizerModel = {
     val labelIndexer = new StringIndexer()
       .setInputCol(labelColumn)
       .setOutputCol(labelColumn + CLEAN_SUFFIX).fit(df)
@@ -213,7 +268,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
     val discretizer = new MDLPDiscretizer()
       .setMaxBins(maxBins)
-      .setMaxByPart(10000)
+      .setMaxByPart(maxByPart)
       .setInputCol("features")  // this must be a feature vector
       .setLabelCol(labelColumn + CLEAN_SUFFIX)
       .setOutputCol("bucketFeatures")

@@ -53,13 +53,13 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
   /**
    * Maximum number of elements to evaluate in each partition. 
    * If this parameter is bigger then the evaluation phase will be sequentially performed. 
-   * Must be >= 10,000.
+   * Should be >= 10,000, but it is allowed to go as low as 100 for testing purposes.
    * default: 10,000
    * @group param
    */
   val maxByPart = new IntParam(this, "maxByPart", "Maximum number of elements per partition" +
-    "to considere in each evaluation process. Must be >= 10,000.",
-    ParamValidators.gtEq(10000))
+    "to consider in each evaluation process. Should be >= 10,000 (the default)",
+    ParamValidators.gtEq(100))
   setDefault(maxByPart -> 10000)
 
   /** @group getParam */

@@ -21,7 +21,7 @@ import scala.collection.mutable
 
 import breeze.linalg.{SparseVector => BSV}
 
-import org.apache.spark.SparkContext._ 
+import org.apache.spark.SparkContext._
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.Logging
 import org.apache.spark.rdd._
@@ -220,7 +220,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
       candidates: RDD[(Float, Array[Long])],
       lastSelected : Option[Float]) = {
 
-    val numPartitions = candidates.partitions.length
     val sc = candidates.sparkContext
 
     // Compute the accumulated frequencies by partition
@@ -261,9 +260,11 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
     // select the best threshold according to MDLP
     val finalCandidates = result.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val k1 = leftFreqs.count(_ != 0); val s1 = leftFreqs.sum
+        val k1 = leftFreqs.count(_ != 0)
+        val s1 = leftFreqs.sum
         val hs1 = entropy(leftFreqs, s1)
-        val k2 = rightFreqs.count(_ != 0); val s2 = rightFreqs.sum
+        val k2 = rightFreqs.count(_ != 0)
+        val s2 = rightFreqs.sum
         val hs2 = entropy(rightFreqs, s2)
         val weightedHs = (s1 * hs1 + s2 * hs2) / s
         val gain = hs - weightedHs
@@ -343,7 +344,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
   /**
    * Run the entropy minimization discretizer on input data.
    * 
-   * @param contFeat Indices to discretize (if not specified, the algorithm try to figure it out).
+   * @param contFeat Indices to discretize (if not specified, the algorithm tries to figure it out).
    * @param elementsByPart Maximum number of elements to keep in each partition.
    * @param maxBins Maximum number of thresholds per feature.
    * @return A discretization model with the thresholds by feature.
