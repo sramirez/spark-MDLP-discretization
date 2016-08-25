@@ -17,7 +17,6 @@
 
 package org.apache.spark.mllib.feature
 
-import scala.collection.mutable.ArrayBuilder
 import org.apache.spark.annotation.Experimental
 import org.apache.spark.mllib.linalg._
 

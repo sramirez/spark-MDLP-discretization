@@ -39,8 +39,8 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
   /**
    * Maximum number of buckets into which data points are grouped. 
    * Must be >= 2. default: 2
-    *
-    * @group param
+   *
+   * @group param
    */
   val maxBins = new IntParam(this, "maxBins", "Maximum number of bins" +
     "into which data points are grouped. Must be >= 2.",
@@ -65,6 +65,16 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
   /** @group getParam */
   def getMaxByPart: Int = getOrDefault(maxByPart)
 
+  val stoppingCriterion = new DoubleParam(this, "stoppingCriterion",
+    "The minimum description length principal (MDLP) stopping criterion. " +
+    "The default is 0 to match what was suggested in the original 1993 paper by Fayyad and Irani. " +
+    "However, smaller values (like -1e-4 or -1e-2) can be set in order to " +
+    "relax the constraint and produce more splits.",
+     ParamValidators.ltEq(0))
+  setDefault(stoppingCriterion -> 0)
+
+  /** @group getParam */
+  def getStoppingCriterion: Double = getOrDefault(stoppingCriterion)
 }
 
 /**
@@ -84,6 +94,9 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
   def setMaxByPart(value: Int): this.type = set(maxByPart, value)
 
   /** @group setParam */
+  def setStoppingCriterion(value: Double): this.type = set(stoppingCriterion, value)
+
+  /** @group setParam */
   def setInputCol(value: String): this.type = set(inputCol, value)
 
   /** @group setParam */
@@ -101,7 +114,7 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
       case Row(label: Double, features: Vector) =>
         LabeledPoint(label, features)
     }
-    val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart))
+    val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
   

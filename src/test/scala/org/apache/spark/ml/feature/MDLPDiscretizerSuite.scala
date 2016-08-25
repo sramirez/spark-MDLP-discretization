@@ -89,6 +89,27 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+  /** Lowering the stopping criterion should result in more splits */
+  test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100, stoppingCriterion = -1e-2)") {
+
+    val df = readCarsData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("mpg", "cylinders", "cubicinches", "horsepower", "weightlbs", "time to sixty", "year"),
+      "origin", maxBins = 100, maxByPart = 10000, stoppingCriterion = -1e-2)
+
+    assertResult(
+      """-Infinity, 16.1, 21.05, 30.95, Infinity;
+        |-Infinity, 5.5, 7.0, Infinity;
+        |-Infinity, 97.5, 106.0, 120.5, 134.5, 140.5, 148.5, 159.5, 165.5, 169.5, Infinity;
+        |-Infinity, 78.5, 134.0, Infinity;
+        |-Infinity, 2379.5, 2959.5, 3274.0, Infinity;
+        |-Infinity, 13.5, 19.5, Infinity;
+        |-Infinity, 1980.5, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   test("Run MDLPD on all columns in cars data (label = brand, maxBins = 100)") {
 
     val df = readCarsData(sqlContext)
@@ -177,6 +198,25 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+  /** lowering the stoppingCriterion should result in more splits. */
+  test("Run MDLPD on all columns in titanic data (label = embarked, stoppingCriterion = -1e-2)") {
+
+    val df = readTitanicData(sqlContext)
+    val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch", "grad date"), "embarked",
+      maxBins = 100, maxByPart = 10000, stoppingCriterion = -1e-2)
+
+    assertResult(
+      """-Infinity, Infinity;
+        |-Infinity, 6.6229, 7.1833496, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.74585, 29.4125, 56.7125, Infinity;
+        |-Infinity, 1.5, 2.5, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   test("Run MDLPD on all columns in titanic data (label = sex)") {
 
     val df = readTitanicData(sqlContext)
@@ -254,7 +294,10 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
   def getDiscretizerModel(df: DataFrame, inputCols: Array[String],
-                          labelColumn: String, maxBins: Int = 100, maxByPart: Int = 10000): DiscretizerModel = {
+                          labelColumn: String,
+                          maxBins: Int = 100,
+                          maxByPart: Int = 10000,
+                          stoppingCriterion: Double = 0): DiscretizerModel = {
     val labelIndexer = new StringIndexer()
       .setInputCol(labelColumn)
       .setOutputCol(labelColumn + CLEAN_SUFFIX).fit(df)
@@ -269,6 +312,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val discretizer = new MDLPDiscretizer()
       .setMaxBins(maxBins)
       .setMaxByPart(maxByPart)
+      .setStoppingCriterion(stoppingCriterion)
       .setInputCol("features")  // this must be a feature vector
       .setLabelCol(labelColumn + CLEAN_SUFFIX)
       .setOutputCol("bucketFeatures")

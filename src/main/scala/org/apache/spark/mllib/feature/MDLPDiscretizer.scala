@@ -35,8 +35,10 @@ import MDLPDiscretizer._
  * "Multi-interval discretization of continuous-valued attributes for classification learning."
  *
  * @param data RDD of LabeledPoint
+ * @param stoppingCriterion (optional) used to determine when to stop recursive splitting
  */
-class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable with Logging {
+class MDLPDiscretizer private (val data: RDD[LabeledPoint],
+            stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION) extends Serializable with Logging {
 
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
@@ -233,7 +235,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         val weightedHs = (s1 * hs1 + s2 * hs2) / s
         val gain = hs - weightedHs
         val delta = log2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
-        var criterion = (gain - (log2(s - 1) + delta) / s) > -1e-5
+        var criterion = (gain - (log2(s - 1) + delta) / s) > stoppingCriterion
         lastSelected match {
           case None =>
           case Some(last) => criterion = criterion && (cand != last)
@@ -292,7 +294,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint]) extends Serializable
         val weightedHs = (s1 * hs1 + s2 * hs2) / s
         val gain = hs - weightedHs
         val delta = log2(math.pow(3, k) - 2) - (k * hs - k1 * hs1 - k2 * hs2)
-        var criterion = (gain - (log2(s - 1) + delta) / s) > -1e-5
+        var criterion = (gain - (log2(s - 1) + delta) / s) > stoppingCriterion
         
         lastSelected match {
             case None =>
@@ -442,6 +444,9 @@ object MDLPDiscretizer {
   /** @return log base 2 of x */
   private val log2 = { x: Double => math.log(x) / LOG2 }
 
+  /** The original paper suggested 0 for the stopping criterion, but smaller values like -1e-3 yield more splits */
+  private val DEFAULT_STOPPING_CRITERION = 0
+
   /**
     * @param freqs sequence of integer frequencies.
     * @param n the sum of all the frequencies in the list.
@@ -488,6 +493,7 @@ object MDLPDiscretizer {
    * 256 (byte range) distinct values.
    * @param maxBins Maximum number of thresholds to select per feature.
    * @param maxByPart Maximum number of elements by partition.
+   * @param stoppingCriterion the threshold used to determine when stop recursive splitting of buckets.
    * @return A DiscretizerModel with the subsequent thresholds.
    * 
    */
@@ -495,7 +501,8 @@ object MDLPDiscretizer {
       input: RDD[LabeledPoint],
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
-      maxByPart: Int = 100000) = {
-    new MDLPDiscretizer(input).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
+      maxByPart: Int = 100000,
+      stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION) = {
+    new MDLPDiscretizer(input, stoppingCriterion).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
   }
 }
