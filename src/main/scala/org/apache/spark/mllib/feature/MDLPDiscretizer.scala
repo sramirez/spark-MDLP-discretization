@@ -18,11 +18,14 @@
 package org.apache.spark.mllib.feature
 
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.Logging
+import org.apache.spark.{Logging, SparkContext}
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg._
 import MDLPDiscretizer._
+import org.apache.spark.broadcast.Broadcast
+
+import scala.collection.Map
 
 
 /**
@@ -102,12 +105,11 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
    * @param elementsByPart Maximum number of elements to keep in each partition.
    * @param maxBins Maximum number of thresholds per feature.
    * @return A discretization model with the thresholds by feature.
-   * 
    */
   def runAll(
       contFeat: Option[Seq[Int]], 
       elementsByPart: Int,
-      maxBins: Int) = {
+      maxBins: Int): DiscretizerModel = {
     
     if (data.getStorageLevel == StorageLevel.NONE) {
       logWarning("The input data is not directly cached, which may hurt performance if its"
@@ -115,7 +117,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     }
 
     // Basic info. about the dataset
-    val sc = data.context; val nInstances = data.count
+    val sc = data.context
     val bLabels2Int = sc.broadcast(labels2Int)
     val classDistrib = data.map(d => bLabels2Int.value(d.label)).countByValue()
     val bclassDistrib = sc.broadcast(classDistrib)
@@ -134,9 +136,9 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     
     // Generate pairs ((feature, point), class histogram)
     val featureValues = dense match {
-      case true => 
+      case true =>
         sc.broadcast(continuousVars)
-        data.flatMap({ case LabeledPoint(label, dv: DenseVector) =>            
+        data.flatMap({ case LabeledPoint(label, dv: DenseVector) =>
             val c = Array.fill[Long](nLabels)(0L)
             c(bLabels2Int.value(label)) = 1L
             for(i <- dv.values.indices) yield ((i, dv(i).toFloat), c)
@@ -154,15 +156,8 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val nonZeros = featureValues.reduceByKey{ case (v1, v2) =>
       (v1, v2).zipped.map(_ + _)
     }
-      
-    // Add zero elements for sparse data
-    val zeros = nonZeros
-      .map{case ((k, p), v) => (k, v)}
-      .reduceByKey{ case (v1, v2) =>  (v1, v2).zipped.map(_ + _)}
-      .map{ case (k, v) => 
-        val v2 = for(i <- v.indices) yield bclassDistrib.value(i) - v(i)
-        ((k, 0.0F), v2.toArray)
-      }.filter{case (_, v) => v.sum > 0}
+
+    val zeros = addZerosIfNeeded(nonZeros, bclassDistrib)
     val distinctValues = nonZeros.union(zeros)
     
     // Sort these values to perform the boundary points evaluation
@@ -177,53 +172,107 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
     val barr = sc.broadcast(arr)
-    
+
     // Get only boundary points from the whole set of distinct values
     val initialCandidates = initialThresholds(sortedValues, firstElements)
       .map{case ((k, point), c) => (k, (point, c))}
       .filter({case (k, _) => barr.value(k)})
       .cache() // It will be iterated for "big" features
-      
-    // Divide RDD into two categories according to the number of points by feature
+
+    val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(elementsByPart, maxBins, initialCandidates, sc)
+
+    buildModelFromThresholds(nFeatures, continuousVars, allThresholds)
+  }
+
+  /**
+    * Add zeros if dealing with sparse data
+    *
+    * @return rdd with 0's filled in
+    */
+  def addZerosIfNeeded(nonZeros: RDD[((Int, Float), Array[Long])],
+                       bclassDistrib: Broadcast[Map[Int, Long]]): RDD[((Int, Float), Array[Long])] = {
+    nonZeros
+      .map { case ((k, p), v) => (k, v) }
+      .reduceByKey { case (v1, v2) => (v1, v2).zipped.map(_ + _) }
+      .map { case (k, v) =>
+        val v2 = for (i <- v.indices) yield bclassDistrib.value(i) - v(i)
+        ((k, 0.0F), v2.toArray)
+      }.filter { case (_, v) => v.sum > 0 }
+  }
+
+
+  /**
+    * Divide RDD into two categories according to the number of points by feature.
+    * @return find threshold for both sorts of attributes - those with many values, and those with few.
+    */
+  def findAllThresholds(elementsByPart: Int, maxBins: Int,
+                        initialCandidates: RDD[(Int, (Float, Array[Long]))],
+                        sc: SparkContext): Array[(Int, Seq[Float])] = {
     val bigIndexes = initialCandidates
       .countByKey()
       .filter{case (_, c) => c > elementsByPart}
     val bBigIndexes = sc.broadcast(bigIndexes)
-      
-    // The features with a small number of points can be processed in a parallel way
-    val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
-    val smallThresholds = initialCandidates
-      .filter{case (k, _) => !bBigIndexes.value.contains(k) }
-      .groupByKey()
-      .mapValues(_.toArray)
-      .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1), maxBins))
-    
-    // Feature with too many points must be processed iteratively (rare condition)
-    logInfo("Number of features that exceed the maximum size per partition: " + 
-        bigIndexes.size)
-    var bigThresholds = Map.empty[Int, Seq[Float]]
-    val bigThresholdsFinder = new ManyValuesThresholdFinder(nLabels, stoppingCriterion)
-    for (k <- bigIndexes.keys){ 
-      val cands = initialCandidates.filter{case (k2, _) => k == k2}.values.sortByKey()
-      bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands, maxBins, elementsByPart)))
-    }
+
+    val smallThresholds = findSmallThresholds(maxBins, initialCandidates, bBigIndexes)
+    val bigThresholds = findBigThresholds(elementsByPart, maxBins, initialCandidates, bigIndexes)
 
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
-    val thrs = smallThresholds.union(bigThRDD).collect()
-    
-    // Update the full list features with the thresholds calculated
-    val thresholds = Array.fill(nFeatures)(Array.empty[Float])   // Nominal values (empty)
+    val allThresholds = smallThresholds.union(bigThRDD).collect()
+    allThresholds
+  }
+
+  /**
+    * Feature with too many points must be processed iteratively (rare condition)
+    *
+    * @return the splits for featuers with more values than will fit in a partition.
+    */
+  def findBigThresholds(elementsByPart: Int, maxBins: Int,
+                        initialCandidates: RDD[(Int, (Float, Array[Long]))],
+                        bigIndexes: Map[Int, Long]): Map[Int, Seq[Float]] = {
+    logInfo("Number of features that exceed the maximum size per partition: " +
+      bigIndexes.size)
+
+    var bigThresholds = Map.empty[Int, Seq[Float]]
+    val bigThresholdsFinder = new ManyValuesThresholdFinder(nLabels, stoppingCriterion)
+    for (k <- bigIndexes.keys) {
+      val cands = initialCandidates.filter { case (k2, _) => k == k2 }.values.sortByKey()
+      bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands, maxBins, elementsByPart)))
+    }
+    bigThresholds
+  }
+
+  /**
+    * The features with a small number of points can be processed in a parallel way
+    *
+    * @return the splits for features with few values
+    */
+  def findSmallThresholds(maxBins: Int,
+                          initialCandidates: RDD[(Int, (Float, Array[Long]))],
+                          bBigIndexes: Broadcast[Map[Int, Long]]): RDD[(Int, Seq[Float])] = {
+    val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
+    initialCandidates
+      .filter { case (k, _) => !bBigIndexes.value.contains(k) }
+      .groupByKey()
+      .mapValues(_.toArray)
+      .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1), maxBins))
+  }
+
+  def buildModelFromThresholds(nFeatures: Int, continuousVars: Array[Int], allThresholds: Array[(Int, Seq[Float])]): DiscretizerModel = {
+    // Update the full list of features with the thresholds calculated
+    val thresholds = Array.fill(nFeatures)(Array.empty[Float]) // Nominal values (empty)
     // Not processed continuous attributes
     continuousVars.foreach(f => thresholds(f) = Array(Float.PositiveInfinity))
     // Continuous attributes (> 0 cut point)
-    thrs.foreach({case (k, vth) => 
-      thresholds(k) = if (arr.length > 0) vth.toArray else Array(Float.PositiveInfinity)})
-    logInfo("Number of features with thresholds computed: " + thrs.length)
+    allThresholds.foreach({ case (k, vth) =>
+      thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.PositiveInfinity)
+    })
+    logInfo("Number of features with thresholds computed: " + allThresholds.length)
     logDebug("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
-    
+
     new DiscretizerModel(thresholds)
   }
+
 }
 
 /** Companion object for static members */
