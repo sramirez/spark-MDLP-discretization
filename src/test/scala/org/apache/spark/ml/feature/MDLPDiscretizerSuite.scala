@@ -318,6 +318,37 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+  test("Run MDLPD on all columns in iris data (label = iristype)") {
+
+    val df = readIrisData(sqlContext)
+    val model = getDiscretizerModel(df, Array("sepallength", "sepalwidth", "petallength", "petalwidth"), "iristype")
+
+    assertResult(
+      """-Infinity, 5.55, 6.1499996, Infinity;
+        |-Infinity, 3.35, Infinity;
+        |-Infinity, 2.45, 4.75, Infinity;
+        |-Infinity, 0.8, 1.75, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  test("Run MDLPD on all columns in iris data (label = iristype, splittingCriterion = -0.01)") {
+
+    val df = readIrisData(sqlContext)
+    val model = getDiscretizerModel(df, Array("sepallength", "sepalwidth", "petallength", "petalwidth"),
+      "iristype", maxBins = 100, maxByPart = 10000, stoppingCriterion = -0.01)
+
+    assertResult(
+      """-Infinity, 5.55, 6.1499996, Infinity;
+        |-Infinity, 2.95, 3.35, Infinity;
+        |-Infinity, 2.45, 4.75, 5.1499996, Infinity;
+        |-Infinity, 0.8, 1.75, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   /**
     * In this case do not convert nulls to a special MISSING value.
     * An error should be reported if the label column contains NaN.

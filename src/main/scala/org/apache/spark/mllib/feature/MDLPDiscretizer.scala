@@ -50,7 +50,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
    * @param points RDD with distinct points by feature ((feature, point), class values).
    * @param firstElements First elements in partitions 
    * @return RDD of candidate points.
-   * 
    */
   private def initialThresholds(
       points: RDD[((Int, Float), Array[Long])], 
@@ -224,7 +223,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
   /**
     * Feature with too many points must be processed iteratively (rare condition)
     *
-    * @return the splits for featuers with more values than will fit in a partition.
+    * @return the splits for features with more values than will fit in a partition.
     */
   def findBigThresholds(elementsByPart: Int, maxBins: Int,
                         initialCandidates: RDD[(Int, (Float, Array[Long]))],
@@ -249,6 +248,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
   def findSmallThresholds(maxBins: Int,
                           initialCandidates: RDD[(Int, (Float, Array[Long]))],
                           bBigIndexes: Broadcast[Map[Int, Long]]): RDD[(Int, Seq[Float])] = {
+    println("cands = " + initialCandidates.collect().map(a =>  a._1 + " s=" + a._2._1 +" ["+ a._2._2.mkString(", ") +"]").mkString(";\n"))
     val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
@@ -257,7 +257,12 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1), maxBins))
   }
 
-  def buildModelFromThresholds(nFeatures: Int, continuousVars: Array[Int], allThresholds: Array[(Int, Seq[Float])]): DiscretizerModel = {
+  /**
+    * @return the discretizer model that can be used to bin data
+    */
+  def buildModelFromThresholds(nFeatures: Int,
+                               continuousVars: Array[Int],
+                               allThresholds: Array[(Int, Seq[Float])]): DiscretizerModel = {
     // Update the full list of features with the thresholds calculated
     val thresholds = Array.fill(nFeatures)(Array.empty[Float]) // Nominal values (empty)
     // Not processed continuous attributes

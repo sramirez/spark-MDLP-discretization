@@ -118,6 +118,28 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+
+  /** @return standard iris dataset from UCI repo.
+    */
+  def readIrisData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "iris.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("sepallength", DoubleType, nullable),
+      StructField("sepalwidth", DoubleType, nullable),
+      StructField("petallength", DoubleType, nullable),
+      StructField("petalwidth", DoubleType, nullable),
+      StructField("iristype", StringType, nullable)
+    ))
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asDouble(x(0)), asDouble(x(1)), asDouble(x(2)), asDouble(x(3)), asString(x(4))))})
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
+
   /** @return dataset with 3 double columns. The first is the label column and contain null.
     */
   def readNullLabelTestData(sqlContext: SQLContext): DataFrame = {
