@@ -91,6 +91,8 @@ object TestHelper {
     else ISO_DATE_FORMAT.parseDateTime(isoString).getMillis.toString.toDouble
   }
 
+  // label cannot currently have null values - see #8.
+  //private def asString(value: String) = if (value == NULL_VALUE) null else value
   private def asString(value: String) = value
   private def asDouble(value: String) = if (value == NULL_VALUE) Double.NaN else value.toDouble
 
