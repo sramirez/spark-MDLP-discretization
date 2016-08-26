@@ -248,7 +248,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
   def findSmallThresholds(maxBins: Int,
                           initialCandidates: RDD[(Int, (Float, Array[Long]))],
                           bBigIndexes: Broadcast[Map[Int, Long]]): RDD[(Int, Seq[Float])] = {
-    println("cands = " + initialCandidates.collect().map(a =>  a._1 + " s=" + a._2._1 +" ["+ a._2._2.mkString(", ") +"]").mkString(";\n"))
+    //println("cands = " + initialCandidates.collect().map(a =>  a._1 + " s=" + a._2._1 +" ["+ a._2._2.mkString(", ") +"]").mkString(";\n"))
     val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
