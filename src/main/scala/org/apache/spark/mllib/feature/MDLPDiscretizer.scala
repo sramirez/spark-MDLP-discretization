@@ -115,8 +115,8 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
 
-    if (!data.filter(_.label == null).isEmpty())
-      logError("Some null values have been found in the labelColumn."
+    if (!data.filter(_.label.isNaN).isEmpty())
+      throw new IllegalArgumentException("Some NaN values have been found in the labelColumn."
           + " This problem must be fixed before continuing with discretization.")
 
     // Basic info. about the dataset

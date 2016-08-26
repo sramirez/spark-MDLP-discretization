@@ -319,6 +319,24 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
   }
 
   /**
+    * In this case do not convert nulls to a special MISSING value.
+    * An error should be reported if the label column contains NaN.
+    */
+  test("Run MDLPD on null_label_test data with nulls in label") {
+    val df = readNullLabelTestData(sqlContext)
+
+    try {
+      createDiscretizerModel(df, Array("col1", "col2"), "label")
+      fail("there should have been an exception")
+    }
+    catch {
+      case ex: IllegalArgumentException =>
+        assert(ex.getMessage.startsWith("Some NaN values have been found") , "Unexpected message: " + ex.getMessage)
+      case otherEx : Throwable => fail("Unexpected error: " + otherEx)
+    }
+  }
+
+  /**
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
   def getDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
@@ -326,30 +344,45 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
                           maxBins: Int = 100,
                           maxByPart: Int = 10000,
                           stoppingCriterion: Double = 0): DiscretizerModel = {
-    val df = dataframe
-      .withColumn(labelColumn + CLEAN_SUFFIX, when(col(labelColumn).isNull, lit(MISSING)).otherwise(col(labelColumn)))
+    val processedDf = cleanLabelCol(dataframe, labelColumn)
+    createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion)
+  }
 
-    val labelIndexer = new StringIndexer()
-      .setInputCol(labelColumn + CLEAN_SUFFIX)
-      .setOutputCol(labelColumn + INDEX_SUFFIX).fit(df)
-
-    var processedDf = labelIndexer.transform(df)
-
+  def createDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
+                             labelColumn: String,
+                             maxBins: Int = 100,
+                             maxByPart: Int = 10000,
+                             stoppingCriterion: Double = 0): DiscretizerModel = {
     val featureAssembler = new VectorAssembler()
       .setInputCols(inputCols)
       .setOutputCol("features")
-    processedDf = featureAssembler.transform(processedDf)
-    //processedDf.select("features").show(800)
+    val processedDf = featureAssembler.transform(dataframe)
 
     val discretizer = new MDLPDiscretizer()
       .setMaxBins(maxBins)
       .setMaxByPart(maxByPart)
       .setStoppingCriterion(stoppingCriterion)
-      .setInputCol("features")  // this must be a feature vector
+      .setInputCol("features") // this must be a feature vector
       .setLabelCol(labelColumn + INDEX_SUFFIX)
       .setOutputCol("bucketFeatures")
 
     discretizer.fit(processedDf)
+  }
+
+  def cleanLabelCol(dataframe: DataFrame, labelColumn: String): DataFrame = {
+    val df = dataframe
+      .withColumn(labelColumn + CLEAN_SUFFIX, when(col(labelColumn).isNull, lit(MISSING)).otherwise(col(labelColumn)))
+
+    convertLabelToIndex(df, labelColumn + CLEAN_SUFFIX, labelColumn + INDEX_SUFFIX)
+  }
+
+  def convertLabelToIndex(df: DataFrame, inputCol: String, outputCol: String): DataFrame = {
+
+    val labelIndexer = new StringIndexer()
+      .setInputCol(inputCol)
+      .setOutputCol(outputCol).fit(df)
+
+    labelIndexer.transform(df)
   }
 
 }

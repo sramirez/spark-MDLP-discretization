@@ -87,7 +87,8 @@ object TestHelper {
 
 
   /** @return the titanic data as a dataframe. This version is interesting because the VectorAssembler
-    *         makes some of its values sparse and other dense. In the other version they are all dense. */
+    *         makes some of its values sparse and other dense. In the other version they are all dense.
+    */
   def readTitanic2Data(sqlContext: SQLContext): DataFrame = {
     val data = SPARK_CTX.textFile(FILE_PREFIX + "titanic2.data")
     val nullable = true
@@ -117,6 +118,24 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  /** @return dataset with 3 double columns. The first is the label column and contain null.
+    */
+  def readNullLabelTestData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "null_label_test.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("label_IDX", DoubleType, nullable),
+      StructField("col1", DoubleType, nullable),
+      StructField("col2", DoubleType, nullable)
+    ))
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asDouble(x(0)), asDouble(x(1)), asDouble(x(2))))})
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
   private def asDateDouble(isoString: String) = {
     if (isoString == NULL_VALUE) Double.NaN
     else ISO_DATE_FORMAT.parseDateTime(isoString).getMillis.toString.toDouble
@@ -125,5 +144,4 @@ object TestHelper {
   // label cannot currently have null values - see #8.
   private def asString(value: String) = if (value == NULL_VALUE) null else value
   private def asDouble(value: String) = if (value == NULL_VALUE) Double.NaN else value.toDouble
-  //private def asInt(value: String) = if (value == NULL_VALUE) null else value.toInt
 }
