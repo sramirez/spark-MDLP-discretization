@@ -116,7 +116,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
         + " parent RDDs are also uncached.")
 
     if (!data.filter(_.label == null).isEmpty())
-      logError("Some null values have been found in the output column."
+      logError("Some null values have been found in the labelColumn."
           + " This problem must be fixed before continuing with discretization.")
 
     // Basic info. about the dataset

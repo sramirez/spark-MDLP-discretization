@@ -4,11 +4,17 @@ import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.scalatest.junit.JUnitRunner
-import MDLPDiscretizerSuite.CLEAN_SUFFIX
+import MDLPDiscretizerSuite._
 import TestHelper._
+import org.apache.spark.sql.functions.{when, lit, col}
 
 object MDLPDiscretizerSuite {
+
+  // This value is used to represent nulls in string columns
+  val MISSING = "__MISSING_VALUE__"
+
   val CLEAN_SUFFIX: String = "_CLEAN"
+  val INDEX_SUFFIX: String = "_IDX"
 }
 
 /**
@@ -293,14 +299,18 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
   /**
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
-  def getDiscretizerModel(df: DataFrame, inputCols: Array[String],
+  def getDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
                           labelColumn: String,
                           maxBins: Int = 100,
                           maxByPart: Int = 10000,
                           stoppingCriterion: Double = 0): DiscretizerModel = {
+
+    val df = dataframe
+      .withColumn(labelColumn + CLEAN_SUFFIX, when(col(labelColumn).isNull, lit(MISSING)).otherwise(col(labelColumn)))
+
     val labelIndexer = new StringIndexer()
-      .setInputCol(labelColumn)
-      .setOutputCol(labelColumn + CLEAN_SUFFIX).fit(df)
+      .setInputCol(labelColumn + CLEAN_SUFFIX)
+      .setOutputCol(labelColumn + INDEX_SUFFIX).fit(df)
 
     var processedDf = labelIndexer.transform(df)
 
@@ -314,7 +324,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       .setMaxByPart(maxByPart)
       .setStoppingCriterion(stoppingCriterion)
       .setInputCol("features")  // this must be a feature vector
-      .setLabelCol(labelColumn + CLEAN_SUFFIX)
+      .setLabelCol(labelColumn + INDEX_SUFFIX)
       .setOutputCol("bucketFeatures")
 
     discretizer.fit(processedDf)

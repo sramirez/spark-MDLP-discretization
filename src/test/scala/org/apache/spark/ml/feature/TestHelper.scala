@@ -92,8 +92,7 @@ object TestHelper {
   }
 
   // label cannot currently have null values - see #8.
-  //private def asString(value: String) = if (value == NULL_VALUE) null else value
-  private def asString(value: String) = value
+  private def asString(value: String) = if (value == NULL_VALUE) null else value
   private def asDouble(value: String) = if (value == NULL_VALUE) Double.NaN else value.toDouble
 
   //private def asInt(value: String) = if (value == NULL_VALUE) null else value.toInt
