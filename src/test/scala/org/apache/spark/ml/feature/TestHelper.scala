@@ -55,10 +55,9 @@ object TestHelper {
 
   /** @return the titanic data as a dataframe. This dataset has nulls and dates */
   def readTitanicData(sqlContext: SQLContext): DataFrame = {
-    val cars = SPARK_CTX.textFile(FILE_PREFIX + "titanic.data")
+    val titanic = SPARK_CTX.textFile(FILE_PREFIX + "titanic.data")
     val nullable = true
 
-    // //
     // No,       Braund,male,22,  A/5 21171,7.25, ?,     3,      S,        1,     0,     2015-04-22T00:00:00
     val schema = StructType(List(
       StructField("survived", StringType, nullable),
@@ -75,13 +74,45 @@ object TestHelper {
       StructField("grad date", DoubleType, nullable)
     ))
     // ints and dates must be read as doubles
-    val rows = cars.map(line => line.split(",").map(elem => elem.trim))
+    val rows = titanic.map(line => line.split(",").map(elem => elem.trim))
       .map(x => Row.fromSeq(Seq(
         asString(x(0)), asString(x(1)), asString(x(2)),
         asDouble(x(3)), asString(x(4)), asDouble(x(5)), asString(x(6)),
         asDouble(x(7)), asString(x(8)), asDouble(x(9)), asDouble(x(10)), asDateDouble(x(11))
         )
       ))
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
+
+  /** @return the titanic data as a dataframe. This version is interesting because the VectorAssembler
+    *         makes some of its values sparse and other dense. In the other version they are all dense. */
+  def readTitanic2Data(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "titanic2.data")
+    val nullable = true
+
+    // No	?	3	S	1	0
+    val schema = StructType(List(
+      StructField("survived", StringType, nullable),
+      StructField("name", StringType, nullable),
+      StructField("sex", StringType, nullable),
+      StructField("age", DoubleType, nullable),
+      StructField("ticket", StringType, nullable),
+      StructField("fare", DoubleType, nullable),
+      StructField("cabin", StringType, nullable),
+      StructField("pclass", DoubleType, nullable), // int
+      StructField("embarked", StringType, nullable),
+      StructField("sibsp", DoubleType, nullable), // int
+      StructField("parch", DoubleType, nullable)  // int
+    ))
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {
+        Row.fromSeq(Seq(
+          asString(x(0)), asString(x(1)), asString(x(2)), asDouble(x(3)), asString(x(4)), asDouble(x(5)),
+          asString(x(6)), asDouble(x(7)), asString(x(8)), asDouble(x(9)), asDouble(x(10))))
+      })
 
     sqlContext.createDataFrame(rows, schema)
   }
@@ -94,6 +125,5 @@ object TestHelper {
   // label cannot currently have null values - see #8.
   private def asString(value: String) = if (value == NULL_VALUE) null else value
   private def asDouble(value: String) = if (value == NULL_VALUE) Double.NaN else value.toDouble
-
   //private def asInt(value: String) = if (value == NULL_VALUE) null else value.toInt
 }

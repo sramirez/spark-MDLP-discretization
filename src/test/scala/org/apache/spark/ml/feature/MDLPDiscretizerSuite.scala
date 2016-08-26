@@ -185,6 +185,28 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+
+  /**
+    * The discretization of the parch column at one time did not work because the
+    * feature vector had a mix of dense and sparse vectors when the VectorAssembler was
+    * applied to this dataset.
+    */
+  test("Run MDLPD on all columns in titanic2 data (label = embarked)") {
+
+    val df = readTitanic2Data(sqlContext)
+    val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch"), "embarked")
+
+    assertResult(
+      """-Infinity, Infinity;
+        |-Infinity, 7.175, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.795851, 74.375, Infinity;
+        |-Infinity, 1.5, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   /** Simulate big data by lowering the maxByPart value to 100. */
   test("Run MDLPD on all columns in titanic data (label = embarked, maxByPart = 100)") {
 
@@ -304,7 +326,6 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
                           maxBins: Int = 100,
                           maxByPart: Int = 10000,
                           stoppingCriterion: Double = 0): DiscretizerModel = {
-
     val df = dataframe
       .withColumn(labelColumn + CLEAN_SUFFIX, when(col(labelColumn).isNull, lit(MISSING)).otherwise(col(labelColumn)))
 
@@ -318,6 +339,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       .setInputCols(inputCols)
       .setOutputCol("features")
     processedDf = featureAssembler.transform(processedDf)
+    //processedDf.select("features").show(800)
 
     val discretizer = new MDLPDiscretizer()
       .setMaxBins(maxBins)

@@ -135,25 +135,21 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     logInfo("Number of continuous attributes: " + continuousVars.distinct.length)
     logInfo("Total number of attributes: " + nFeatures)      
     if (continuousVars.isEmpty) logWarning("Discretization aborted. " +
-      "No continous attribute in the dataset")
+      "No continuous attributes in the dataset")
     
     // Generate pairs ((feature, point), class histogram)
-    val featureValues = dense match {
-      case true =>
-        sc.broadcast(continuousVars)
-        data.flatMap({ case LabeledPoint(label, dv: DenseVector) =>
+    sc.broadcast(continuousVars)
+    val featureValues =
+        data.flatMap({
+          case LabeledPoint(label, dv: DenseVector) =>
             val c = Array.fill[Long](nLabels)(0L)
             c(bLabels2Int.value(label)) = 1L
             for (i <- dv.values.indices) yield ((i, dv(i).toFloat), c)
+          case LabeledPoint(label, sv: SparseVector) =>
+            val c = Array.fill[Long](nLabels)(0L)
+            c(bLabels2Int.value(label)) = 1L
+            for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
         })
-      case false =>
-        sc.broadcast(continuousVars)
-        data.flatMap{ case LabeledPoint(label, sv: SparseVector) =>
-          val c = Array.fill[Long](nLabels)(0L)
-          c(bLabels2Int.value(label)) = 1L
-          for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
-        }
-    }
     
     // Group elements by feature and point (get distinct points)
     val nonZeros = featureValues.reduceByKey{ case (v1, v2) =>
