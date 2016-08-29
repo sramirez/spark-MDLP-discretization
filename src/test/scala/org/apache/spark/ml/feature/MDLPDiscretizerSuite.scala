@@ -4,11 +4,17 @@ import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
 import org.scalatest.junit.JUnitRunner
-import MDLPDiscretizerSuite.CLEAN_SUFFIX
+import MDLPDiscretizerSuite._
 import TestHelper._
+import org.apache.spark.sql.functions.{when, lit, col}
 
 object MDLPDiscretizerSuite {
+
+  // This value is used to represent nulls in string columns
+  val MISSING = "__MISSING_VALUE__"
+
   val CLEAN_SUFFIX: String = "_CLEAN"
+  val INDEX_SUFFIX: String = "_IDX"
 }
 
 /**
@@ -179,6 +185,28 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+
+  /**
+    * The discretization of the parch column at one time did not work because the
+    * feature vector had a mix of dense and sparse vectors when the VectorAssembler was
+    * applied to this dataset.
+    */
+  test("Run MDLPD on all columns in titanic2 data (label = embarked)") {
+
+    val df = readTitanic2Data(sqlContext)
+    val model = getDiscretizerModel(df, Array("age", "fare", "pclass", "sibsp", "parch"), "embarked")
+
+    assertResult(
+      """-Infinity, Infinity;
+        |-Infinity, 7.175, 7.2396, 7.6875, 7.7625, 13.20835, 15.3729, 15.795851, 74.375, Infinity;
+        |-Infinity, 1.5, 2.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   /** Simulate big data by lowering the maxByPart value to 100. */
   test("Run MDLPD on all columns in titanic data (label = embarked, maxByPart = 100)") {
 
@@ -290,34 +318,102 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+  test("Run MDLPD on all columns in iris data (label = iristype)") {
+
+    val df = readIrisData(sqlContext)
+    val model = getDiscretizerModel(df, Array("sepallength", "sepalwidth", "petallength", "petalwidth"), "iristype")
+
+    assertResult(
+      """-Infinity, 5.55, 6.1499996, Infinity;
+        |-Infinity, 3.35, Infinity;
+        |-Infinity, 2.45, 4.75, Infinity;
+        |-Infinity, 0.8, 1.75, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  test("Run MDLPD on all columns in iris data (label = iristype, splittingCriterion = -0.01)") {
+
+    val df = readIrisData(sqlContext)
+    val model = getDiscretizerModel(df, Array("sepallength", "sepalwidth", "petallength", "petalwidth"),
+      "iristype", maxBins = 100, maxByPart = 10000, stoppingCriterion = -0.01)
+
+    assertResult(
+      """-Infinity, 5.55, 6.1499996, Infinity;
+        |-Infinity, 2.95, 3.35, Infinity;
+        |-Infinity, 2.45, 4.75, 5.1499996, Infinity;
+        |-Infinity, 0.8, 1.75, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  /**
+    * In this case do not convert nulls to a special MISSING value.
+    * An error should be reported if the label column contains NaN.
+    */
+  test("Run MDLPD on null_label_test data with nulls in label") {
+    val df = readNullLabelTestData(sqlContext)
+
+    try {
+      createDiscretizerModel(df, Array("col1", "col2"), "label")
+      fail("there should have been an exception")
+    }
+    catch {
+      case ex: IllegalArgumentException =>
+        assert(ex.getMessage.startsWith("Some NaN values have been found") , "Unexpected message: " + ex.getMessage)
+      case otherEx : Throwable => fail("Unexpected error: " + otherEx)
+    }
+  }
+
   /**
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
-  def getDiscretizerModel(df: DataFrame, inputCols: Array[String],
+  def getDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
                           labelColumn: String,
                           maxBins: Int = 100,
                           maxByPart: Int = 10000,
                           stoppingCriterion: Double = 0): DiscretizerModel = {
-    val labelIndexer = new StringIndexer()
-      .setInputCol(labelColumn)
-      .setOutputCol(labelColumn + CLEAN_SUFFIX).fit(df)
+    val processedDf = cleanLabelCol(dataframe, labelColumn)
+    createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion)
+  }
 
-    var processedDf = labelIndexer.transform(df)
-
+  def createDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
+                             labelColumn: String,
+                             maxBins: Int = 100,
+                             maxByPart: Int = 10000,
+                             stoppingCriterion: Double = 0): DiscretizerModel = {
     val featureAssembler = new VectorAssembler()
       .setInputCols(inputCols)
       .setOutputCol("features")
-    processedDf = featureAssembler.transform(processedDf)
+    val processedDf = featureAssembler.transform(dataframe)
 
     val discretizer = new MDLPDiscretizer()
       .setMaxBins(maxBins)
       .setMaxByPart(maxByPart)
       .setStoppingCriterion(stoppingCriterion)
-      .setInputCol("features")  // this must be a feature vector
-      .setLabelCol(labelColumn + CLEAN_SUFFIX)
+      .setInputCol("features") // this must be a feature vector
+      .setLabelCol(labelColumn + INDEX_SUFFIX)
       .setOutputCol("bucketFeatures")
 
     discretizer.fit(processedDf)
+  }
+
+  def cleanLabelCol(dataframe: DataFrame, labelColumn: String): DataFrame = {
+    val df = dataframe
+      .withColumn(labelColumn + CLEAN_SUFFIX, when(col(labelColumn).isNull, lit(MISSING)).otherwise(col(labelColumn)))
+
+    convertLabelToIndex(df, labelColumn + CLEAN_SUFFIX, labelColumn + INDEX_SUFFIX)
+  }
+
+  def convertLabelToIndex(df: DataFrame, inputCol: String, outputCol: String): DataFrame = {
+
+    val labelIndexer = new StringIndexer()
+      .setInputCol(inputCol)
+      .setOutputCol(outputCol).fit(df)
+
+    labelIndexer.transform(df)
   }
 
 }

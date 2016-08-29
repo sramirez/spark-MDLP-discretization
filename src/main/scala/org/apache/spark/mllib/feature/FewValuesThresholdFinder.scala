@@ -81,11 +81,11 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
     // Compute the accumulated frequencies (both left and right) by label
     var leftAccum = Array.fill(nLabels)(0L)
     var entropyFreqs = Seq.empty[(Float, Array[Long], Array[Long], Array[Long])]
-    for(i <- candidates.indices) {
+    for (i <- candidates.indices) {
       val (cand, freq) = candidates(i)
       leftAccum = (leftAccum, freq).zipped.map(_ + _)
       val rightTotal = (totals, leftAccum).zipped.map(_ - _)
-      entropyFreqs = (cand, freq, leftAccum.clone, rightTotal) +: entropyFreqs
+      entropyFreqs = (cand, freq, leftAccum, rightTotal) +: entropyFreqs
     }
 
     val bucketInfo = new BucketInfo(totals)

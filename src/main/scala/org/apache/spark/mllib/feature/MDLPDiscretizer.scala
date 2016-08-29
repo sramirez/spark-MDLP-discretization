@@ -50,7 +50,6 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
    * @param points RDD with distinct points by feature ((feature, point), class values).
    * @param firstElements First elements in partitions 
    * @return RDD of candidate points.
-   * 
    */
   private def initialThresholds(
       points: RDD[((Int, Float), Array[Long])], 
@@ -115,8 +114,8 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
 
-    if (!data.filter(_.label == null).isEmpty())
-      logError("Some null values have been found in the output column."
+    if (!data.filter(_.label.isNaN).isEmpty())
+      throw new IllegalArgumentException("Some NaN values have been found in the labelColumn."
           + " This problem must be fixed before continuing with discretization.")
 
     // Basic info. about the dataset
@@ -135,25 +134,21 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     logInfo("Number of continuous attributes: " + continuousVars.distinct.length)
     logInfo("Total number of attributes: " + nFeatures)      
     if (continuousVars.isEmpty) logWarning("Discretization aborted. " +
-      "No continous attribute in the dataset")
+      "No continuous attributes in the dataset")
     
     // Generate pairs ((feature, point), class histogram)
-    val featureValues = dense match {
-      case true =>
-        sc.broadcast(continuousVars)
-        data.flatMap({ case LabeledPoint(label, dv: DenseVector) =>
+    sc.broadcast(continuousVars)
+    val featureValues =
+        data.flatMap({
+          case LabeledPoint(label, dv: DenseVector) =>
             val c = Array.fill[Long](nLabels)(0L)
             c(bLabels2Int.value(label)) = 1L
             for (i <- dv.values.indices) yield ((i, dv(i).toFloat), c)
+          case LabeledPoint(label, sv: SparseVector) =>
+            val c = Array.fill[Long](nLabels)(0L)
+            c(bLabels2Int.value(label)) = 1L
+            for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
         })
-      case false =>
-        sc.broadcast(continuousVars)
-        data.flatMap{ case LabeledPoint(label, sv: SparseVector) =>
-          val c = Array.fill[Long](nLabels)(0L)
-          c(bLabels2Int.value(label)) = 1L
-          for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
-        }
-    }
     
     // Group elements by feature and point (get distinct points)
     val nonZeros = featureValues.reduceByKey{ case (v1, v2) =>
@@ -228,7 +223,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
   /**
     * Feature with too many points must be processed iteratively (rare condition)
     *
-    * @return the splits for featuers with more values than will fit in a partition.
+    * @return the splits for features with more values than will fit in a partition.
     */
   def findBigThresholds(elementsByPart: Int, maxBins: Int,
                         initialCandidates: RDD[(Int, (Float, Array[Long]))],
@@ -253,6 +248,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
   def findSmallThresholds(maxBins: Int,
                           initialCandidates: RDD[(Int, (Float, Array[Long]))],
                           bBigIndexes: Broadcast[Map[Int, Long]]): RDD[(Int, Seq[Float])] = {
+    //println("cands = " + initialCandidates.collect().map(a =>  a._1 + " s=" + a._2._1 +" ["+ a._2._2.mkString(", ") +"]").mkString(";\n"))
     val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
@@ -261,7 +257,12 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1), maxBins))
   }
 
-  def buildModelFromThresholds(nFeatures: Int, continuousVars: Array[Int], allThresholds: Array[(Int, Seq[Float])]): DiscretizerModel = {
+  /**
+    * @return the discretizer model that can be used to bin data
+    */
+  def buildModelFromThresholds(nFeatures: Int,
+                               continuousVars: Array[Int],
+                               allThresholds: Array[(Int, Seq[Float])]): DiscretizerModel = {
     // Update the full list of features with the thresholds calculated
     val thresholds = Array.fill(nFeatures)(Array.empty[Float]) // Nominal values (empty)
     // Not processed continuous attributes

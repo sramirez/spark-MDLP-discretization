@@ -106,7 +106,7 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
       for ((cand, freqs) <- it) {
         leftTotal = (leftTotal, freqs).zipped.map(_ + _)
         val rightTotal = (bcTotals.value, leftTotal).zipped.map(_ - _)
-        entropyFreqs = (cand, freqs, leftTotal.clone, rightTotal) +: entropyFreqs
+        entropyFreqs = (cand, freqs, leftTotal, rightTotal) +: entropyFreqs
       }
       entropyFreqs.iterator
     })
