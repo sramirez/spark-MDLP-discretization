@@ -43,6 +43,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
 
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
+  private def calcMinBinWeight(maxBins: Int): Long = (0.1 * data.count() / maxBins).toLong
 
   /**
    * Computes the initial candidate points by feature.
@@ -210,9 +211,10 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       .countByKey()
       .filter{case (_, c) => c > elementsByPart}
     val bBigIndexes = sc.broadcast(bigIndexes)
+    val minBinWeight = calcMinBinWeight(maxBins)
 
-    val smallThresholds = findSmallThresholds(maxBins, initialCandidates, bBigIndexes)
-    val bigThresholds = findBigThresholds(elementsByPart, maxBins, initialCandidates, bigIndexes)
+    val smallThresholds = findSmallThresholds(maxBins, minBinWeight, initialCandidates, bBigIndexes)
+    val bigThresholds = findBigThresholds(elementsByPart, maxBins, minBinWeight, initialCandidates, bigIndexes)
 
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
@@ -225,17 +227,18 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     *
     * @return the splits for features with more values than will fit in a partition.
     */
-  def findBigThresholds(elementsByPart: Int, maxBins: Int,
+  def findBigThresholds(elementsByPart: Int, maxBins: Int, minBinWeight: Long,
                         initialCandidates: RDD[(Int, (Float, Array[Long]))],
                         bigIndexes: Map[Int, Long]): Map[Int, Seq[Float]] = {
     logInfo("Number of features that exceed the maximum size per partition: " +
       bigIndexes.size)
 
     var bigThresholds = Map.empty[Int, Seq[Float]]
-    val bigThresholdsFinder = new ManyValuesThresholdFinder(nLabels, stoppingCriterion)
+    val bigThresholdsFinder =
+      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight, elementsByPart)
     for (k <- bigIndexes.keys) {
       val cands = initialCandidates.filter { case (k2, _) => k == k2 }.values.sortByKey()
-      bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands, maxBins, elementsByPart)))
+      bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands)))
     }
     bigThresholds
   }
@@ -245,16 +248,17 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     *
     * @return the splits for features with few values
     */
-  def findSmallThresholds(maxBins: Int,
+  def findSmallThresholds(maxBins: Int, minBinWeight: Long,
                           initialCandidates: RDD[(Int, (Float, Array[Long]))],
                           bBigIndexes: Broadcast[Map[Int, Long]]): RDD[(Int, Seq[Float])] = {
     //println("cands = " + initialCandidates.collect().map(a =>  a._1 + " s=" + a._2._1 +" ["+ a._2._2.mkString(", ") +"]").mkString(";\n"))
-    val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
+    val smallThresholdsFinder =
+      new FewValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
       .groupByKey()
       .mapValues(_.toArray)
-      .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1), maxBins))
+      .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1)))
   }
 
   /**

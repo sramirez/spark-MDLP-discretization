@@ -139,6 +139,41 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  /** @return subset of fake telecom churn dataset. This dataset has more rows than the others.
+    */
+  def readChurnData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "churn.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("State", StringType, nullable),
+      StructField("Number Vmail Messages", DoubleType, nullable),
+      StructField("Total Day Minutes", DoubleType, nullable),
+      StructField("Total Day Calls", DoubleType, nullable),
+      StructField("Total Day Charge", DoubleType, nullable),
+      StructField("Total Eve Minutes", DoubleType, nullable),
+      StructField("Calls", DoubleType, nullable),
+      StructField("Charge", DoubleType, nullable),
+      StructField("Total Night Minutes", DoubleType, nullable),
+      StructField("Total Night Calls", DoubleType, nullable),
+      StructField("Total Night Charge", DoubleType, nullable),
+      StructField("Total Intl Minutes", DoubleType, nullable),
+      StructField("Total Intl Calls", DoubleType, nullable),
+      StructField("Total Intl Charge", DoubleType, nullable),
+      StructField("Number Customer Service Calls", DoubleType, nullable),
+      StructField("Churned", StringType, nullable)
+    ))
+
+
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asString(x(0)), asDouble(x(1)), asDouble(x(2)), asDouble(x(3)), asDouble(x(4)),
+        asDouble(x(5)), asDouble(x(6)), asDouble(x(7)), asDouble(x(8)), asDouble(x(9)), asDouble(x(10)),
+        asDouble(x(11)), asDouble(x(12)), asDouble(x(13)), asDouble(x(14)), asString(x(15))))})
+
+    sqlContext.createDataFrame(rows, schema)
+  }
 
   /** @return dataset with 3 double columns. The first is the label column and contain null.
     */

@@ -33,7 +33,7 @@ trait ThresholdFinder extends Serializable with Logging {
     * @return the MDLP criterion value, and the weighted entropy value
     */
   def calcCriterionValue(bucketInfo: BucketInfo,
-                         leftFreqs: Seq[Long], rightFreqs: Seq[Long]): (Double, Double) = {
+                         leftFreqs: Seq[Long], rightFreqs: Seq[Long]): (Double, Double, Long, Long) = {
     val k1 = leftFreqs.count(_ != 0)
     val s1 = if (k1 > 0) leftFreqs.sum else 0
     val hs1 = entropy(leftFreqs, s1)
@@ -43,7 +43,7 @@ trait ThresholdFinder extends Serializable with Logging {
     val weightedHs = (s1 * hs1 + s2 * hs2) / bucketInfo.s
     val gain = bucketInfo.hs - weightedHs
     val delta = log2(math.pow(3, bucketInfo.k) - 2) - (bucketInfo.k * bucketInfo.hs - k1 * hs1 - k2 * hs2)
-    (gain - (log2(bucketInfo.s - 1) + delta) / bucketInfo.s, weightedHs)
+    (gain - (log2(bucketInfo.s - 1) + delta) / bucketInfo.s, weightedHs, s1, s2)
   }
 
 }

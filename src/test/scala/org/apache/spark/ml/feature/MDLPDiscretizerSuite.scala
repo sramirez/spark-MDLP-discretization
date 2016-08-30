@@ -106,7 +106,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     assertResult(
       """-Infinity, 16.1, 21.05, 30.95, Infinity;
         |-Infinity, 5.5, 7.0, Infinity;
-        |-Infinity, 97.5, 106.0, 120.5, 134.5, 140.5, 148.5, 159.5, 165.5, 169.5, Infinity;
+        |-Infinity, 97.5, 106.0, 120.5, 134.5, 140.5, 148.5, 159.5, 169.5, Infinity;
         |-Infinity, 78.5, 134.0, Infinity;
         |-Infinity, 2379.5, 2959.5, 3274.0, Infinity;
         |-Infinity, 13.5, 19.5, Infinity;
@@ -184,7 +184,6 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
   }
-
 
   /**
     * The discretization of the parch column at one time did not work because the
@@ -309,7 +308,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
     assertResult(
       """-Infinity, 14.75, Infinity;
-        |-Infinity, 13.825001, 28.2, 41.9896, 44.65, 47.0, 51.67085, 152.50626, Infinity;
+        |-Infinity, 13.825001, 28.2, 41.9896, 47.0, 51.67085, 152.50626, Infinity;
         |-Infinity, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, 1.44359817E12, Infinity
@@ -364,6 +363,65 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       case ex: IllegalArgumentException =>
         assert(ex.getMessage.startsWith("Some NaN values have been found") , "Unexpected message: " + ex.getMessage)
       case otherEx : Throwable => fail("Unexpected error: " + otherEx)
+    }
+  }
+
+  test("Run MDLPD on all columns in churn data (label = churned, maxBins = 10)") {
+
+    val df = readChurnData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("Number Vmail Messages", "Total Day Minutes", "Total Day Calls", "Total Day Charge", "Total Eve Minutes",
+        "Calls", "Charge", "Total Night Minutes", "Total Night Calls", "Total Night Charge", "Total Intl Minutes",
+        "Total Intl Calls", "Total Intl Charge", "Number Customer Service Calls"),
+      "Churned", 10)
+
+    assertResult(
+      """-Infinity, 2.0, Infinity;
+        |-Infinity, 168.05, 221.85, 248.65, 285.5, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 28.57, 37.715, 42.269997, 48.535, Infinity;
+        |-Infinity, 248.15, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 21.095001, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 13.15, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, 3.55, Infinity;
+        |-Infinity, 3.5, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  /** many more bins will be generated when maxBins is 1000 because it also reduces the min weight allowed in a bin. */
+  test("Run MDLPD on all columns in churn data (label = churned, maxBins = 1000)") {
+
+    val df = readChurnData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("Number Vmail Messages", "Total Day Minutes", "Total Day Calls", "Total Day Charge", "Total Eve Minutes",
+        "Calls", "Charge", "Total Night Minutes", "Total Night Calls", "Total Night Charge", "Total Intl Minutes",
+        "Total Intl Calls", "Total Intl Charge", "Number Customer Service Calls"),
+      "Churned", 1000)
+
+    assertResult(
+      """-Infinity, 2.0, Infinity;
+        |-Infinity, 168.05, 221.85, 248.65, 285.5, 316.35, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 28.57, 37.715, 42.269997, 48.535, 53.78, Infinity;
+        |-Infinity, 248.15, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 21.095001, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 13.15, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, 3.55, Infinity;
+        |-Infinity, 3.5, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
     }
   }
 
