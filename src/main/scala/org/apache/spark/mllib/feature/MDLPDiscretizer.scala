@@ -37,13 +37,14 @@ import scala.collection.Map
  *
  * @param data RDD of LabeledPoint
  * @param stoppingCriterion (optional) used to determine when to stop recursive splitting
+ * @param minBinPercentage (optional) minimum percent of total dataset allowed in a single bin.
  */
 class MDLPDiscretizer private (val data: RDD[LabeledPoint],
-            stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION) extends Serializable with Logging {
+            stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
+            minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) extends Serializable with Logging {
 
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
-  private def calcMinBinWeight(maxBins: Int): Long = (0.1 * data.count() / maxBins).toLong
 
   /**
    * Computes the initial candidate points by feature.
@@ -211,7 +212,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       .countByKey()
       .filter{case (_, c) => c > elementsByPart}
     val bBigIndexes = sc.broadcast(bigIndexes)
-    val minBinWeight = calcMinBinWeight(maxBins)
+    val minBinWeight: Long = (minBinPercentage * data.count() / 100.0).toLong
 
     val smallThresholds = findSmallThresholds(maxBins, minBinWeight, initialCandidates, bBigIndexes)
     val bigThresholds = findBigThresholds(elementsByPart, maxBins, minBinWeight, initialCandidates, bigIndexes)
@@ -289,6 +290,13 @@ object MDLPDiscretizer {
   /** The original paper suggested 0 for the stopping criterion, but smaller values like -1e-3 yield more splits */
   private val DEFAULT_STOPPING_CRITERION = 0
 
+  /**
+    * Don't allow less that this percent of the total number of records in a single bin.
+    * The default is 0, meaning that its OK to have as few as a single record in a bin.
+    * A value of 0.1 means that no fewer than 0.1% of records will be in a single bin.
+    */
+  private val DEFAULT_MIN_BIN_PERCENTAGE = 0
+
   /** @return true if f1 and f2 define a boundary */
   private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
     (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
@@ -331,7 +339,8 @@ object MDLPDiscretizer {
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
       maxByPart: Int = 100000,
-      stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION) = {
-    new MDLPDiscretizer(input, stoppingCriterion).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
+      stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
+      minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) = {
+    new MDLPDiscretizer(input, stoppingCriterion, minBinPercentage).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
   }
 }
