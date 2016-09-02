@@ -22,9 +22,11 @@ import scala.collection.mutable
 /**
   * Use this version when the feature to discretize has relatively few unique values.
   * @param nLabels the number of class labels
+  * @param maxBins Maximum number of points to select.
+  * @param minBinWeight don't generate bins with fewer than this many records.
   * @param stoppingCriterion influences when to stop recursive splits
   */
-class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
+class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins: Int, minBinWeight: Long)
   extends ThresholdFinder  {
 
   /**
@@ -32,10 +34,9 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
     * Here, the evaluation is bounded by partition as the number of points is small enough.
     *
     * @param candidates RDD of candidates points (point, class histogram).
-    * @param maxBins Maximum number of points to select.
     * @return Sequence of threshold values.
     */
-  def findThresholds(candidates: Array[(Float, Array[Long])], maxBins: Int) = {
+  def findThresholds(candidates: Array[(Float, Array[Long])]) = {
 
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     // Insert first in the stack (recursive iteration)
@@ -93,8 +94,8 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
     // select best threshold according to the criteria
     val finalCandidates = entropyFreqs.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val (criterionValue, weightedHs) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
-        var criterion = criterionValue > stoppingCriterion
+        val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+        var criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
 
         lastSelected match {
           case None =>

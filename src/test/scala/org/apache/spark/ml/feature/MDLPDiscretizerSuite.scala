@@ -106,7 +106,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     assertResult(
       """-Infinity, 16.1, 21.05, 30.95, Infinity;
         |-Infinity, 5.5, 7.0, Infinity;
-        |-Infinity, 97.5, 106.0, 120.5, 134.5, 140.5, 148.5, 159.5, 165.5, 169.5, Infinity;
+        |-Infinity, 97.5, 106.0, 120.5, 134.5, 140.5, 148.5, 159.5, 169.5, Infinity;
         |-Infinity, 78.5, 134.0, Infinity;
         |-Infinity, 2379.5, 2959.5, 3274.0, Infinity;
         |-Infinity, 13.5, 19.5, Infinity;
@@ -184,7 +184,6 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
   }
-
 
   /**
     * The discretization of the parch column at one time did not work because the
@@ -309,7 +308,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
     assertResult(
       """-Infinity, 14.75, Infinity;
-        |-Infinity, 13.825001, 28.2, 41.9896, 44.65, 47.0, 51.67085, 152.50626, Infinity;
+        |-Infinity, 13.825001, 28.2, 41.9896, 47.0, 51.67085, 152.50626, Infinity;
         |-Infinity, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, 1.44359817E12, Infinity
@@ -367,6 +366,95 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+  /** the min bin percent is 5% */
+  test("Run MDLPD on all columns in churn data (label = churned, maxBins = 1000, minBinPercentage = 5.0)") {
+    val df = readChurnData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("Number Vmail Messages", "Total Day Minutes", "Total Day Calls", "Total Day Charge", "Total Eve Minutes",
+        "Calls", "Charge", "Total Night Minutes", "Total Night Calls", "Total Night Charge", "Total Intl Minutes",
+        "Total Intl Calls", "Total Intl Charge", "Number Customer Service Calls"),
+      "Churned", maxBins = 1000, maxByPart = 10000, stoppingCriterion = 0, minBinPercentage = 5.0)
+
+    assertResult(
+      """-Infinity, 2.0, Infinity;
+        |-Infinity, 168.05, 221.85, 248.65, 271.05, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 28.57, 37.715, 42.269997, 46.08, Infinity;
+        |-Infinity, 248.15, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 21.095001, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 13.15, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, 3.55, Infinity;
+        |-Infinity, 3.5, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  /** More bins will be generated because the minBinPercentage is lower. */
+  test("Run MDLPD on all columns in churn data (label = churned, maxBins = 1000, minBinPercentage = 0.01)") {
+
+    val df = readChurnData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("Number Vmail Messages", "Total Day Minutes", "Total Day Calls", "Total Day Charge", "Total Eve Minutes",
+        "Calls", "Charge", "Total Night Minutes", "Total Night Calls", "Total Night Charge", "Total Intl Minutes",
+        "Total Intl Calls", "Total Intl Charge", "Number Customer Service Calls"),
+      "Churned", maxBins = 1000, maxByPart = 10000, stoppingCriterion = 0, minBinPercentage = 0.01)
+
+    assertResult(
+      """-Infinity, 2.0, Infinity;
+        |-Infinity, 168.05, 221.85, 248.65, 285.5, 316.35, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 28.57, 37.715, 42.269997, 48.535, 53.78, Infinity;
+        |-Infinity, 248.15, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 21.095001, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, 13.15, Infinity;
+        |-Infinity, 2.5, Infinity;
+        |-Infinity, 3.55, Infinity;
+        |-Infinity, 3.5, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  /** state is a label with many values and none of them correlate well with the other columns */
+  test("Run MDLPD on all columns in churn data (label = state, maxBins = 1000)") {
+
+    val df = readChurnData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("Number Vmail Messages", "Total Day Minutes", "Total Day Calls", "Total Day Charge", "Total Eve Minutes",
+        "Calls", "Charge", "Total Night Minutes", "Total Night Calls", "Total Night Charge", "Total Intl Minutes",
+        "Total Intl Calls", "Total Intl Charge", "Number Customer Service Calls"),
+      "State", maxBins = 1000)
+
+    assertResult(
+      """-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
   /**
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
@@ -374,16 +462,18 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
                           labelColumn: String,
                           maxBins: Int = 100,
                           maxByPart: Int = 10000,
-                          stoppingCriterion: Double = 0): DiscretizerModel = {
+                          stoppingCriterion: Double = 0,
+                          minBinPercentage: Double = 0): DiscretizerModel = {
     val processedDf = cleanLabelCol(dataframe, labelColumn)
-    createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion)
+    createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion, minBinPercentage)
   }
 
   def createDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
                              labelColumn: String,
                              maxBins: Int = 100,
                              maxByPart: Int = 10000,
-                             stoppingCriterion: Double = 0): DiscretizerModel = {
+                             stoppingCriterion: Double = 0,
+                             minBinPercentage: Double = 0): DiscretizerModel = {
     val featureAssembler = new VectorAssembler()
       .setInputCols(inputCols)
       .setOutputCol("features")
@@ -393,6 +483,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       .setMaxBins(maxBins)
       .setMaxByPart(maxByPart)
       .setStoppingCriterion(stoppingCriterion)
+      .setMinBinPercentage(minBinPercentage)
       .setInputCol("features") // this must be a feature vector
       .setLabelCol(labelColumn + INDEX_SUFFIX)
       .setOutputCol("bucketFeatures")

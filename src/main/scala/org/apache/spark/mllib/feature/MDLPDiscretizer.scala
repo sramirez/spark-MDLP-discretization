@@ -37,9 +37,11 @@ import scala.collection.Map
  *
  * @param data RDD of LabeledPoint
  * @param stoppingCriterion (optional) used to determine when to stop recursive splitting
+ * @param minBinPercentage (optional) minimum percent of total dataset allowed in a single bin.
  */
 class MDLPDiscretizer private (val data: RDD[LabeledPoint],
-            stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION) extends Serializable with Logging {
+            stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
+            minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) extends Serializable with Logging {
 
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
@@ -210,9 +212,10 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       .countByKey()
       .filter{case (_, c) => c > elementsByPart}
     val bBigIndexes = sc.broadcast(bigIndexes)
+    val minBinWeight: Long = (minBinPercentage * data.count() / 100.0).toLong
 
-    val smallThresholds = findSmallThresholds(maxBins, initialCandidates, bBigIndexes)
-    val bigThresholds = findBigThresholds(elementsByPart, maxBins, initialCandidates, bigIndexes)
+    val smallThresholds = findSmallThresholds(maxBins, minBinWeight, initialCandidates, bBigIndexes)
+    val bigThresholds = findBigThresholds(elementsByPart, maxBins, minBinWeight, initialCandidates, bigIndexes)
 
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
@@ -225,17 +228,18 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     *
     * @return the splits for features with more values than will fit in a partition.
     */
-  def findBigThresholds(elementsByPart: Int, maxBins: Int,
+  def findBigThresholds(elementsByPart: Int, maxBins: Int, minBinWeight: Long,
                         initialCandidates: RDD[(Int, (Float, Array[Long]))],
                         bigIndexes: Map[Int, Long]): Map[Int, Seq[Float]] = {
     logInfo("Number of features that exceed the maximum size per partition: " +
       bigIndexes.size)
 
     var bigThresholds = Map.empty[Int, Seq[Float]]
-    val bigThresholdsFinder = new ManyValuesThresholdFinder(nLabels, stoppingCriterion)
+    val bigThresholdsFinder =
+      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight, elementsByPart)
     for (k <- bigIndexes.keys) {
       val cands = initialCandidates.filter { case (k2, _) => k == k2 }.values.sortByKey()
-      bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands, maxBins, elementsByPart)))
+      bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands)))
     }
     bigThresholds
   }
@@ -245,16 +249,17 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     *
     * @return the splits for features with few values
     */
-  def findSmallThresholds(maxBins: Int,
+  def findSmallThresholds(maxBins: Int, minBinWeight: Long,
                           initialCandidates: RDD[(Int, (Float, Array[Long]))],
                           bBigIndexes: Broadcast[Map[Int, Long]]): RDD[(Int, Seq[Float])] = {
     //println("cands = " + initialCandidates.collect().map(a =>  a._1 + " s=" + a._2._1 +" ["+ a._2._2.mkString(", ") +"]").mkString(";\n"))
-    val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion)
+    val smallThresholdsFinder =
+      new FewValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
       .groupByKey()
       .mapValues(_.toArray)
-      .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1), maxBins))
+      .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1)))
   }
 
   /**
@@ -284,6 +289,13 @@ object MDLPDiscretizer {
 
   /** The original paper suggested 0 for the stopping criterion, but smaller values like -1e-3 yield more splits */
   private val DEFAULT_STOPPING_CRITERION = 0
+
+  /**
+    * Don't allow less that this percent of the total number of records in a single bin.
+    * The default is 0, meaning that its OK to have as few as a single record in a bin.
+    * A value of 0.1 means that no fewer than 0.1% of records will be in a single bin.
+    */
+  private val DEFAULT_MIN_BIN_PERCENTAGE = 0
 
   /** @return true if f1 and f2 define a boundary */
   private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
@@ -327,7 +339,8 @@ object MDLPDiscretizer {
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
       maxByPart: Int = 100000,
-      stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION) = {
-    new MDLPDiscretizer(input, stoppingCriterion).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
+      stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
+      minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) = {
+    new MDLPDiscretizer(input, stoppingCriterion, minBinPercentage).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
   }
 }

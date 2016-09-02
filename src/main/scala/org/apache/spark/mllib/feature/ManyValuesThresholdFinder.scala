@@ -24,9 +24,14 @@ import scala.collection.mutable
 /**
   * Use this version when the feature to discretize has more values that will fix in a partition (see maxByPart param).
   * @param nLabels the number of class labels
+  * @param maxBins Maximum number of points to select
+  * @param minBinWeight don't generate bins with fewer than this many records.
+  * @param elementsByPart Maximum number of elements to evaluate in each partition.
   * @param stoppingCriterion influences when to stop recursive splits
   */
-class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
+class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
+                                maxBins: Int, minBinWeight: Long,
+                                elementsByPart: Int)
   extends ThresholdFinder {
 
   /**
@@ -34,13 +39,9 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
     * the number of candidates exceeds the maximum size per partition (distributed version).
     *
     * @param candidates RDD of candidates points (point, class histogram).
-    * @param maxBins Maximum number of points to select
-    * @param elementsByPart Maximum number of elements to evaluate in each partition.
     * @return Sequence of threshold values.
     */
-  def findThresholds(candidates: RDD[(Float, Array[Long])],
-                     maxBins: Int,
-                     elementsByPart: Int): Seq[Float] = {
+  def findThresholds(candidates: RDD[(Float, Array[Long])]): Seq[Float] = {
 
     // Get the number of partitions according to the maximum size established by partition
     val partitions = { x: Long => math.ceil(x.toFloat / elementsByPart).toInt }
@@ -116,8 +117,8 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double)
     // select the best threshold according to MDLP
     val finalCandidates = result.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val (criterionValue, weightedHs) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
-        var criterion = criterionValue > stoppingCriterion
+        val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+        var criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
         lastSelected match {
           case None =>
           case Some(last) => criterion = criterion && (cand != last)

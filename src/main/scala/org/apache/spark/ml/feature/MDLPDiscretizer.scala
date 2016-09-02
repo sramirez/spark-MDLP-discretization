@@ -75,6 +75,16 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
 
   /** @group getParam */
   def getStoppingCriterion: Double = getOrDefault(stoppingCriterion)
+
+  val minBinPercentage = new DoubleParam(this, "minBinPercentage",
+    "A lower limit on the percent of total instances allowed in a single bin. " +
+    "The default is 0 to be consistent with the original 1993 paper by Fayyad and Irani, " +
+    "but some applications may find it useful to prevent bins with just a very small number of instances." +
+    " A value of 0.1% is reasonable, but it depends somewhat on the value of maxBins.",
+    ParamValidators.inRange(0, 5.0))
+
+  /** @group getParam */
+  def getMinBinPercentage: Double = getOrDefault(minBinPercentage)
 }
 
 /**
@@ -97,6 +107,9 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
   def setStoppingCriterion(value: Double): this.type = set(stoppingCriterion, value)
 
   /** @group setParam */
+  def setMinBinPercentage(value: Double): this.type = set(minBinPercentage, value)
+
+  /** @group setParam */
   def setInputCol(value: String): this.type = set(inputCol, value)
 
   /** @group setParam */
@@ -113,8 +126,8 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
     val input = dataset.select($(labelCol), $(inputCol)).map {
       case Row(label: Double, features: Vector) =>
         LabeledPoint(label, features)
-    }
-    val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion))
+    }.cache() // cache the input to avoid performance warning (see issue #18)
+    val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
   
