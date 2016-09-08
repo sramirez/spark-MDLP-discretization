@@ -118,7 +118,6 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
-
   /** @return standard iris dataset from UCI repo.
     */
   def readIrisData(sqlContext: SQLContext): DataFrame = {
@@ -164,8 +163,6 @@ object TestHelper {
       StructField("Churned", StringType, nullable)
     ))
 
-
-
     // ints and dates must be read as doubles
     val rows = data.map(line => line.split(",").map(elem => elem.trim))
       .map(x => {Row.fromSeq(Seq(asString(x(0)), asDouble(x(1)), asDouble(x(2)), asDouble(x(3)), asDouble(x(4)),
@@ -174,6 +171,41 @@ object TestHelper {
 
     sqlContext.createDataFrame(rows, schema)
   }
+
+  /** @return subset of 311 service call data.
+    */
+  def readSvcRequests40000Data(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "svcRequests40000.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("Unique Key", DoubleType, nullable),
+      StructField("Closed Date", DoubleType, nullable),
+      StructField("Agency", StringType, nullable),
+      StructField("Complaint Type", StringType, nullable),
+      StructField("Descriptor", StringType, nullable),
+      StructField("Incident Zip", StringType, nullable),
+      StructField("City", StringType, nullable),
+      StructField("Landmark", StringType, nullable),
+      StructField("Facility Type", StringType, nullable),
+      StructField("Status", StringType, nullable),
+      StructField("Borough", StringType, nullable),
+      StructField("X Coordinate (State Plane)", DoubleType, nullable),
+      StructField("Y Coordinate (State Plane)", DoubleType, nullable),
+      StructField("Latitude", DoubleType, nullable),
+      StructField("Longitude", DoubleType, nullable)
+    ))
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asDouble(x(0)), asDateDouble(x(1)), asString(x(2)), asString(x(3)), asString(x(4)),
+        asString(x(5)), asString(x(6)), asString(x(7)), asString(x(8)), asString(x(9)), asString(x(10)),
+        asDouble(x(11)), asDouble(x(12)), asDouble(x(13)), asDouble(x(14))))})
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
+
 
   /** @return dataset with 3 double columns. The first is the label column and contain null.
     */
