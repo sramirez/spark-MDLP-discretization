@@ -3,6 +3,7 @@ package org.apache.spark.ml.feature
 import java.sql.Timestamp
 
 import org.apache.log4j.{Level, LogManager}
+import org.apache.spark.sql.functions._
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.sql.types._
@@ -18,6 +19,76 @@ object TestHelper {
   final val ISO_DATE_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss")
   final val NULL_VALUE = "?"
 
+  // This value is used to represent nulls in string columns
+  final val MISSING = "__MISSING_VALUE__"
+  final val CLEAN_SUFFIX: String = "_CLEAN"
+  final val INDEX_SUFFIX: String = "_IDX"
+
+  /**
+    * @return the discretizer fit to the data given the specified features to bin and label use as target.
+    */
+  def createDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
+                             labelColumn: String,
+                             maxBins: Int = 100,
+                             maxByPart: Int = 10000,
+                             stoppingCriterion: Double = 0,
+                             minBinPercentage: Double = 0): DiscretizerModel = {
+    val featureAssembler = new VectorAssembler()
+      .setInputCols(inputCols)
+      .setOutputCol("features")
+    val processedDf = featureAssembler.transform(dataframe)
+
+    val discretizer = new MDLPDiscretizer()
+      .setMaxBins(maxBins)
+      .setMaxByPart(maxByPart)
+      .setStoppingCriterion(stoppingCriterion)
+      .setMinBinPercentage(minBinPercentage)
+      .setInputCol("features") // this must be a feature vector
+      .setLabelCol(labelColumn + INDEX_SUFFIX)
+      .setOutputCol("bucketFeatures")
+
+    discretizer.fit(processedDf)
+  }
+
+
+  /**
+    * The label column will have null values replaced with MISSING values in this case.
+    * @return the discretizer fit to the data given the specified features to bin and label use as target.
+    */
+  def getDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
+                          labelColumn: String,
+                          maxBins: Int = 100,
+                          maxByPart: Int = 10000,
+                          stoppingCriterion: Double = 0,
+                          minBinPercentage: Double = 0): DiscretizerModel = {
+    val processedDf = cleanLabelCol(dataframe, labelColumn)
+    createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion, minBinPercentage)
+  }
+
+
+  def cleanLabelCol(dataframe: DataFrame, labelColumn: String): DataFrame = {
+    val df = dataframe
+      .withColumn(labelColumn + CLEAN_SUFFIX, when(col(labelColumn).isNull, lit(MISSING)).otherwise(col(labelColumn)))
+
+    convertLabelToIndex(df, labelColumn + CLEAN_SUFFIX, labelColumn + INDEX_SUFFIX)
+  }
+
+  def cleanNumericCols(dataframe: DataFrame, numericCols: Array[String]): DataFrame = {
+    var df = dataframe
+    numericCols.foreach(column => {
+      df = df.withColumn(column + CLEAN_SUFFIX, when(col(column).isNull, lit(Double.NaN)).otherwise(col(column)))
+    })
+    df
+  }
+
+  def convertLabelToIndex(df: DataFrame, inputCol: String, outputCol: String): DataFrame = {
+
+    val labelIndexer = new StringIndexer()
+      .setInputCol(inputCol)
+      .setOutputCol(outputCol).fit(df)
+
+    labelIndexer.transform(df)
+  }
 
   def createSparkContext() = {
     // the [n] corresponds to the number of worker threads and should correspond ot the number of cores available.
