@@ -157,6 +157,8 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
   /**
     * If the label has actual null values, this throws an NPE.
     * Nulls are currently represented with "?"
+    * Sometimes this does not find the first 6.6229 cutpoint for fare. It fails intermittently as a result.
+    * I believe this is due to issue #14.
     */
   test("Run MDLPD on all columns in titanic data (label = embarked)") {
 
@@ -196,7 +198,10 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /** Simulate big data by lowering the maxByPart value to 100. */
+  /**
+    * Simulate big data by lowering the maxByPart value to 100.
+    * Sometimes fails due to issue #14.
+    */
   test("Run MDLPD on all columns in titanic data (label = embarked, maxByPart = 100)") {
 
     val df = readTitanicData(sqlContext)
