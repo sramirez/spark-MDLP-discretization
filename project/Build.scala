@@ -6,7 +6,7 @@ object ProjectBuild extends Build {
   lazy val project = Project(
     id = "root",
     base = file("."),
-    settings = Project.defaultSettings ++ Seq(
+    settings = Defaults.coreDefaultSettings ++ Seq(
       	name := "spark-MDLP-discretization",
 	version := "0.2-SNAPSHOT",
 	organization := "org.apache.spark",

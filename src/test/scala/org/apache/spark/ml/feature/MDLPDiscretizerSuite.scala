@@ -15,7 +15,7 @@ import TestHelper._
 @RunWith(classOf[JUnitRunner])
 class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
-  var sqlContext: SQLContext = null
+  var sqlContext: SQLContext = _
 
   override def beforeAll(): Unit = {
     sqlContext = new SQLContext(SPARK_CTX)

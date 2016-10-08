@@ -36,7 +36,7 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
     * @param candidates RDD of candidates points (point, class histogram).
     * @return Sequence of threshold values.
     */
-  def findThresholds(candidates: Array[(Float, Array[Long])]) = {
+  def findThresholds(candidates: Array[(Float, Array[Long])]): Seq[Float] = {
 
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     // Insert first in the stack (recursive iteration)
