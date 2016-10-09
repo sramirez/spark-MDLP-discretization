@@ -155,9 +155,8 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
 
     // Get the first elements by partition for the boundary points evaluation
-    val firstElements = sc.runJob(sortedValues, { case it =>
-      if (it.hasNext) Some(it.next()._1) else None
-    }: (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
+    val firstElements = sc.runJob(sortedValues, (it =>
+      if (it.hasNext) Some(it.next()._1) else None): (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
       
     // Filter those features selected by the user
     val arr = Array.fill(nFeatures) { false }
@@ -241,7 +240,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
   }
 
   /**
-    * Feature with too many points must be processed iteratively (rare condition)
+    * Features with too many unique points must be processed iteratively (rare condition)
     *
     * @return the splits for features with more values than will fit in a partition.
     */

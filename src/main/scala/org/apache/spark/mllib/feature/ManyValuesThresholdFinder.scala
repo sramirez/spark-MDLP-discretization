@@ -19,6 +19,7 @@ package org.apache.spark.mllib.feature
 
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable
+import ThresholdFinder.calcCriterionValue
 
 
 /**
@@ -86,9 +87,11 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
     val sc = candidates.sparkContext
 
     // Compute the accumulated frequencies by partition
-    val totalsByPart = sc.runJob(candidates, { case it =>
+    val totalsByPart = sc.runJob(candidates, { it =>
       val accum = Array.fill(nLabels)(0L)
-      for ((_, freqs) <- it) {for (i <- 0 until nLabels) accum(i) += freqs(i)}
+      for ((_, freqs) <- it) {
+        for (i <- 0 until nLabels) accum(i) += freqs(i)
+      }
       accum
     }: (Iterator[(Float, Array[Long])]) => Array[Long])
 

@@ -42,7 +42,7 @@ class MDLPDiscretizerBigSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /** Lots of rows (40k) few bins. */
+  /** Lots of rows (40k) few bins. Sometimes fails due to #14 */
   test("Run MDLPD on all columns in srvRequest40000 data (label = churned, maxBins = 10, maxByPart = 10000)") {
 
     val df = readSvcRequests40000Data(sqlContext)

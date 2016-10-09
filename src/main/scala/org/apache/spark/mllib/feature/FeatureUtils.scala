@@ -35,6 +35,8 @@ object FeatureUtils {
   val log2 = { x: Double => math.log(x) / LOG2 }
 
   /**
+    * Entropy is a measure of disorder. The higher the value, the closer to a purely random distribution.
+    * The MDLP algorithm tries to find splits that will minimize entropy.
     * @param frequencies sequence of integer frequencies.
     * @param n the sum of all the frequencies in the list.
     * @return the total entropy

@@ -20,17 +20,13 @@ package org.apache.spark.mllib.feature
 import org.apache.spark.Logging
 import FeatureUtils._
 
-
-/**
-  * Base trait for threshold finders.
-  */
-trait ThresholdFinder extends Serializable with Logging {
+object ThresholdFinder {
 
   /**
     * @param bucketInfo info about the parent bucket
     * @param leftFreqs frequencies to the left
     * @param rightFreqs frequencies to the right
-    * @return the MDLP criterion value, and the weighted entropy value
+    * @return the MDLP criterion value, the weighted entropy value, sum of leftFreqs, and sum of rightFreqs
     */
   def calcCriterionValue(bucketInfo: BucketInfo,
                          leftFreqs: Seq[Long], rightFreqs: Seq[Long]): (Double, Double, Long, Long) = {
@@ -45,5 +41,11 @@ trait ThresholdFinder extends Serializable with Logging {
     val delta = log2(math.pow(3, bucketInfo.k) - 2) - (bucketInfo.k * bucketInfo.hs - k1 * hs1 - k2 * hs2)
     (gain - (log2(bucketInfo.s - 1) + delta) / bucketInfo.s, weightedHs, s1, s2)
   }
+}
+
+/**
+  * Base trait for threshold finders.
+  */
+trait ThresholdFinder extends Serializable with Logging {
 
 }
