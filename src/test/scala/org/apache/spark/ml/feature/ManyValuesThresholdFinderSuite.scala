@@ -28,7 +28,7 @@ class ManyValuesThresholdFinderSuite extends FunSuite with BeforeAndAfterAll {
   test("Run many values finder on nLabels = 3 feature len = 4") {
 
     val finder = new ManyValuesThresholdFinder(nLabels = 3, stoppingCriterion = 0,
-      maxBins = 100, minBinWeight = 1, elementsByPart = 1000)
+      maxBins = 100, minBinWeight = 1)
 
     val feature = SPARK_CTX.parallelize(List(
       (4.0f, Array(1L, 2L, 3L)),
@@ -53,7 +53,7 @@ class ManyValuesThresholdFinderSuite extends FunSuite with BeforeAndAfterAll {
 
 
     val finder = new ManyValuesThresholdFinder(nLabels = 6, stoppingCriterion = 0,
-      maxBins = 100, minBinWeight = 1, elementsByPart = 1)
+      maxBins = 100, minBinWeight = 1)
 
     val result = finder.findThresholds(feature)
 

@@ -26,12 +26,10 @@ import scala.collection.mutable
   * @param nLabels the number of class labels
   * @param maxBins Maximum number of points to select
   * @param minBinWeight don't generate bins with fewer than this many records.
-  * @param elementsByPart Maximum number of elements to evaluate in each partition.
   * @param stoppingCriterion influences when to stop recursive splits
   */
 class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
-                                maxBins: Int, minBinWeight: Long,
-                                elementsByPart: Int)
+                                maxBins: Int, minBinWeight: Long)
   extends ThresholdFinder {
 
   /**
@@ -43,9 +41,6 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
     */
   def findThresholds(candidates: RDD[(Float, Array[Long])]): Seq[Float] = {
 
-    // Get the number of partitions according to the maximum size established by partition
-    val partitions = { x: Long => math.ceil(x.toFloat / elementsByPart).toInt }
-
     // Insert the extreme values in the stack (recursive iteration)
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     stack.enqueue(((Float.NegativeInfinity, Float.PositiveInfinity), None))
@@ -53,12 +48,10 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
 
     while (stack.nonEmpty && result.size < maxBins){
       val (bounds, lastThresh) = stack.dequeue
-      // Filter the candidates between the last limits added to the stack
-      var cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
+      // Filter to the candidates between the last limits added to the stack
+      val cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
       val nCands = cands.count
       if (nCands > 0) {
-        cands = cands.coalesce(partitions(nCands))
-        // Selects one threshold among the candidates and returns two partitions to recurse
         evalThresholds(cands, lastThresh) match {
           case Some(th) =>
             result = th +: result
@@ -125,7 +118,7 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
         }
         if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
     })
-    // Select among the list of accepted candidate, that with the minimum weightedHs
+    // Select the candidate with the minimum weightedHs from among the list of accepted candidates.
     if (finalCandidates.count > 0) Some(finalCandidates.min._2) else None
   }
 }
