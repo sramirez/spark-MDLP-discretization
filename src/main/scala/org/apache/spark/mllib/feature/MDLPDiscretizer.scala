@@ -55,16 +55,17 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
    */
   private def initialThresholds(
       points: RDD[((Int, Float), Array[Long])], 
-      firstElements: Array[Option[(Int, Float)]]) = {
+      firstElements: Array[Option[((Int, Float), Array[Long])]]) = {
     
     val numPartitions = points.partitions.length
+    println("numParts = " + numPartitions)
     val bcFirsts = points.context.broadcast(firstElements)
 
-    points.mapPartitionsWithIndex({ (index, it) =>      
+    points.mapPartitionsWithIndex({ (index, it) =>
       if (it.hasNext) {
         var ((lastFeatureIdx, lastX), lastFreqs) = it.next()
         var result = Seq.empty[((Int, Float), Array[Long])]
-        var accumFreqs = lastFreqs      
+        var accumFreqs = lastFreqs
         
         for (((featureIdx, x), freqs) <- it) {
           if (featureIdx != lastFeatureIdx) {
@@ -73,7 +74,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
             accumFreqs = Array.fill(nLabels)(0L)
           } else if (isBoundary(freqs, lastFreqs)) {
             // new boundary point: midpoint between this point and the previous one
-            result = ((lastFeatureIdx, (x + lastX) / 2), accumFreqs.clone) +: result
+            result = ((lastFeatureIdx, midpoint(x, lastX)), accumFreqs.clone) +: result
             accumFreqs = Array.fill(nLabels)(0L)
           }
           
@@ -84,19 +85,31 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
         }
        
         // Evaluate the last point in this partition with the first one in the next partition
-        val lastPoint = if (index < (numPartitions - 1)) {
+        if (index < (numPartitions - 1)) {
           bcFirsts.value(index + 1) match {
-            case Some((featureIdx, x)) => if (featureIdx != lastFeatureIdx) lastX else (x + lastX) / 2
-            case None => lastX // last point in the attribute
+            case Some(((featureIdx, x), freqs)) =>
+              if (featureIdx != lastFeatureIdx) {
+                result = ((lastFeatureIdx, lastX), accumFreqs.clone) +: result
+              } else if (isBoundary(freqs, lastFreqs)) {
+                result = ((lastFeatureIdx, midpoint(x, lastX)), accumFreqs.clone) +: result
+              }
+            case None => throw new IllegalStateException("no first element in partition")
           }
-        }else{
-          lastX // last point in the dataset
-        }                    
-        (((lastFeatureIdx, lastPoint), accumFreqs.clone) +: result).reverse.toIterator
+        } else {
+          result = ((lastFeatureIdx, lastX), accumFreqs.clone) +: result
+        }
+        result.reverse.toIterator
       } else {
         Iterator.empty
-      }             
+      }
     })
+  }
+
+  // If one of the unique values is NaN, use the other one, otherwise take the midpoint.
+  def midpoint(x1: Float, x2: Float): Float = {
+    if (x1.isNaN) x2
+    else if (x2.isNaN) x1
+    else (x1 + x2) / 2.0F
   }
 
   /**
@@ -111,7 +124,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       contFeat: Option[Seq[Int]], 
       elementsByPart: Int,
       maxBins: Int): DiscretizerModel = {
-    
+
     if (data.getStorageLevel == StorageLevel.NONE)
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
@@ -156,9 +169,9 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
 
     // Get the first elements by partition for the boundary points evaluation
     val firstElements = sc.runJob(sortedValues, { case it =>
-      if (it.hasNext) Some(it.next()._1) else None
-    }: (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
-      
+      if (it.hasNext) Some(it.next()) else None
+    }: (Iterator[((Int, Float), Array[Long])]) => Option[((Int, Float), Array[Long])])
+
     // Filter those features selected by the user
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
@@ -166,9 +179,16 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
 
     // Get only boundary points from the whole set of distinct values
     val initialCandidates = initialThresholds(sortedValues, firstElements)
-      .map{case ((k, point), c) => (k, (point, c))}
-      .filter({case (k, _) => barr.value(k)})
+      .map{case ((featureIdx, point), cut) => (featureIdx, (point, cut))}
+      .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features
+
+    val numDistinct = initialCandidates
+      .groupByKey()
+      .mapValues(x => {
+        x.toArray.length
+      })
+    println("numDistinct = " + numDistinct.take(100).mkString(", "))
 
     val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(elementsByPart, maxBins, initialCandidates, sc)
 
@@ -272,7 +292,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
-      .groupByKey()
+      .groupByKey() // group by feature index
       .mapValues(_.toArray)
       .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1)))
   }
