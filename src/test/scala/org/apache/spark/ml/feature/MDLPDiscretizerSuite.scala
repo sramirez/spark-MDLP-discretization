@@ -196,10 +196,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /**
-    * Simulate big data by lowering the maxByPart value to 100.
-    * Sometimes fails due to issue #14.
-    */
+  /** Simulate big data by lowering the maxByPart value to 100. */
   test("Run MDLPD on all columns in titanic data (label = embarked, maxByPart = 100)") {
 
     val df = readTitanicData(sqlContext)
