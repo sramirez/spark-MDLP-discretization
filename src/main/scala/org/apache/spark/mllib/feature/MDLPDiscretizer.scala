@@ -55,82 +55,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
    */
   private def initialThresholds(points: RDD[((Int, Float), Array[Long])], nFeatures: Int) = {
 
-    // First find the number of points in each partition
-    val countsByFeatureIdx = points.map(_._1._1).countByValue().toList.sortBy(_._1)
-
-    var lastCount: Long = 0
-    var sum: Long = 0
-    var sumPreviousNumParts: Int = 0
-    // infoByFeature contains :
-    // (featureIdx, numUniqueValues, sumValuesBeforeFirst, partitionSize, numPartsForFeature, sumPreviousParts)
-    val infoByFeatureIdx = countsByFeatureIdx.map(x => {
-      val partSize = Math.ceil(x._2 / Math.ceil(x._2 / maxByPart.toFloat)).toInt
-      val numParts = Math.ceil(x._2 / partSize.toFloat).toInt
-      val tuple = (x._1, x._2, sum + lastCount, partSize, numParts, sumPreviousNumParts)
-      sum += lastCount
-      sumPreviousNumParts += numParts
-      lastCount = x._2
-      tuple
-    })
-    println("infoByFeatureIdx = " + infoByFeatureIdx + "\n totalParts = " + sumPreviousNumParts)
-
-    // Get the first element cuts and their order index by partition for the boundary points evaluation
-    val pointsWithIndex = points.zipWithIndex().map(  v => ((v._1._1._1, v._1._1._2, v._2), v._1._2))
-
-    /** This custom partitioner will partition by feature and subdivide features into smaller partitions if large */
-    class FeaturePartitioner[V]()
-      extends Partitioner {
-
-      def getPartition(key: Any): Int = {
-        val (featureIdx, cut, sortIdx) = key.asInstanceOf[(Int, Float, Long)]
-        val (_, _, sumValuesBefore, partitionSize, _, sumPreviousNumParts) = infoByFeatureIdx(featureIdx)
-        val partKey = sumPreviousNumParts + (Math.max(0, sortIdx - sumValuesBefore - 1) / partitionSize).toInt
-        partKey
-      }
-
-      override def numPartitions: Int = sumPreviousNumParts
-    }
-
-    // partition by feature instead of default partitioning strategy
-    val partitionedPoints = pointsWithIndex.partitionBy(new FeaturePartitioner())
-
-    val numPartitions = partitionedPoints.partitions.length
-    println("numParts = " + numPartitions + " numpoints = " + points.count())
-
-    partitionedPoints.mapPartitionsWithIndex({ (index, it) =>
-      if (it.hasNext) {
-        var ((lastFeatureIdx, lastX, _), lastFreqs) = it.next()
-        println("the first value of part " + index + " is " + lastX)
-        var result = Seq.empty[((Int, Float), Array[Long])]
-        var accumFreqs = lastFreqs
-        
-        for (((fIdx, x, _), freqs) <- it) {
-          if (isBoundary(freqs, lastFreqs)) {
-            // new boundary point: midpoint between this point and the previous one
-            result = ((lastFeatureIdx, midpoint(x, lastX)), accumFreqs.clone) +: result
-            accumFreqs = Array.fill(nLabels)(0L)
-          }
-
-          lastX = x
-          lastFeatureIdx = fIdx
-          lastFreqs = freqs
-          accumFreqs = (accumFreqs, freqs).zipped.map(_ + _)
-        }
-
-        // The last X is either on a feature or a partition boundary
-        result = ((lastFeatureIdx, lastX), accumFreqs.clone) +: result
-        result.reverse.toIterator
-      } else {
-        Iterator.empty
-      }
-    })
-  }
-
-  // If one of the unique values is NaN, use the other one, otherwise take the midpoint.
-  def midpoint(x1: Float, x2: Float): Float = {
-    if (x1.isNaN) x2
-    else if (x2.isNaN) x1
-    else (x1 + x2) / 2.0F
+    new InitialThresholdFinder().findInitialThresholds(points, nFeatures, nLabels, maxByPart)
   }
 
   /**
@@ -344,14 +269,6 @@ object MDLPDiscretizer {
     * If this number gets too big, you could run out of memory depending on resources.
     */
   private val DEFAULT_MAX_BY_PART = 100000
-
-  /**
-    * @return true if f1 and f2 define a boundary.
-    *   It is a boundary if there is more than one class label present when the two are combined.
-    */
-  private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
-    (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
-  }
 
   /**
     * Get information about the attributes before performing discretization.
