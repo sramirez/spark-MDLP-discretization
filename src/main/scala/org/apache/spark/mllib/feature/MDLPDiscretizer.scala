@@ -53,9 +53,9 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
    * @param points RDD with distinct points by feature ((feature, point), class values).
    * @return RDD of candidate points.
    */
-  private def initialThresholds(points: RDD[((Int, Float), Array[Long])], nFeatures: Int) = {
+  private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
 
-    new InitialThresholdFinder().findInitialThresholds(points, nFeatures, nLabels, maxByPart)
+    new InitialThresholdsFinder().findInitialThresholds(points, nLabels, maxByPart)
   }
 
   /**
@@ -117,7 +117,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
     val barr = sc.broadcast(arr)
 
     // Get only boundary points from the whole set of distinct values
-    val initialCandidates = initialThresholds(sortedValues, nFeatures)
+    val initialCandidates = initialThresholds(sortedValues)
       .map{case ((featureIdx, cutpoint), freqs) => (featureIdx, (cutpoint, freqs))}
       .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features

@@ -18,9 +18,9 @@ package org.apache.spark.mllib.feature
 
 import org.apache.spark.Partitioner
 import org.apache.spark.rdd.RDD
-import InitialThresholdFinder.isBoundary
+import InitialThresholdsFinder._
 
-object InitialThresholdFinder {
+object InitialThresholdsFinder {
   /**
     * @return true if f1 and f2 define a boundary.
     *   It is a boundary if there is more than one class label present when the two are combined.
@@ -28,22 +28,31 @@ object InitialThresholdFinder {
   private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
     (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
   }
+
+
+  // If one of the unique values is NaN, use the other one, otherwise take the midpoint.
+  def midpoint(x1: Float, x2: Float): Float = {
+    if (x1.isNaN) x2
+    else if (x2.isNaN) x1
+    else (x1 + x2) / 2.0F
+  }
 }
 
 /**
   * Find the initial thresholds. Look at the unique points and find ranges where the distribution
   * of labels is identical and split only where they are not.
   */
-class InitialThresholdFinder() extends Serializable{
+class InitialThresholdsFinder() extends Serializable{
 
   /**
     * Computes the initial candidate cut points by feature.
     *
     * @param points RDD with distinct points by feature ((feature, point), class values).
+    * @param nLabels number of class labels
+    * @param maxByPart maximum number of values allowed in a partition
     * @return RDD of candidate points.
     */
-  def findInitialThresholds(points: RDD[((Int, Float), Array[Long])],
-                                    nFeatures: Int, nLabels: Int, maxByPart: Int) = {
+  def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nLabels: Int, maxByPart: Int) = {
 
     val featureInfo = createFeatureInfoMap(points, maxByPart)
     val totalPartitions = featureInfo.last._5 + featureInfo.last._6
@@ -121,13 +130,6 @@ class InitialThresholdFinder() extends Serializable{
       lastCount = x._2
       info
     })
-  }
-
-  // If one of the unique values is NaN, use the other one, otherwise take the midpoint.
-  def midpoint(x1: Float, x2: Float): Float = {
-    if (x1.isNaN) x2
-    else if (x2.isNaN) x1
-    else (x1 + x2) / 2.0F
   }
 
 }
