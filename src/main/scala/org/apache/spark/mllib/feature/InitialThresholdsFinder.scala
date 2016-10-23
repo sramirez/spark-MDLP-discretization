@@ -54,7 +54,7 @@ class InitialThresholdsFinder() extends Serializable{
     */
   def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nLabels: Int, maxByPart: Int) = {
 
-    val featureInfo = createFeatureInfoMap(points, maxByPart)
+    val featureInfo = createFeatureInfoList(points, maxByPart)
     val totalPartitions = featureInfo.last._5 + featureInfo.last._6
 
     // Get the first element cuts and their order index by partition for the boundary points evaluation
@@ -112,9 +112,9 @@ class InitialThresholdsFinder() extends Serializable{
     * @return a list of info for each partition. The values in the info tuple are:
     *  (featureIdx, numUniqueValues, sumValsBeforeFirst, partitionSize, numPartitionsForFeature, sumPreviousPartitions)
     */
-  def createFeatureInfoMap(points: RDD[((Int, Float), Array[Long])],
-                           maxByPart: Int): List[(Int, Long, Long, Int, Int, Int)] = {
-    // First find the number of points in each partition
+  def createFeatureInfoList(points: RDD[((Int, Float), Array[Long])],
+                            maxByPart: Int): List[(Int, Long, Long, Int, Int, Int)] = {
+    // First find the number of points in each partition, ordered by featureIdx
     val countsByFeatureIdx = points.map(_._1._1).countByValue().toList.sortBy(_._1)
 
     var lastCount: Long = 0

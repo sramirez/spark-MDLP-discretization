@@ -42,7 +42,7 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
   }
 
 
-  test("Find initial thresholds for a four features") {
+  test("Find initial thresholds for four features") {
 
     val feature: Array[((Int, Float), Array[Long])] = Array(
       ((0, 100.0f), Array(1L, 2L, 3L)),
@@ -76,7 +76,43 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
   // In this case the features have more values that fit in a partition
   test("Find initial thresholds when more values than maxByPart") {
 
-    val feature: Array[((Int, Float), Array[Long])] = Array(
+    val result = finder.findInitialThresholds(createPointsFor2Features, nLabels = 3, maxByPart = 5)
+
+    assertResult("(0,125.0), (0,225.0), (0,450.0), (0,700.0), (0,800.0), (0,1025.0), (0,1150.0), (0,1200.0), " +
+      "(1,3.75), (1,4.55), (1,4.8), (1,5.5), (1,6.0), (1,8.05), (1,8.8), (1,9.5), (1,10.0), (1,12.05), (1,12.6)") {
+      result.collect().map(_._1).mkString(", ")
+    }
+  }
+
+  test("test createFeatureInfList for 2 features") {
+
+    val points = createPointsFor2Features
+
+    // the tuple in result list is
+    //(featureIdx, numUniqueValues, sumValsBeforeFirst, partitionSize, numPartitionsForFeature, sumPreviousPartitions)
+    assertResult("(0,8,0,8,1,0), (1,11,8,11,1,1)") {
+      finder.createFeatureInfoList(points, 100).mkString(", ")
+    }
+
+    assertResult("(0,8,0,8,1,0), (1,11,8,6,2,1)") {
+      finder.createFeatureInfoList(points, 10).mkString(", ")
+    }
+
+    assertResult("(0,8,0,4,2,0), (1,11,8,6,2,2)") {
+      finder.createFeatureInfoList(points, 7).mkString(", ")
+    }
+
+    assertResult("(0,8,0,4,2,0), (1,11,8,4,3,2)") {
+      finder.createFeatureInfoList(points, 5).mkString(", ")
+    }
+
+    assertResult("(0,8,0,2,4,0), (1,11,8,2,6,4)") {
+      finder.createFeatureInfoList(points, 2).mkString(", ")
+    }
+  }
+
+  private def createPointsFor2Features = {
+    val features: Array[((Int, Float), Array[Long])] = Array(
       ((0, 100.0f), Array(1L, 2L, 3L)),
       ((0, 150.0f), Array(3L, 20L, 12L)),
       ((0, 300.0f), Array(3L, 20L, 12L)),
@@ -98,13 +134,6 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
       ((1, 11.5f), Array(3L, 20L, 12L)),
       ((1, 12.6f), Array(8L, 18L, 2L))
     )
-    val points = sqlContext.sparkContext.parallelize(feature)
-    val result = finder.findInitialThresholds(points, nLabels = 3, maxByPart = 5)
-
-
-    assertResult("(0,125.0), (0,225.0), (0,450.0), (0,700.0), (0,800.0), (0,1025.0), (0,1150.0), (0,1200.0), " +
-      "(1,3.75), (1,4.55), (1,4.8), (1,5.5), (1,6.0), (1,8.05), (1,8.8), (1,9.5), (1,10.0), (1,12.05), (1,12.6)") {
-      result.collect().map(_._1).mkString(", ")
-    }
+    sqlContext.sparkContext.parallelize(features)
   }
 }
