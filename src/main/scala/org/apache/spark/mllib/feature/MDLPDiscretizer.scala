@@ -17,11 +17,14 @@
 
 package org.apache.spark.mllib.feature
 
+import org.apache.spark.ml.feature.LabeledPoint
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.{Logging, Partitioner, SparkContext}
+import org.apache.spark.SparkContext
+import org.apache.spark.internal.Logging
 import org.apache.spark.rdd._
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.linalg._
+import org.apache.spark.sql.{Dataset, SparkSession}
+//import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.ml.linalg._
 import MDLPDiscretizer._
 import org.apache.spark.broadcast.Broadcast
 
@@ -39,11 +42,12 @@ import scala.collection.Map
  * @param stoppingCriterion (optional) used to determine when to stop recursive splitting
  * @param minBinPercentage (optional) minimum percent of total dataset allowed in a single bin.
  */
-private class MDLPDiscretizer (val data: RDD[LabeledPoint],
+private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
             stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
             maxByPart: Int = DEFAULT_MAX_BY_PART,
             minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) extends Serializable with Logging {
 
+  import data.sparkSession.implicits._
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
 
@@ -69,24 +73,27 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
       contFeat: Option[Seq[Int]],
       maxBins: Int): DiscretizerModel = {
 
-    if (data.getStorageLevel == StorageLevel.NONE)
+    if (data.rdd.getStorageLevel == StorageLevel.NONE)
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
 
-    if (!data.filter(_.label.isNaN).isEmpty())
+    if (!data.rdd.filter(_.label.isNaN).isEmpty())
       throw new IllegalArgumentException("Some NaN values have been found in the labelColumn."
           + " This problem must be fixed before continuing with discretization.")
 
     // Basic info. about the dataset
-    val sc = data.context
+    val sc = data.sparkSession.sparkContext
     val bLabels2Int = sc.broadcast(labels2Int)
-    val classDistrib = data.map(d => bLabels2Int.value(d.label)).countByValue()
+    import data.sparkSession.implicits._
+    val classDistrib = data.map(d => bLabels2Int.value(d.label)).rdd.countByValue()
     val bclassDistrib = sc.broadcast(classDistrib)
     val (dense, nFeatures) = data.first.features match {
       case v: DenseVector => 
         (true, v.size)
       case v: SparseVector =>
         (false, v.size)
+      case unexpected: Any => throw new IllegalStateException(
+        "Unexptected Vector type: " + unexpected.getClass.getName)
     }
             
     val continuousVars = processContinuousAttributes(contFeat, nFeatures)
@@ -109,7 +116,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
             for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
         })
 
-    val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
+    val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues.rdd)
 
     // Filter those features selected by the user
     val arr = Array.fill(nFeatures) { false }
@@ -303,7 +310,7 @@ object MDLPDiscretizer {
    * @return A DiscretizerModel with the subsequent thresholds.
    */
   def train(
-      input: RDD[LabeledPoint],
+      input: Dataset[LabeledPoint],
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
       maxByPart: Int = DEFAULT_MAX_BY_PART,

@@ -17,8 +17,8 @@
 
 package org.apache.spark.mllib.feature
 
-import org.apache.spark.Logging
 import FeatureUtils._
+import org.apache.spark.internal.Logging
 
 object ThresholdFinder {
 
