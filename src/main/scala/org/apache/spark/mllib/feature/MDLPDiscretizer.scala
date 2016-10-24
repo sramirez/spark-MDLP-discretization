@@ -18,7 +18,7 @@
 package org.apache.spark.mllib.feature
 
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.{Logging, SparkContext}
+import org.apache.spark.{Logging, Partitioner, SparkContext}
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg._
@@ -39,8 +39,9 @@ import scala.collection.Map
  * @param stoppingCriterion (optional) used to determine when to stop recursive splitting
  * @param minBinPercentage (optional) minimum percent of total dataset allowed in a single bin.
  */
-class MDLPDiscretizer private (val data: RDD[LabeledPoint],
+private class MDLPDiscretizer (val data: RDD[LabeledPoint],
             stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
+            maxByPart: Int = DEFAULT_MAX_BY_PART,
             minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) extends Serializable with Logging {
 
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
@@ -50,68 +51,24 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
    * Computes the initial candidate points by feature.
    * 
    * @param points RDD with distinct points by feature ((feature, point), class values).
-   * @param firstElements First elements in partitions (feature, point)
    * @return RDD of candidate points.
    */
-  private def initialThresholds(
-      points: RDD[((Int, Float), Array[Long])], 
-      firstElements: Array[Option[(Int, Float)]]) = {
-    
-    val numPartitions = points.partitions.length
-    val bcFirsts = points.context.broadcast(firstElements)
+  private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
 
-    points.mapPartitionsWithIndex({ (index, it) =>      
-      if (it.hasNext) {
-        var ((lastFeatureIdx, lastX), lastFreqs) = it.next()
-        var result = Seq.empty[((Int, Float), Array[Long])]
-        var accumFreqs = lastFreqs      
-        
-        for (((featureIdx, x), freqs) <- it) {
-          if (featureIdx != lastFeatureIdx) {
-            // new attribute: add last point from the previous one
-            result = ((lastFeatureIdx, lastX), accumFreqs.clone) +: result
-            accumFreqs = Array.fill(nLabels)(0L)
-          } else if (isBoundary(freqs, lastFreqs)) {
-            // new boundary point: midpoint between this point and the previous one
-            result = ((lastFeatureIdx, (x + lastX) / 2), accumFreqs.clone) +: result
-            accumFreqs = Array.fill(nLabels)(0L)
-          }
-          
-          lastFeatureIdx = featureIdx
-          lastX = x
-          lastFreqs = freqs
-          accumFreqs = (accumFreqs, freqs).zipped.map(_ + _)
-        }
-       
-        // Evaluate the last point in this partition with the first one in the next partition
-        val lastPoint = if (index < (numPartitions - 1)) {
-          bcFirsts.value(index + 1) match {
-            case Some((featureIdx, x)) => if (featureIdx != lastFeatureIdx) lastX else (x + lastX) / 2
-            case None => lastX // last point in the attribute
-          }
-        }else{
-          lastX // last point in the dataset
-        }                    
-        (((lastFeatureIdx, lastPoint), accumFreqs.clone) +: result).reverse.toIterator
-      } else {
-        Iterator.empty
-      }             
-    })
+    new InitialThresholdsFinder().findInitialThresholds(points, nLabels, maxByPart)
   }
 
   /**
    * Run the entropy minimization discretizer on input data.
    * 
    * @param contFeat Indices to discretize (if not specified, the algorithm tries to figure it out).
-   * @param elementsByPart Maximum number of elements to keep in each partition.
    * @param maxBins Maximum number of thresholds per feature.
    * @return A discretization model with the thresholds by feature.
    */
   def runAll(
-      contFeat: Option[Seq[Int]], 
-      elementsByPart: Int,
+      contFeat: Option[Seq[Int]],
       maxBins: Int): DiscretizerModel = {
-    
+
     if (data.getStorageLevel == StorageLevel.NONE)
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
@@ -154,22 +111,18 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
 
     val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
 
-    // Get the first elements by partition for the boundary points evaluation
-    val firstElements = sc.runJob(sortedValues, (it =>
-      if (it.hasNext) Some(it.next()._1) else None): (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
-      
     // Filter those features selected by the user
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
     val barr = sc.broadcast(arr)
 
     // Get only boundary points from the whole set of distinct values
-    val initialCandidates = initialThresholds(sortedValues, firstElements)
-      .map{case ((k, point), c) => (k, (point, c))}
-      .filter({case (k, _) => barr.value(k)})
+    val initialCandidates = initialThresholds(sortedValues)
+      .map{case ((featureIdx, cutpoint), freqs) => (featureIdx, (cutpoint, freqs))}
+      .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features
 
-    val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(elementsByPart, maxBins, initialCandidates, sc)
+    val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(maxByPart, maxBins, initialCandidates, sc)
 
     buildModelFromThresholds(nFeatures, continuousVars, allThresholds)
   }
@@ -231,7 +184,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val minBinWeight: Long = (minBinPercentage * data.count() / 100.0).toLong
 
     val smallThresholds = findSmallThresholds(maxBins, minBinWeight, initialCandidates, bBigIndexes)
-    val bigThresholds = findBigThresholds(elementsByPart, maxBins, minBinWeight, initialCandidates, bigIndexes)
+    val bigThresholds = findBigThresholds(maxBins, minBinWeight, initialCandidates, bigIndexes)
 
     // Join all thresholds in a single structure
     val bigThRDD = sc.parallelize(bigThresholds.toSeq)
@@ -244,7 +197,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     *
     * @return the splits for features with more values than will fit in a partition.
     */
-  def findBigThresholds(elementsByPart: Int, maxBins: Int, minBinWeight: Long,
+  def findBigThresholds(maxBins: Int, minBinWeight: Long,
                         initialCandidates: RDD[(Int, (Float, Array[Long]))],
                         bigIndexes: Map[Int, Long]): Map[Int, Seq[Float]] = {
     logInfo("Number of features that exceed the maximum size per partition: " +
@@ -252,7 +205,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
 
     var bigThresholds = Map.empty[Int, Seq[Float]]
     val bigThresholdsFinder =
-      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight, elementsByPart)
+      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
     for (k <- bigIndexes.keys) {
       val cands = initialCandidates.filter { case (k2, _) => k == k2 }.values.sortByKey()
       bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands)))
@@ -271,7 +224,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     val smallThresholdsFinder = new FewValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
     initialCandidates
       .filter { case (k, _) => !bBigIndexes.value.contains(k) }
-      .groupByKey()
+      .groupByKey() // group by feature index
       .mapValues(_.toArray)
       .mapValues(points => smallThresholdsFinder.findThresholds(points.sortBy(_._1)))
   }
@@ -312,12 +265,10 @@ object MDLPDiscretizer {
   private val DEFAULT_MIN_BIN_PERCENTAGE = 0
 
   /**
-    * @return true if f1 and f2 define a boundary.
-    *   It is a boundary if there is more than one class label present when the two are combined.
+    * Maximum number of elements in a partition.
+    * If this number gets too big, you could run out of memory depending on resources.
     */
-  private val isBoundary = (f1: Array[Long], f2: Array[Long]) => {
-    (f1, f2).zipped.map(_ + _).count(_ != 0) > 1
-  }
+  private val DEFAULT_MAX_BY_PART = 100000
 
   /**
     * Get information about the attributes before performing discretization.
@@ -355,9 +306,9 @@ object MDLPDiscretizer {
       input: RDD[LabeledPoint],
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
-      maxByPart: Int = 100000,
+      maxByPart: Int = DEFAULT_MAX_BY_PART,
       stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
       minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) = {
-    new MDLPDiscretizer(input, stoppingCriterion, minBinPercentage).runAll(continuousFeaturesIndexes, maxByPart, maxBins)
+    new MDLPDiscretizer(input, stoppingCriterion, maxByPart, minBinPercentage).runAll(continuousFeaturesIndexes, maxBins)
   }
 }
