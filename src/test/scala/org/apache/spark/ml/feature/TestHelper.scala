@@ -53,6 +53,7 @@ object TestHelper {
 
   /**
     * The label column will have null values replaced with MISSING values in this case.
+    *
     * @return the discretizer fit to the data given the specified features to bin and label use as target.
     */
   def getDiscretizerModel(dataframe: DataFrame, inputCols: Array[String],
@@ -61,7 +62,10 @@ object TestHelper {
                           maxByPart: Int = 10000,
                           stoppingCriterion: Double = 0,
                           minBinPercentage: Double = 0): DiscretizerModel = {
+    println("about to clean label column. parts = " + dataframe.rdd.partitions.length)
+    println("dataframe ct = " + dataframe.count())
     val processedDf = cleanLabelCol(dataframe, labelColumn)
+    println("done cleaning label column")
     createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion, minBinPercentage)
   }
 
@@ -93,8 +97,9 @@ object TestHelper {
   def createSparkContext() = {
     // the [n] corresponds to the number of worker threads and should correspond ot the number of cores available.
     val conf = new SparkConf().setAppName("test-spark").setMaster("local[4]")
-    // Changing the default parallelism gave slightly different results and did not do much for performance.
-    //conf.set("spark.default.parallelism", "2")
+    // Changing the default parallelism to 4 hurt performance a lot for a big dataset.
+    // When maxByPart was 10000, it wend from 39 min to 4.5 hours.
+    //conf.set("spark.default.parallelism", "4")
     val sc = new SparkContext(conf)
     LogManager.getRootLogger.setLevel(Level.WARN)
     sc
@@ -276,6 +281,54 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  /** @return dataset with lots of rows
+    */
+  def readServerXData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "serverX_100000.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("rpm1", DoubleType, nullable),
+      StructField("CPU1_TJ", DoubleType, nullable),
+      StructField("CPU2_TJ", DoubleType, nullable),
+      StructField("total_cfm", DoubleType, nullable),
+      StructField("val1", DoubleType, nullable),
+      StructField("val2", DoubleType, nullable),
+      StructField("target4", StringType, nullable),
+      StructField("target2", StringType, nullable)
+    ))
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asDouble(x(0)), asDouble(x(1)), asDouble(x(2)),
+        asDouble(x(3)), asDouble(x(4)), asDouble(x(5)),
+         asString(x(6)), asString(x(7))))})
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
+  /** @return dataset with lots of rows
+    */
+  def readServerBigXData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "serverX_10000000.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("target2", StringType, nullable),
+      StructField("target4", StringType, nullable),
+      StructField("CPU1_TJ", DoubleType, nullable),
+      StructField("CPU2_TJ", DoubleType, nullable),
+      StructField("total_cfm", DoubleType, nullable),
+      StructField("rpm1", DoubleType, nullable)
+    ))
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asString(x(0)), asString(x(1)),
+        asDouble(x(2)), asDouble(x(3)), asDouble(x(4)), asDouble(x(5)))) })
+
+    sqlContext.createDataFrame(rows, schema)
+  }
 
 
   /** @return dataset with 3 double columns. The first is the label column and contain null.

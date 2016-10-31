@@ -4,6 +4,8 @@
 ### Scala template
 *.class
 *.log
+# exclude big datafile so it is not accidentally checked in
+test/resources/data/serverX_10000000.data
 
 # sbt specific
 .cache

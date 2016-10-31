@@ -54,11 +54,16 @@ class InitialThresholdsFinder() extends Serializable{
     */
   def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nLabels: Int, maxByPart: Int) = {
 
+    println("about to create featureInfo list")
+    val startTime = System.currentTimeMillis()
     val featureInfo = createFeatureInfoList(points, maxByPart)
+    println("featureInfo = " + featureInfo.mkString(", "))
     val totalPartitions = featureInfo.last._5 + featureInfo.last._6
+    println("totalParts = " + totalPartitions)
 
     // Get the first element cuts and their order index by partition for the boundary points evaluation
     val pointsWithIndex = points.zipWithIndex().map(  v => ((v._1._1._1, v._1._1._2, v._2), v._1._2))
+    println(" points parts = " + pointsWithIndex.partitions.length)
 
     /** This custom partitioner will partition by feature and subdivide features into smaller partitions if large */
     class FeaturePartitioner[V]()
@@ -76,11 +81,12 @@ class InitialThresholdsFinder() extends Serializable{
 
     // partition by feature (possibly sub-partitioned features) instead of default partitioning strategy
     val partitionedPoints = pointsWithIndex.partitionBy(new FeaturePartitioner())
+    println("partitionPts parts = " + partitionedPoints.partitions.length + " count = " + partitionedPoints.count())
 
-    partitionedPoints.mapPartitionsWithIndex({ (index, it) =>
+    val result = partitionedPoints.mapPartitionsWithIndex({ (index, it) =>
       if (it.hasNext) {
         var ((lastFeatureIdx, lastX, _), lastFreqs) = it.next()
-        //println("the first value of part " + index + " is " + lastX)
+        println("the first value of part " + index + " is " + lastX)
         var result = Seq.empty[((Int, Float), Array[Long])]
         var accumFreqs = lastFreqs
 
@@ -104,6 +110,8 @@ class InitialThresholdsFinder() extends Serializable{
         Iterator.empty
       }
     })
+    println("done computing initial thresholds in " + (System.currentTimeMillis() - startTime) + " millis")
+    result
   }
 
   /**

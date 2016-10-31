@@ -50,8 +50,7 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
       val (bounds, lastThresh) = stack.dequeue
       // Filter to the candidates between the last limits added to the stack
       val cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
-      val nCands = cands.count
-      if (nCands > 0) {
+      if (!cands.isEmpty()) {
         evalThresholds(cands, lastThresh) match {
           case Some(th) =>
             result = th +: result
@@ -119,6 +118,6 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
         if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
     })
     // Select the candidate with the minimum weightedHs from among the list of accepted candidates.
-    if (finalCandidates.count > 0) Some(finalCandidates.min._2) else None
+    if (!finalCandidates.isEmpty()) Some(finalCandidates.min._2) else None
   }
 }
