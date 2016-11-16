@@ -85,7 +85,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /** Lowering the stopping criterion should result in more splits */
+  /** Lowering the stopping criterion should result in more splits. This sometimes fails due to #14.  */
   test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100, stoppingCriterion = -1e-2)") {
 
     val df = readCarsData(sqlContext)

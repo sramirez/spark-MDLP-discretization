@@ -208,7 +208,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
   }
 
   /**
-    * Feature with too many points must be processed iteratively (rare condition)
+    * Features with too many unique points must be processed iteratively (rare condition)
     *
     * @return the splits for features with more values than will fit in a partition.
     */
