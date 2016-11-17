@@ -248,6 +248,56 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  // Blockbuster columns
+  //STORE,SQFT,ADI,State,POP_02,POP_97,POP_90,POP_80,DAYPOP,PCHG9702,HH_02,HH_97,HH_90,HH_80,HHPG9702,MEDHI97,
+  // _97PCI,POP97MAL,POP97FEM,MEDAGE97,_97AVAGE,HWP97,HBP97,POP90ED,PWHTC90,HH97AHHI,PWHITE,VIDRNT,AREA,POP0266,
+  // POP9766,POP9066,POP8066,DAYPOP66,PC669702,HH_0266,HH_9766,HH_9066,HH_8066,HHPG6602,AVHHI66,MEDHI66,_66PCI,
+  // POP66MAL,POP66FEM,MEDAGE66,_66AVAGE,HWP66,PWHTC66,HH66AHHI,PWHITE66,VIDRNT66,AREA66,DROPBOX,AWNING,TORNTICK,
+  // PYLON,Q10,Q9,Q12,Q11,Q13,Q15,Q14,Q16,Q17,Q18,Q19,Q23,Q24,Q25A,Q25B,Q25C,Q20,HOMEDEP,KMART,TARGET,WALMART,WSCLUB,
+  // Q22,RESGROW,RETGROW,Q28,Q29,ATM,BANK,BOOK,CONVEN,DAYCARE,DISC,DRUG,DRY,ELECTRON,GAS,GROCERY,GYM,HOSPITAL,FASTFOOD,
+  // RESTBAR,THEATER,YOGURT,Q31,BADBUS,BARRIER,ZONEREST,MILITARY,ETHNIC,COLLEGE,ADULT,VACANCY,JAIL,CEMETARY,OMO,OYR,
+  // GRREV,EXVIS,PREMPOS,BADPOS,URB,SMTOWN,SUB,RUR,FREESTAN,ENDCAP,NAMREC,RETAIL,ENTERT,RESTAUR,EVENING,ACTIVITY,
+  // DISCOUNT,EMPACC,RESACC,BADTRAFB,GOODTRAF,BADEDGE,LINK,LINKAGES,LAFMKT,AMKT,BMKT,WES,CEN,MID,SEA,NEA,HOLD,
+  // HOLDOUT,PDAYPOP,PWHT97,PBLK97,PAIS97,POTH97,PHIS97,P0_5,P5_15,P1525,P2535,P3550,P5075,P75_100,P1_15,P1_150,
+  // PMALE,PFEMALE,P0_8,PSHI,PHSG,PSCO,PASS,PBAC,PGRD,PWKAM,PWKTS,PWKS,PWKAC,PWKPR,PWKPS,PWKOS,PWKFF,PWKP,PWKA,
+  // PWKTM,PWKHL,PHH4P,PHH5P,PHH7P,P04,P59,P1014,P1517,P1820,P2124,P2529,P3034,P3539,P4044,P4549,P50P,POWN,PRNT,
+  // PWHIS,PBHIS,PDAY66,PWHT66,PBLK66,PAIS66,POTH66,PHIS66,P0_566,P5_1566,P15_2566,P25_3566,P35_5066,P50_7566,P75_166,
+  // P1_1566,P1_15066,PMALE66,PFEM66,PWHIS66,PBHIS66,P0_866,PSHI66,PHSG66,PSCO66,PASS66,PBAC66,PGRD66,PWKAM66,PWKTS66,
+  // PWKS66,PWKAC66,PWKPR66,PWKPS66,PWKOS66,PWKFF66,PWKP66,PWKOA66,PWKTM66,PWKHL66,PHH4P66,PHH5P66,PHH6P66,PHH7P66,
+  // P0466,P5966,P101466,P151766,P182066,P212466,P252966,P303466,P353966,P404466,P454966,P50P66,POWN66,PRNT66,CLUSTER,
+  // CITYTYPE,BSI,NR,PERBSI,PERNR,CLOSE1,CLOSE2,CLOSE3,CLOSE4,CLOSE5,COUNT_5,COUNT1,COUNT1_5,COUNT2,COUNT2_5,COUNT3,
+  // COUNT3_5,COUNT4,COUNT4_5,COUNT5,NEARDIST,NUMIN1,NUMIN2,NUMIN3,NUMIN5,CLOZE1YR,IMPCT1YR,PROBDOG,PROBSTUD,POP973,
+  // POP972,HH972,HH973,PERBSI2,MEDHI2,LSQFT,LPOP97,LHH97,LMEDHI,LMEDAGE,SQFT2,LPERBSI,LAREA,PKIDS14,MAT,SWE,NWE,
+  // CLUS1,CLUS2,CLUS3,CLUS4,CLUS5
+  /** @return the blockbuster dataset. It has a lot of columns (312), but not that many rows (421)
+    */
+  def readBlockBusterData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "blockbuster.data")
+    val nullable = true
+    val numTrailingNumberCols = 308
+
+    // A whole bunch of numeric columns
+    var fields: Seq[StructField] = for (i <- 1 to numTrailingNumberCols) yield {
+      StructField("col" + i, DoubleType, nullable)
+    }
+    fields = List(List(
+      StructField("Store", DoubleType, nullable),
+      StructField("Sqft", DoubleType, nullable),
+      StructField("City", StringType, nullable),
+      StructField("State", StringType, nullable)
+    ), fields).flatten
+
+    val schema = StructType(fields)
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(
+        List(Seq(asDouble(x(0)), asDouble(x(1)), asString(x(2)), asString(x(3))),
+          for (i <- 4 to numTrailingNumberCols + 3) yield { asDouble(x(i)) }
+        ).flatten )
+      })
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
   /** @return subset of 311 service call data.
     */
   def readSvcRequests40000Data(sqlContext: SQLContext): DataFrame = {
@@ -314,18 +364,21 @@ object TestHelper {
     val nullable = true
 
     val schema = StructType(List(
-      StructField("target2", StringType, nullable),
-      StructField("target4", StringType, nullable),
-      StructField("CPU1_TJ", DoubleType, nullable),
-      StructField("CPU2_TJ", DoubleType, nullable),
-      StructField("total_cfm", DoubleType, nullable),
-      StructField("rpm1", DoubleType, nullable)
+      StructField("targetA", StringType, nullable),
+      StructField("val1", DoubleType, nullable),
+      StructField("val2", DoubleType, nullable),
+      StructField("val3", DoubleType, nullable),
+      StructField("val4", DoubleType, nullable),
+      StructField("val5", DoubleType, nullable),
+      StructField("val6", DoubleType, nullable),
+      StructField("targetB", StringType, nullable)
     ))
 
     // ints and dates must be read as doubles
     val rows = data.map(line => line.split(",").map(elem => elem.trim))
-      .map(x => {Row.fromSeq(Seq(asString(x(0)), asString(x(1)),
-        asDouble(x(2)), asDouble(x(3)), asDouble(x(4)), asDouble(x(5)))) })
+      .map(x => {Row.fromSeq(Seq(asString(x(0)), asDouble(x(1)),
+        asDouble(x(2)), asDouble(x(3)), asDouble(x(4)), asDouble(x(5)), asDouble(x(6)), asString(x(7))))
+      })
 
     sqlContext.createDataFrame(rows, schema)
   }

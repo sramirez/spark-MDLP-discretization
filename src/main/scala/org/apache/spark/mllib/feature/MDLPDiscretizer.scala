@@ -54,8 +54,6 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
    * @return RDD of candidate points.
    */
   private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
-
-    println("about to find initial thresholds")
     new InitialThresholdsFinder().findInitialThresholds(points, nLabels, maxByPart)
   }
 
@@ -80,10 +78,10 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     // Basic info. about the dataset
     val sc = data.context
-    println("in MDLPDiscretizer.runAll")
+    logInfo("in MDLPDiscretizer.runAll")
     val bLabels2Int = sc.broadcast(labels2Int)
     val classDistrib = data.map(d => bLabels2Int.value(d.label)).countByValue()
-    println("classDistrib = " + classDistrib.mkString(", "))
+    logInfo("classDistrib = " + classDistrib.mkString(", "))
     val bclassDistrib = sc.broadcast(classDistrib)
     val (dense, nFeatures) = data.first.features match {
       case v: DenseVector => 
@@ -91,7 +89,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
       case v: SparseVector =>
         (false, v.size)
     }
-            
+
     val continuousVars = processContinuousAttributes(contFeat, nFeatures)
     logInfo("Number of continuous attributes: " + continuousVars.distinct.length)
     logInfo("Total number of attributes: " + nFeatures)      
@@ -112,10 +110,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
             for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
         })
 
-    val startTime = System.currentTimeMillis()
-    println("now sorting distinct values. parts = " + featureValues.partitions.length + " millis")
     val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
-    println("done sorting distinct values in " + (System.currentTimeMillis() - startTime))
 
     // Filter those features selected by the user
     val arr = Array.fill(nFeatures) { false }
@@ -123,15 +118,16 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
     val barr = sc.broadcast(arr)
 
     // Get only boundary points from the whole set of distinct values
+    val start = System.currentTimeMillis()
     val initialCandidates = initialThresholds(sortedValues)
       .map{case ((featureIdx, cutpoint), freqs) => (featureIdx, (cutpoint, freqs))}
       .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features
+    logInfo("done finding initial thresholds in " + (System.currentTimeMillis() - start) )
 
-    println("about to find all thresholds")
-    val startTime2 = System.currentTimeMillis()
+    val start2 = System.currentTimeMillis()
     val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(maxByPart, maxBins, initialCandidates, sc)
-    println("done finding MDLP thresholds in "+ (System.currentTimeMillis() - startTime2) +" Now returning model")
+    logInfo("done finding MDLP thresholds in "+ (System.currentTimeMillis() - start2) +" Now returning model")
     buildModelFromThresholds(nFeatures, continuousVars, allThresholds)
   }
 
@@ -158,12 +154,10 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
     val distinctValues = nonZeros.union(zeros)
 
     // Sort these values to perform the boundary points evaluation
-    println("start sortByKey. numpartitions = " + distinctValues.partitions.length)
-    //distinctValues = distinctValues.repartition(16)
+    val start = System.currentTimeMillis()
     distinctValues.take(10).foreach(x => println(x._1, x._2.mkString(", ")))
-    println("repart numparts = " + distinctValues.partitions.length)
     val result = distinctValues.sortByKey()
-    println("done sortByKey")
+    logInfo("done sortByKey in " + (System.currentTimeMillis() - start))
     result.take(10).foreach(x => println(x._1, x._2.mkString(", ")))
     result
   }
@@ -220,7 +214,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     var bigThresholds = Map.empty[Int, Seq[Float]]
     val bigThresholdsFinder =
-      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
+      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight, maxByPart)
     for (k <- bigIndexes.keys) {
       val cands = initialCandidates.filter { case (k2, _) => k == k2 }.values.sortByKey()
       bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands)))

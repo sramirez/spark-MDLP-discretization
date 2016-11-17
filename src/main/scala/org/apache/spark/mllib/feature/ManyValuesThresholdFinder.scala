@@ -27,10 +27,12 @@ import ThresholdFinder.calcCriterionValue
   * @param nLabels the number of class labels
   * @param maxBins Maximum number of points to select
   * @param minBinWeight don't generate bins with fewer than this many records.
+  * @param elementsByPart Maximum number of elements to evaluate in each partition.
   * @param stoppingCriterion influences when to stop recursive splits
   */
 class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
-                                maxBins: Int, minBinWeight: Long)
+                                maxBins: Int, minBinWeight: Long,
+                                elementsByPart: Int)
   extends ThresholdFinder {
 
   /**
@@ -42,6 +44,9 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
     */
   def findThresholds(candidates: RDD[(Float, Array[Long])]): Seq[Float] = {
 
+    // Get the number of partitions according to the maximum size established by partition
+    def partitions(x: Long) = math.ceil(x.toFloat / elementsByPart).toInt
+
     // Insert the extreme values in the stack (recursive iteration)
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
     stack.enqueue(((Float.NegativeInfinity, Float.PositiveInfinity), None))
@@ -49,9 +54,14 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
 
     while (stack.nonEmpty && result.size < maxBins){
       val (bounds, lastThresh) = stack.dequeue
-      // Filter to the candidates between the last limits added to the stack
+      // Filter the candidates between the last limits added to the stack
       val cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
+      //val nCands = cands.count
       if (!cands.isEmpty()) {
+        // There does not seem to be an advantage to doing this here, and it can give different results
+        // Possibly because of SPARK-14393?
+        //cands = cands.coalesce(partitions(nCands))
+        // Selects one threshold among the candidates and returns two partitions to recurse
         evalThresholds(cands, lastThresh) match {
           case Some(th) =>
             result = th +: result

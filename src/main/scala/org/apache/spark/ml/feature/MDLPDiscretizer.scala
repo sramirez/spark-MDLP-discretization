@@ -123,13 +123,11 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
    * Computes a [[DiscretizerModel]] that contains the cut points (splits) for each input feature.
    */
   override def fit(dataset: DataFrame): DiscretizerModel = {
-    println("fit. about to call train")
     transformSchema(dataset.schema, logging = true)
     val input = dataset.select($(labelCol), $(inputCol)).map {
       case Row(label: Double, features: Vector) =>
         LabeledPoint(label, features)
     }.cache() // cache the input to avoid performance warning (see issue #18)
-    println("its cached now calling train")
     val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
