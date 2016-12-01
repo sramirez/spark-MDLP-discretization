@@ -93,8 +93,9 @@ object TestHelper {
   def createSparkContext() = {
     // the [n] corresponds to the number of worker threads and should correspond ot the number of cores available.
     val conf = new SparkConf().setAppName("test-spark").setMaster("local[4]")
-    // Changing the default parallelism gave slightly different results and did not do much for performance.
-    //conf.set("spark.default.parallelism", "2")
+    // Changing the default parallelism to 4 hurt performance a lot for a big dataset.
+    // When maxByPart was 10000, it wend from 39 min to 4.5 hours.
+    //conf.set("spark.default.parallelism", "4")
     val sc = new SparkContext(conf)
     LogManager.getRootLogger.setLevel(Level.WARN)
     sc
@@ -119,7 +120,6 @@ object TestHelper {
     ))
     val rows = cars.map(line => line.split(",").map(elem => elem.trim))
       .map(x => Row.fromSeq(Seq(x(0).toDouble, x(1).toInt, x(2).toInt, x(3).toDouble, x(4).toDouble, x(5).toDouble, x(6).toInt, x(7), x(8))))
-    //println(rows)
 
     sqlContext.createDataFrame(rows, schema)
   }
@@ -259,6 +259,35 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  /** @return the blockbuster dataset. It has a lot of columns (312), but not that many rows (421)
+    */
+  def readBlockBusterData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "blockbuster.data")
+    val nullable = true
+    val numTrailingNumberCols = 308
+
+    // A whole bunch of numeric columns
+    var fields: Seq[StructField] = for (i <- 1 to numTrailingNumberCols) yield {
+      StructField("col" + i, DoubleType, nullable)
+    }
+    fields = List(List(
+      StructField("Store", DoubleType, nullable),
+      StructField("Sqft", DoubleType, nullable),
+      StructField("City", StringType, nullable),
+      StructField("State", StringType, nullable)
+    ), fields).flatten
+
+    val schema = StructType(fields)
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(
+        List(Seq(asDouble(x(0)), asDouble(x(1)), asString(x(2)), asString(x(3))),
+          for (i <- 4 to numTrailingNumberCols + 3) yield { asDouble(x(i)) }
+        ).flatten )
+      })
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
   /** @return subset of 311 service call data.
     */
   def readSvcRequests40000Data(sqlContext: SQLContext): DataFrame = {
@@ -292,6 +321,57 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  /** @return dataset with lots of rows
+    */
+  def readServerXData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "serverX_100000.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("rpm1", DoubleType, nullable),
+      StructField("CPU1_TJ", DoubleType, nullable),
+      StructField("CPU2_TJ", DoubleType, nullable),
+      StructField("total_cfm", DoubleType, nullable),
+      StructField("val1", DoubleType, nullable),
+      StructField("val2", DoubleType, nullable),
+      StructField("target4", StringType, nullable),
+      StructField("target2", StringType, nullable)
+    ))
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asDouble(x(0)), asDouble(x(1)), asDouble(x(2)),
+        asDouble(x(3)), asDouble(x(4)), asDouble(x(5)),
+         asString(x(6)), asString(x(7))))})
+
+    sqlContext.createDataFrame(rows, schema)
+  }
+
+  /** @return dataset with lots of rows
+    */
+  def readServerBigXData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "serverX_10000000.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("targetA", StringType, nullable),
+      StructField("val1", DoubleType, nullable),
+      StructField("val2", DoubleType, nullable),
+      StructField("val3", DoubleType, nullable),
+      StructField("val4", DoubleType, nullable),
+      StructField("val5", DoubleType, nullable),
+      StructField("val6", DoubleType, nullable),
+      StructField("targetB", StringType, nullable)
+    ))
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(asString(x(0)), asDouble(x(1)),
+        asDouble(x(2)), asDouble(x(3)), asDouble(x(4)), asDouble(x(5)), asDouble(x(6)), asString(x(7))))
+      })
+
+    sqlContext.createDataFrame(rows, schema)
+  }
 
 
   /** @return dataset with 3 double columns. The first is the label column and contain null.
