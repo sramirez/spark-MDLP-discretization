@@ -120,7 +120,6 @@ object TestHelper {
     ))
     val rows = cars.map(line => line.split(",").map(elem => elem.trim))
       .map(x => Row.fromSeq(Seq(x(0).toDouble, x(1).toInt, x(2).toInt, x(3).toDouble, x(4).toDouble, x(5).toDouble, x(6).toInt, x(7), x(8))))
-    //println(rows)
 
     sqlContext.createDataFrame(rows, schema)
   }

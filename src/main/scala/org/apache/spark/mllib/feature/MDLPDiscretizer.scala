@@ -125,7 +125,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     val start2 = System.currentTimeMillis()
     val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(maxByPart, maxBins, initialCandidates, sc)
-    logInfo("done finding MDLP thresholds in "+ (System.currentTimeMillis() - start2) +" Now returning model")
+    logInfo("done finding MDLP thresholds in "+ (System.currentTimeMillis() - start2) + " Now returning model")
     buildModelFromThresholds(nFeatures, continuousVars, allThresholds)
   }
 
@@ -153,7 +153,6 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     // Sort these values to perform the boundary points evaluation
     val start = System.currentTimeMillis()
-    distinctValues.take(10).foreach(x => println(x._1, x._2.mkString(", ")))
     val result = distinctValues.sortByKey()
     logInfo("done sortByKey in " + (System.currentTimeMillis() - start))
     result
