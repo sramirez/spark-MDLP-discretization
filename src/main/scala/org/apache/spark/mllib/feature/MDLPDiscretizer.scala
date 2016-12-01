@@ -111,7 +111,8 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
 
-    // Filter those features selected by the user
+    // Filter those features selected for binning by the user
+    assert (nFeatures > 0, "The number of features to bin must be greater than 0")
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
     val barr = sc.broadcast(arr)
