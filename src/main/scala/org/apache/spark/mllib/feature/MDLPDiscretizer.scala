@@ -78,10 +78,8 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     // Basic info. about the dataset
     val sc = data.context
-    logInfo("in MDLPDiscretizer.runAll")
     val bLabels2Int = sc.broadcast(labels2Int)
     val classDistrib = data.map(d => bLabels2Int.value(d.label)).countByValue()
-    logInfo("classDistrib = " + classDistrib.mkString(", "))
     val bclassDistrib = sc.broadcast(classDistrib)
     val (dense, nFeatures) = data.first.features match {
       case v: DenseVector => 
@@ -158,7 +156,6 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
     distinctValues.take(10).foreach(x => println(x._1, x._2.mkString(", ")))
     val result = distinctValues.sortByKey()
     logInfo("done sortByKey in " + (System.currentTimeMillis() - start))
-    result.take(10).foreach(x => println(x._1, x._2.mkString(", ")))
     result
   }
 
