@@ -77,7 +77,7 @@ class InitialThresholdsFinder() extends Serializable{
     // partition by feature (possibly sub-partitioned features) instead of default partitioning strategy
     val partitionedPoints = pointsWithIndex.partitionBy(new FeaturePartitioner())
 
-    partitionedPoints.mapPartitionsWithIndex({ (index, it) =>
+    val result = partitionedPoints.mapPartitionsWithIndex({ (index, it) =>
       if (it.hasNext) {
         var ((lastFeatureIdx, lastX, _), lastFreqs) = it.next()
         //println("the first value of part " + index + " is " + lastX)
@@ -104,6 +104,7 @@ class InitialThresholdsFinder() extends Serializable{
         Iterator.empty
       }
     })
+    result
   }
 
   /**

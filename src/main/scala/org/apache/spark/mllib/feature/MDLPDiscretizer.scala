@@ -58,7 +58,6 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
    * @return RDD of candidate points.
    */
   private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
-
     new InitialThresholdsFinder().findInitialThresholds(points, nLabels, maxByPart)
   }
 
@@ -95,7 +94,7 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
       case unexpected: Any => throw new IllegalStateException(
         "Unexptected Vector type: " + unexpected.getClass.getName)
     }
-            
+
     val continuousVars = processContinuousAttributes(contFeat, nFeatures)
     logInfo("Number of continuous attributes: " + continuousVars.distinct.length)
     logInfo("Total number of attributes: " + nFeatures)      
@@ -118,19 +117,23 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
 
     val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues.rdd)
 
-    // Filter those features selected by the user
+    // Filter those features selected for binning by the user
+    assert (nFeatures > 0, "The number of features to bin must be greater than 0")
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
     val barr = sc.broadcast(arr)
 
     // Get only boundary points from the whole set of distinct values
+    val start = System.currentTimeMillis()
     val initialCandidates = initialThresholds(sortedValues)
       .map{case ((featureIdx, cutpoint), freqs) => (featureIdx, (cutpoint, freqs))}
       .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features
+    logInfo("done finding initial thresholds in " + (System.currentTimeMillis() - start) )
 
+    val start2 = System.currentTimeMillis()
     val allThresholds: Array[(Int, Seq[Float])] = findAllThresholds(maxByPart, maxBins, initialCandidates, sc)
-
+    logInfo("done finding MDLP thresholds in "+ (System.currentTimeMillis() - start2) + " Now returning model")
     buildModelFromThresholds(nFeatures, continuousVars, allThresholds)
   }
 
@@ -157,7 +160,10 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
     val distinctValues = nonZeros.union(zeros)
 
     // Sort these values to perform the boundary points evaluation
-    distinctValues.sortByKey()
+    val start = System.currentTimeMillis()
+    val result = distinctValues.sortByKey()
+    logInfo("done sortByKey in " + (System.currentTimeMillis() - start))
+    result
   }
 
   /**
@@ -185,7 +191,7 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
                         initialCandidates: RDD[(Int, (Float, Array[Long]))],
                         sc: SparkContext): Array[(Int, Seq[Float])] = {
     val bigIndexes = initialCandidates
-      .countByKey()
+      .countByKey()  // this is fairly expensive
       .filter{case (_, c) => c > elementsByPart}
     val bBigIndexes = sc.broadcast(bigIndexes)
     val minBinWeight: Long = (minBinPercentage * data.count() / 100.0).toLong
@@ -212,7 +218,7 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
 
     var bigThresholds = Map.empty[Int, Seq[Float]]
     val bigThresholdsFinder =
-      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight)
+      new ManyValuesThresholdFinder(nLabels, stoppingCriterion, maxBins, minBinWeight, maxByPart)
     for (k <- bigIndexes.keys) {
       val cands = initialCandidates.filter { case (k2, _) => k == k2 }.values.sortByKey()
       bigThresholds += ((k, bigThresholdsFinder.findThresholds(cands)))

@@ -43,6 +43,23 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
+
+  /** Do entropy based binning on a dataset with no continuous columns to bin.
+    * We expect an assert error as there must be some columns to bin  */
+  test("Run MDLPD on date_test (maxBins = 10)") {
+
+    val df = readDatesData(sqlContext)
+    try {
+      getDiscretizerModel(df, Array(), "date", 10)
+      fail("should not get here")
+    }
+    catch {
+      case err: AssertionError => // expected
+      case ex: Throwable => fail("Unexpected exception :"+ ex.printStackTrace());
+    }
+  }
+
+
   /** Do entropy based binning of cars data for all the numeric columns using origin as target. */
   test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100)") {
 
