@@ -91,8 +91,6 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
         (true, v.size)
       case v: SparseVector =>
         (false, v.size)
-      case unexpected: Any => throw new IllegalStateException(
-        "Unexptected Vector type: " + unexpected.getClass.getName)
     }
 
     val continuousVars = processContinuousAttributes(contFeat, nFeatures)
