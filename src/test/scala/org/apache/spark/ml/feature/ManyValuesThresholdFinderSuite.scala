@@ -1,8 +1,7 @@
 package org.apache.spark.ml.feature
 
 import org.apache.spark.ml.feature.TestHelper._
-import org.apache.spark.mllib.feature.{FewValuesThresholdFinder, ManyValuesThresholdFinder}
-import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.feature.ManyValuesThresholdFinder
 import org.apache.spark.sql.SQLContext
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner

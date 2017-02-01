@@ -23,7 +23,7 @@ import ThresholdFinder.calcCriterionValue
 
 
 /**
-  * Use this version when the feature to discretize has more values that will fix in a partition (see maxByPart param).
+  * Use this version when the feature to discretize has more values that will fit in a partition (see maxByPart param).
   * @param nLabels the number of class labels
   * @param maxBins Maximum number of points to select
   * @param minBinWeight don't generate bins with fewer than this many records.
