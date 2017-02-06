@@ -51,10 +51,8 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
         th > bounds._1 && th < bounds._2
       })
       if (newCandidates.length > 0) {
-        //println("evaluating newCandidates = " + newCandidates.map(x=>x._1 + ": " + x._2.mkString(", ")).mkString(";   ") + "   lastThresh= " + lastThresh)
         evalThresholds(newCandidates, lastThresh, nLabels) match {
           case Some(th) =>
-            //println("added "+ th + " to " + result)
             result = th +: result
             stack.enqueue(((bounds._1, th), Some(th)))
             stack.enqueue(((th, bounds._2), Some(th)))
@@ -91,7 +89,6 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
       val rightTotal = (totals, leftAccum).zipped.map(_ - _)
       entropyFreqs = (cand, freq, leftAccum, rightTotal) +: entropyFreqs
     }
-    //println(entropyFreqs.map(x => " cand=" + x._1 + "   f="+ x._2.mkString(", ") + "   left="+ x._3.mkString(", ") + "   right="+ x._4.mkString(", ") ).mkString("\n"))
 
     val bucketInfo = new BucketInfo(totals)
 

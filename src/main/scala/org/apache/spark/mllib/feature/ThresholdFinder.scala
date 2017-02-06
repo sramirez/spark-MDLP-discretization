@@ -46,6 +46,4 @@ object ThresholdFinder {
 /**
   * Base trait for threshold finders.
   */
-trait ThresholdFinder extends Serializable with Logging {
-
-}
+trait ThresholdFinder extends Serializable with Logging
