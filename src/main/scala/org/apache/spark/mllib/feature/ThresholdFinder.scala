@@ -18,6 +18,7 @@
 package org.apache.spark.mllib.feature
 
 import FeatureUtils._
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.internal.Logging
 
 object ThresholdFinder {
@@ -29,7 +30,7 @@ object ThresholdFinder {
     * @return the MDLP criterion value, the weighted entropy value, sum of leftFreqs, and sum of rightFreqs
     */
   def calcCriterionValue(bucketInfo: BucketInfo,
-                         leftFreqs: Seq[Long], rightFreqs: Seq[Long]): (Double, Double, Long, Long) = {
+                         leftFreqs: IndexedSeq[Long], rightFreqs: IndexedSeq[Long]): (Double, Double, Long, Long) = {
     val k1 = leftFreqs.count(_ != 0)
     val s1 = if (k1 > 0) leftFreqs.sum else 0
     val hs1 = entropy(leftFreqs, s1)
@@ -41,6 +42,37 @@ object ThresholdFinder {
     val delta = log2(math.pow(3, bucketInfo.k) - 2) - (bucketInfo.k * bucketInfo.hs - k1 * hs1 - k2 * hs2)
     (gain - (log2(bucketInfo.s - 1) + delta) / bucketInfo.s, weightedHs, s1, s2)
   }
+
+  /**
+    * This approach is 2x faster than
+    *
+    * @param a array of arrays to sum by column
+    * @return 1D element-wise sum of the arrays passed in
+    */
+  def sumByColumn(a: Array[Array[Long]], numCols: Int, initialTotals: Option[Array[Long]] = None): Array[Long] = {
+    val total = if (initialTotals.isDefined) initialTotals.get else Array.fill(numCols)(0L)
+    for (row <- a) {
+      for (i <- 0 until numCols) total(i) += row(i)
+    }
+    total
+  }
+
+  /**
+    * This approach is 2x faster than
+    *
+    * @param a array of arrays to sum by column
+    * @param numRows the number of rows to sum (from 0)
+    * @return 1D element-wise sum of the arrays passed in
+    */
+  def sumByColumn(a: Broadcast[Array[Array[Long]]], numRows: Int, numCols: Int): Array[Long] = {
+    var total= Array.fill(numCols)(0L)
+    for (rowIdx <- 0 until numRows) {
+      val row = a.value(rowIdx)
+      for (i <- 0 until numCols) total(i) += row(i)
+    }
+    total
+  }
+
 }
 
 /**
