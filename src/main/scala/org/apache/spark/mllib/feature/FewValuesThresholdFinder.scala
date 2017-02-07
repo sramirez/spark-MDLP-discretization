@@ -102,11 +102,11 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
           case Some(last) => cand == last
         }
         // avoid computing entropy if we have a dupe
-        if (duplicate) Seq.empty[(Double, Float)]
+        if (duplicate) None
         else {
           val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
           val criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
-          if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
+          if (criterion) Some((weightedHs, cand)) else None
         }
     })
     // Select among the list of accepted candidate, that with the minimum weightedHs
