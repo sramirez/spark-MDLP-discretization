@@ -43,7 +43,11 @@ object FeatureUtils {
     */
   def entropy(frequencies: Seq[Long], n: Long) = {
     -frequencies.aggregate(0.0)(
-      { case (h, q) => h + (if (q == 0) 0 else (q.toDouble / n) * log2(q.toDouble / n))},
+      { case (h, q) => h + (if (q == 0) 0 else {
+          val qn = q.toDouble / n
+          qn * log2(qn)
+        })
+      },
       { case (h1, h2) => h1 + h2 }
     )
   }
@@ -54,7 +58,7 @@ object FeatureUtils {
    * Might be moved to Vector as .slice
    * @param features vector
    * @param filterIndices indices of features to filter, must be ordered asc
-   */
+   *
   private[feature] def compress(features: Vector, filterIndices: Array[Int]): Vector = {
     features match {
       case v: SparseVector =>
@@ -89,5 +93,5 @@ object FeatureUtils {
         throw new UnsupportedOperationException(
           s"Only sparse and dense vectors are supported but got ${other.getClass}.")
     }
-  }
+  }*/
 }
