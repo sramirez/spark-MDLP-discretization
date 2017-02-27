@@ -41,7 +41,7 @@ object FeatureUtils {
     * @param n the sum of all the frequencies in the list.
     * @return the total entropy
     */
-  def entropy(frequencies: Seq[Long], n: Long) = {
+  def entropy(frequencies: Seq[Long], n: Long): Double = {
     -frequencies.aggregate(0.0)(
       { case (h, q) => h + (if (q == 0) 0 else {
           val qn = q.toDouble / n
@@ -52,46 +52,4 @@ object FeatureUtils {
     )
   }
 
-  /*
-   * Returns a vector with features filtered.
-   * Preserves the order of filtered features the same as their indices are stored.
-   * Might be moved to Vector as .slice
-   * @param features vector
-   * @param filterIndices indices of features to filter, must be ordered asc
-   *
-  private[feature] def compress(features: Vector, filterIndices: Array[Int]): Vector = {
-    features match {
-      case v: SparseVector =>
-        val newSize = filterIndices.length
-        val newValues = new mutable.ArrayBuilder.ofDouble
-        val newIndices = new mutable.ArrayBuilder.ofInt
-        var i = 0
-        var j = 0
-        var indicesIdx = 0
-        var filterIndicesIdx = 0
-        while (i < v.indices.length && j < filterIndices.length) {
-          indicesIdx = v.indices(i)
-          filterIndicesIdx = filterIndices(j)
-          if (indicesIdx == filterIndicesIdx) {
-            newIndices += j
-            newValues += v.values(i)
-            j += 1
-            i += 1
-          } else {
-            if (indicesIdx > filterIndicesIdx) {
-              j += 1
-            } else {
-              i += 1
-            }
-          }
-        }
-        // TODO: Sparse representation might be ineffective if (newSize ~= newValues.size)
-        Vectors.sparse(newSize, newIndices.result(), newValues.result())
-      case v: DenseVector =>
-        Vectors.dense(filterIndices.map(i => v.values(i)))
-      case other =>
-        throw new UnsupportedOperationException(
-          s"Only sparse and dense vectors are supported but got ${other.getClass}.")
-    }
-  }*/
 }

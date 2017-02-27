@@ -59,7 +59,7 @@ class InitialThresholdsFinder() extends Serializable{
     val totalPartitions = featureInfo.last._5 + featureInfo.last._6
 
     // Get the first element cuts and their order index by partition for the boundary points evaluation
-    val pointsWithIndex = points.zipWithIndex().map(  v => ((v._1._1._1, v._1._1._2, v._2), v._1._2))
+    val pointsWithIndex = points.zipWithIndex().map( v => ((v._1._1._1, v._1._1._2, v._2), v._1._2))
 
     /** This custom partitioner will partition by feature and subdivide features into smaller partitions if large */
     class FeaturePartitioner[V]()
@@ -116,9 +116,9 @@ class InitialThresholdsFinder() extends Serializable{
     *  (featureIdx, numUniqueValues, sumValsBeforeFirst, partitionSize, numPartitionsForFeature, sumPreviousPartitions)
     */
   def createFeatureInfoList(points: RDD[((Int, Float), Array[Long])],
-                            maxByPart: Int, nFeatures: Int): List[(Int, Long, Long, Int, Int, Int)] = {
+                            maxByPart: Int, nFeatures: Int): IndexedSeq[(Int, Long, Long, Int, Int, Int)] = {
     // First find the number of points in each partition, ordered by featureIdx
-    var countsByFeatureIdx = points.map(_._1._1).countByValue().toList
+    var countsByFeatureIdx = points.map(_._1._1).countByValue().toArray
     // if there are features not represented, add them manually.
     // This can happen if there are some features with all 0 values (rare, but we need to handle it).
     val representedFeatures = countsByFeatureIdx.map(_._1).toSet
