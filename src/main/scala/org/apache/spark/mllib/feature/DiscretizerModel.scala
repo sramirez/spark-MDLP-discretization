@@ -51,7 +51,7 @@ class DiscretizerModel(val thresholds: Array[Array[Float]]) extends VectorTransf
             yield assignDiscreteValue(v(i).toFloat, thresholds(i)).toDouble         
           Vectors.dense(newValues.toArray)
     }    
-  } 
+  }
   
   /**
    * Discretizes values in a given dataset using thresholds.
@@ -76,12 +76,12 @@ class DiscretizerModel(val thresholds: Array[Array[Float]]) extends VectorTransf
           Vectors.dense(newValues.toArray)
     }
   }
-  
+
   private def binarySearch[A <% Ordered[A]](a: Array[A], v: A) = {
     def recurse(low: Int, high: Int): Int = (low + high) / 2 match {
       case _ if high < low => high + 1
-      case mid if a(mid) > v => recurse(low, mid - 1)
-      case mid if a(mid) < v => recurse(mid + 1, high)
+      case midHigher if a(midHigher) > v => recurse(low, midHigher - 1)
+      case midLower if a(midLower) < v => recurse(midLower + 1, high)
       case mid => mid
     }
     recurse(0, a.length - 1)

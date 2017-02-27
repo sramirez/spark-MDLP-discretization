@@ -15,7 +15,7 @@ import TestHelper._
 @RunWith(classOf[JUnitRunner])
 class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
-  var sqlContext: SQLContext = null
+  var sqlContext: SQLContext = _
 
   override def beforeAll(): Unit = {
     sqlContext = new SQLContext(SPARK_CTX)
@@ -42,6 +42,23 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       model.splits(0).mkString(", ")
     }
   }
+
+
+  /** Do entropy based binning on a dataset with no continuous columns to bin.
+    * We expect an assert error as there must be some columns to bin  */
+  test("Run MDLPD on date_test (maxBins = 10)") {
+
+    val df = readDatesData(sqlContext)
+    try {
+      getDiscretizerModel(df, Array(), "date", 10)
+      fail("should not get here")
+    }
+    catch {
+      case err: AssertionError => // expected
+      case ex: Throwable => fail("Unexpected exception :"+ ex.printStackTrace());
+    }
+  }
+
 
   /** Do entropy based binning of cars data for all the numeric columns using origin as target. */
   test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100)") {
@@ -85,7 +102,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /** Lowering the stopping criterion should result in more splits */
+  /** Lowering the stopping criterion should result in more splits. This sometimes fails due to #14.  */
   test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100, stoppingCriterion = -1e-2)") {
 
     val df = readCarsData(sqlContext)
@@ -148,7 +165,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
-        |-Infinity, 1.44359817E12, Infinity
+        |-Infinity, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
         model.splits.map(a => a.mkString(", ")).mkString(";")
     }
