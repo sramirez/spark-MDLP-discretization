@@ -55,10 +55,11 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
    * Computes the initial candidate points by feature.
    * 
    * @param points RDD with distinct points by feature ((feature, point), class values).
+   * @param nFeatures the number of continuous features to bin
    * @return RDD of candidate points.
    */
-  private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
-    new InitialThresholdsFinder().findInitialThresholds(points, nLabels, maxByPart)
+  private def initialThresholds(points: RDD[((Int, Float), Array[Long])], nFeatures: Int) = {
+    new InitialThresholdsFinder().findInitialThresholds(points, nFeatures, nLabels, maxByPart)
   }
 
   /**
@@ -123,7 +124,7 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
 
     // Get only boundary points from the whole set of distinct values
     val start = System.currentTimeMillis()
-    val initialCandidates = initialThresholds(sortedValues)
+    val initialCandidates = initialThresholds(sortedValues, nFeatures)
       .map{case ((featureIdx, cutpoint), freqs) => (featureIdx, (cutpoint, freqs))}
       .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features
@@ -146,6 +147,8 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
         bclassDistrib: Broadcast[Map[Int, Long]],
         featureValues: RDD[((Int, Float), Array[Long])]): RDD[((Int, Float), Array[Long])] = {
 
+    //println("featureValues = ")
+    //featureValues.collect().foreach(x => println(x._1 + " " + x._2.mkString(",")))
     val nonZeros: RDD[((Int, Float), Array[Long])] =
       featureValues.map(y => (y._1._1 + "," + y._1._2, y._2)).reduceByKey { case (v1, v2) =>
       (v1, v2).zipped.map(_ + _)
@@ -249,10 +252,10 @@ private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
     // Update the full list of features with the thresholds calculated
     val thresholds = Array.fill(nFeatures)(Array.empty[Float]) // Nominal values (empty)
     // Not processed continuous attributes
-    continuousVars.foreach(f => thresholds(f) = Array(Float.PositiveInfinity))
+    continuousVars.foreach(f => thresholds(f) = Array(Float.NegativeInfinity, Float.PositiveInfinity))
     // Continuous attributes (> 0 cut point)
     allThresholds.foreach({ case (k, vth) =>
-      thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.PositiveInfinity)
+      thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.NegativeInfinity, Float.PositiveInfinity)
     })
     logInfo("Number of features with thresholds computed: " + allThresholds.length)
     logDebug("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))

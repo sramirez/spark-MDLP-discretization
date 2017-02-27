@@ -52,7 +52,7 @@ object FeatureUtils {
     )
   }
 
-  /**
+  /*
    * Returns a vector with features filtered.
    * Preserves the order of filtered features the same as their indices are stored.
    * Might be moved to Vector as .slice

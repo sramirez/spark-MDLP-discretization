@@ -373,6 +373,34 @@ object TestHelper {
     sqlContext.createDataFrame(rows, schema)
   }
 
+  /** @return dataset with lots of rows
+    */
+  def readRedTrainData(sqlContext: SQLContext): DataFrame = {
+    val data = SPARK_CTX.textFile(FILE_PREFIX + "red_train.data")
+    val nullable = true
+
+    val schema = StructType(List(
+      StructField("col1", DoubleType, nullable),
+      StructField("col2", DoubleType, nullable),
+      StructField("col3", DoubleType, nullable),
+      StructField("col4", DoubleType, nullable),
+      StructField("col5", DoubleType, nullable),
+      StructField("col6", DoubleType, nullable),
+      StructField("col7", DoubleType, nullable),
+      StructField("col8", DoubleType, nullable),
+      StructField("col9", DoubleType, nullable),
+      StructField("outcome", StringType, nullable)
+    ))
+
+    // ints and dates must be read as doubles
+    val rows = data.map(line => line.split(",").map(elem => elem.trim))
+      .map(x => {Row.fromSeq(Seq(
+        asDouble(x(0)), asDouble(x(1)), asDouble(x(2)), asDouble(x(3)), asDouble(x(4)), asDouble(x(5)),
+        asDouble(x(6)), asDouble(x(7)), asDouble(x(8)), asString(x(9))))
+      })
+
+    sqlContext.createDataFrame(rows, schema)
+  }
 
   /** @return dataset with 3 double columns. The first is the label column and contain null.
     */

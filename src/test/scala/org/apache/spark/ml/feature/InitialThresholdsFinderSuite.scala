@@ -33,7 +33,7 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
       ((0, 5.0f), Array(5L, 4L, 20L))
     )
     val points = sqlContext.sparkContext.parallelize(feature)
-    val result = finder.findInitialThresholds(points, nLabels = 3, maxByPart = 100)
+    val result = finder.findInitialThresholds(points, 1, nLabels = 3, maxByPart = 100)
 
 
     assertResult("4.25, 4.55, 4.8, 5.0") {
@@ -66,7 +66,7 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
       ((3, 5.0f), Array(0L, 28L, 0L))
     )
     val points = sqlContext.sparkContext.parallelize(feature)
-    val result = finder.findInitialThresholds(points, nLabels = 3, maxByPart = 100)
+    val result = finder.findInitialThresholds(points, nLabels = 3, maxByPart = 100, nFeatures = 4)
 
     assertResult("(0,125.0), (0,225.3), (0,350.3), (0,400.0), (1,4.55), (1,4.8), (1,5.0), (2,4.25), (2,4.8), (2,5.0), (3,4.25), (3,5.0)") {
       result.collect().map(_._1).mkString(", ")
@@ -76,7 +76,7 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
   // In this case the features have more values that fit in a partition
   test("Find initial thresholds when more values than maxByPart") {
 
-    val result = finder.findInitialThresholds(createPointsFor2Features, nLabels = 3, maxByPart = 5)
+    val result = finder.findInitialThresholds(createPointsFor2Features, nLabels = 3, maxByPart = 5, nFeatures = 2)
 
     assertResult("(0,125.0), (0,225.0), (0,450.0), (0,700.0), (0,800.0), (0,1025.0), (0,1150.0), (0,1200.0), " +
       "(1,3.75), (1,4.55), (1,4.8), (1,5.5), (1,6.0), (1,8.05), (1,8.8), (1,9.5), (1,10.0), (1,12.05), (1,12.6)") {
@@ -91,23 +91,23 @@ class InitialThresholdsFinderSuite extends FunSuite with BeforeAndAfterAll {
     // the tuple in result list is
     //(featureIdx, numUniqueValues, sumValsBeforeFirst, partitionSize, numPartitionsForFeature, sumPreviousPartitions)
     assertResult("(0,8,0,8,1,0), (1,11,8,11,1,1)") {
-      finder.createFeatureInfoList(points, 100).mkString(", ")
+      finder.createFeatureInfoList(points, 100, nFeatures = 2).mkString(", ")
     }
 
     assertResult("(0,8,0,8,1,0), (1,11,8,6,2,1)") {
-      finder.createFeatureInfoList(points, 10).mkString(", ")
+      finder.createFeatureInfoList(points, 10, nFeatures = 2).mkString(", ")
     }
 
     assertResult("(0,8,0,4,2,0), (1,11,8,6,2,2)") {
-      finder.createFeatureInfoList(points, 7).mkString(", ")
+      finder.createFeatureInfoList(points, 7, nFeatures = 2).mkString(", ")
     }
 
     assertResult("(0,8,0,4,2,0), (1,11,8,4,3,2)") {
-      finder.createFeatureInfoList(points, 5).mkString(", ")
+      finder.createFeatureInfoList(points, 5, nFeatures = 2).mkString(", ")
     }
 
     assertResult("(0,8,0,2,4,0), (1,11,8,2,6,4)") {
-      finder.createFeatureInfoList(points, 2).mkString(", ")
+      finder.createFeatureInfoList(points, 2, nFeatures = 2).mkString(", ")
     }
   }
 

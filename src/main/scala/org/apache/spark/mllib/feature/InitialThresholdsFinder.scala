@@ -49,12 +49,13 @@ class InitialThresholdsFinder() extends Serializable{
     *
     * @param points RDD with distinct points by feature ((feature, point), class values).
     * @param nLabels number of class labels
+    * @param nFeatures expected number of features
     * @param maxByPart maximum number of values allowed in a partition
     * @return RDD of candidate points.
     */
-  def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nLabels: Int, maxByPart: Int) = {
+  def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nFeatures: Int, nLabels: Int, maxByPart: Int) = {
 
-    val featureInfo = createFeatureInfoList(points, maxByPart)
+    val featureInfo = createFeatureInfoList(points, maxByPart, nFeatures)
     val totalPartitions = featureInfo.last._5 + featureInfo.last._6
 
     // Get the first element cuts and their order index by partition for the boundary points evaluation
@@ -110,13 +111,25 @@ class InitialThresholdsFinder() extends Serializable{
   /**
     * @param points all unique points
     * @param maxByPart maximum number of values in a partition
+    * @param nFeatures expected number of features.
     * @return a list of info for each partition. The values in the info tuple are:
     *  (featureIdx, numUniqueValues, sumValsBeforeFirst, partitionSize, numPartitionsForFeature, sumPreviousPartitions)
     */
   def createFeatureInfoList(points: RDD[((Int, Float), Array[Long])],
-                            maxByPart: Int): List[(Int, Long, Long, Int, Int, Int)] = {
+                            maxByPart: Int, nFeatures: Int): List[(Int, Long, Long, Int, Int, Int)] = {
     // First find the number of points in each partition, ordered by featureIdx
-    val countsByFeatureIdx = points.map(_._1._1).countByValue().toList.sortBy(_._1)
+    var countsByFeatureIdx = points.map(_._1._1).countByValue().toList
+    // if there are features not represented, add them manually.
+    // This can happen if there are some features with all 0 values (rare, but we need to handle it).
+    val representedFeatures = countsByFeatureIdx.map(_._1).toSet
+    if (countsByFeatureIdx.length < nFeatures) {
+      for (i <- 0 until nFeatures) {
+        if (!representedFeatures.contains(i)) {
+          countsByFeatureIdx +:= (i, 1L)  // (featureIdx, single 0 value)
+        }
+      }
+    }
+    countsByFeatureIdx = countsByFeatureIdx.sortBy(_._1)
 
     var lastCount: Long = 0
     var sum: Long = 0
