@@ -18,7 +18,8 @@
 package org.apache.spark.mllib.feature
 
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.{Logging, SparkContext}
+import org.apache.spark.internal.Logging
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg._
@@ -292,7 +293,10 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
       thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.PositiveInfinity)
     })
     logInfo("Number of features with thresholds computed: " + allThresholds.length)
-    logDebug("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
+    
+
+    
+    ("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
 
     new DiscretizerModel(thresholds)
   }

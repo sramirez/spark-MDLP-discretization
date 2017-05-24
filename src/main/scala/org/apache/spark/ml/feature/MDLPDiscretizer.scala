@@ -19,17 +19,21 @@ package org.apache.spark.ml.feature
 
 import org.apache.hadoop.fs.Path
 import org.apache.spark.annotation.{Experimental, Since}
-import org.apache.spark.ml._
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.param.shared._
 import org.apache.spark.ml.util._
 import org.apache.spark.mllib.feature
-import org.apache.spark.mllib.linalg._
+import org.apache.spark.ml.linalg._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{StructField, StructType}
-import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.ml.attribute._
+import org.apache.spark.mllib.linalg.{Vectors => OldVectors}
+import org.apache.spark.ml.Estimator
+import org.apache.spark.ml.Model
+import org.apache.spark.rdd.RDD
+import org.apache.spark.mllib.regression.{LabeledPoint => OldLabeledPoint}
+import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 /**
  * Params for [[MDLPDiscretizer]] and [[DiscretizerModel]].
@@ -121,18 +125,22 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
   /**
    * Computes a [[DiscretizerModel]] that contains the cut points (splits) for each input feature.
    */
-  override def fit(dataset: DataFrame): DiscretizerModel = {
+  @Since("2.1.0")
+  override def fit(dataset: Dataset[_]): DiscretizerModel = {
+    
     transformSchema(dataset.schema, logging = true)
-    val input = dataset.select($(labelCol), $(inputCol)).map {
-      case Row(label: Double, features: Vector) =>
-        LabeledPoint(label, features)
-    }.cache() // cache the input to avoid performance warning (see issue #18)
-    val discretizer = feature.MDLPDiscretizer.train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage))
+    val input: RDD[OldLabeledPoint] =
+      dataset.select(col($(labelCol)).cast(DoubleType), col($(inputCol))).rdd.map {
+        case Row(label: Double, features: Vector) =>
+          OldLabeledPoint(label, OldVectors.fromML(features))
+      }.cache() // cache the input to avoid performance warning (see issue #18)
+    val discretizer = feature.MDLPDiscretizer.train(
+        input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
   
+  @Since("1.6.0")
   override def transformSchema(schema: StructType): StructType = {
-    validateParams()
     val inputType = schema($(inputCol)).dataType
     require(inputType.isInstanceOf[VectorUDT],
       s"Input column ${$(inputCol)} must be a vector column")
@@ -177,17 +185,18 @@ class DiscretizerModel private[ml] (
    * NOTE: Vectors to be transformed must be the same length
    * as the source vectors given to MDLPDiscretizer.fit.
    */
-  override def transform(dataset: DataFrame): DataFrame = {
+  @Since("2.1.0")
+  override def transform(dataset: Dataset[_]): DataFrame = {
     transformSchema(dataset.schema, logging = true)
     val discModel = new feature.DiscretizerModel(splits)
-    val discOp = udf { discModel.transform _ }
+    val discOp = udf ( (mlVector: Vector) => discModel.transform(OldVectors.fromML(mlVector)).asML )
     dataset.withColumn($(outputCol), discOp(col($(inputCol))))
   }
 
   override def transformSchema(schema: StructType): StructType = {
-    validateParams()
     val buckets = splits.map(_.sliding(2).map(bucket => bucket.mkString(", ")).toArray)
-    val featureAttributes: Seq[attribute.Attribute] = for(i <- splits.indices) yield new NominalAttribute(
+    val featureAttributes: Seq[org.apache.spark.ml.attribute.Attribute] = 
+      for(i <- splits.indices) yield new NominalAttribute(
         isOrdinal = Some(true),
         values = Some(buckets(i)))
     val newAttributeGroup = new AttributeGroup($(outputCol), featureAttributes.toArray)
