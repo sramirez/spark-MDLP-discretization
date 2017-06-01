@@ -187,19 +187,36 @@ class DiscretizerModel private[ml] (
    */
   @Since("2.1.0")
   override def transform(dataset: Dataset[_]): DataFrame = {
-    transformSchema(dataset.schema, logging = true)
+    val newSchema = transformSchema(dataset.schema, logging = true)
+    val metadata = newSchema.fields.last.metadata
     val discModel = new feature.DiscretizerModel(splits)
     val discOp = udf ( (mlVector: Vector) => discModel.transform(OldVectors.fromML(mlVector)).asML )
-    dataset.withColumn($(outputCol), discOp(col($(inputCol))))
+    dataset.withColumn($(outputCol), discOp(col($(inputCol))).as($(outputCol), metadata))
   }
 
   override def transformSchema(schema: StructType): StructType = {
+    val origAttrGroup = AttributeGroup.fromStructField(schema($(inputCol)))
+    val origFeatureAttributes: Array[Attribute] = if (origAttrGroup.attributes.nonEmpty) {
+      origAttrGroup.attributes.get.zipWithIndex.map(_._1)
+    } else {
+      Array.fill[Attribute](origAttrGroup.size)(NominalAttribute.defaultAttr)
+    }
+
     val buckets = splits.map(_.sliding(2).map(bucket => bucket.mkString(", ")).toArray)
-    val featureAttributes: Seq[org.apache.spark.ml.attribute.Attribute] = 
-      for(i <- splits.indices) yield new NominalAttribute(
+
+    val newFeatureAttributes: Seq[org.apache.spark.ml.attribute.Attribute] = if (origAttrGroup.attributes.nonEmpty) {
+      for (i <- splits.indices) yield new NominalAttribute(
+        name = origFeatureAttributes(i).name,
+        index = origFeatureAttributes(i).index,
         isOrdinal = Some(true),
         values = Some(buckets(i)))
-    val newAttributeGroup = new AttributeGroup($(outputCol), featureAttributes.toArray)
+    } else {
+      for (i <- splits.indices) yield new NominalAttribute(
+        isOrdinal = Some(true),
+        values = Some(buckets(i)))
+    }
+
+    val newAttributeGroup = new AttributeGroup($(outputCol), newFeatureAttributes.toArray)
     val outputFields = schema.fields :+ newAttributeGroup.toStructField()
     StructType(outputFields)
   }
