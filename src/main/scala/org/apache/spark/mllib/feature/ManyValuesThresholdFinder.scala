@@ -57,7 +57,9 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
       var cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
       val nCands = cands.count
       if (nCands > 0) {
-        cands = cands.coalesce(partitions(nCands))
+        nPart = partitions(nCands)
+        shuffling = nPart > cands.partitions.size || nPart == 1
+        cands = cands.coalesce(nPart, shuffle = shuffling)
         // Selects one threshold among the candidates and returns two partitions to recurse
         evalThresholds(cands, lastThresh) match {
           case Some(th) =>
