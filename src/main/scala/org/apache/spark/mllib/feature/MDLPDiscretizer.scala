@@ -161,6 +161,7 @@ class MDLPDiscretizer private (val data: RDD[LabeledPoint],
     }: (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
       
     // Filter those features selected by the user
+    assert (nFeatures > 0, "The number of features to bin must be greater than 0")
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
     val barr = sc.broadcast(arr)
