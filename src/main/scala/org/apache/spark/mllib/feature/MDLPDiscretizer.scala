@@ -18,7 +18,8 @@
 package org.apache.spark.mllib.feature
 
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.{Logging, Partitioner, SparkContext}
+import org.apache.spark.internal.Logging
+import org.apache.spark.SparkContext
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg._
@@ -111,6 +112,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
     val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
 
     // Filter those features selected by the user
+    assert (nFeatures > 0, "The number of features to bin must be greater than 0")
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
     val barr = sc.broadcast(arr)
@@ -249,7 +251,10 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
       thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.PositiveInfinity)
     })
     logInfo("Number of features with thresholds computed: " + allThresholds.length)
-    logDebug("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
+    
+
+    
+    ("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
 
     new DiscretizerModel(thresholds)
   }
