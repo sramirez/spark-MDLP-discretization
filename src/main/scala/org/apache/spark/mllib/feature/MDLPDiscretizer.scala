@@ -35,15 +35,20 @@ import scala.collection.Map
  * 
  * [1] Fayyad, U., & Irani, K. (1993). 
  * "Multi-interval discretization of continuous-valued attributes for classification learning."
+ * 
+ * Note: Approximate version may generate some non-boundary points when processing limits in partitions (related to issue #14). 
+ * Please refer to mllib.feature.InitialThresholdsFinder.findFastInitialThresholds for more information.
  *
  * @param data RDD of LabeledPoint
  * @param stoppingCriterion (optional) used to determine when to stop recursive splitting
  * @param minBinPercentage (optional) minimum percent of total dataset allowed in a single bin.
+ * @param approximate If true, boundary points are computed faster but in an approximate manner.
  */
 private class MDLPDiscretizer (val data: RDD[LabeledPoint],
             stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
             maxByPart: Int = DEFAULT_MAX_BY_PART,
-            minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) extends Serializable with Logging {
+            minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
+            approximate: Boolean = true) extends Serializable with Logging {
 
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
@@ -55,7 +60,11 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
    * @return RDD of candidate points.
    */
   private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
-    new InitialThresholdsFinder().findInitialThresholds(points, nLabels, maxByPart)
+    val finder = new InitialThresholdsFinder()    
+    if(approximate)
+      finder.findInitialThresholds(points, nLabels, maxByPart)
+    else
+      finder.findFastInitialThresholds(points, nLabels, maxByPart)
   }
 
   /**
@@ -310,6 +319,7 @@ object MDLPDiscretizer {
    * @param maxBins Maximum number of thresholds to select per feature.
    * @param maxByPart Maximum number of elements by partition.
    * @param stoppingCriterion the threshold used to determine when stop recursive splitting of buckets.
+   * @param approximate If true, boundary points are computed faster but in an approximate manner.
    * @return A DiscretizerModel with the subsequent thresholds.
    */
   def train(
@@ -318,7 +328,8 @@ object MDLPDiscretizer {
       maxBins: Int = 15,
       maxByPart: Int = DEFAULT_MAX_BY_PART,
       stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
-      minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE) = {
+      minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
+      approximate: Boolean = true) = {
     new MDLPDiscretizer(input, stoppingCriterion, maxByPart, minBinPercentage).runAll(continuousFeaturesIndexes, maxBins)
   }
 }

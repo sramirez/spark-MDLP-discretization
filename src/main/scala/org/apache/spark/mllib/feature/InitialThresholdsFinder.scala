@@ -106,6 +106,69 @@ class InitialThresholdsFinder() extends Serializable{
     })
     result
   }
+  
+  
+  /**
+    * Computes the initial candidate cut points by feature (non-determinism and faster version).
+    * This version may generate some non-boundary points when processing limits in partitions (related to issue #14). 
+    * This approximative solution may slightly affect the final set of cutpoints, which will provoke 
+    * that some unit tests failed. It should not be relevant in large scenarios, where peformance is more valuable.
+    * If you prefer a determinism solution, please try 'findInitialThresholds' (totallys exact but slower).
+    * 
+    * @param points RDD with distinct points by feature ((feature, point), class values).
+    * @param nLabels number of class labels
+    * @param maxByPart maximum number of values allowed in a partition
+    * @return RDD of candidate points.
+    */
+  def findFastInitialThresholds(sortedValues: RDD[((Int, Float), Array[Long])], nLabels: Int, maxByPart: Int) = {
+    val numPartitions = sortedValues.partitions.length
+    val sc = sortedValues.context
+     // Get the first elements by partition for the boundary points evaluation
+    val firstElements = sc.runJob(sortedValues, { case it =>
+      if (it.hasNext) Some(it.next()._1) else None
+    }: (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
+
+    val bcFirsts = sc.broadcast(firstElements)
+
+    sortedValues.mapPartitionsWithIndex({ (index, it) =>      
+      if (it.hasNext) {
+        var ((lastFeatureIdx, lastX), lastFreqs) = it.next()
+        var result = Seq.empty[((Int, Float), Array[Long])]
+        var accumFreqs = lastFreqs      
+        
+        for (((featureIdx, x), freqs) <- it) {
+          if (featureIdx != lastFeatureIdx) {
+            // new attribute: add last point from the previous one
+            result = ((lastFeatureIdx, lastX), accumFreqs.clone) +: result
+            accumFreqs = Array.fill(nLabels)(0L)
+          } else if (isBoundary(freqs, lastFreqs)) {
+            // new boundary point: midpoint between this point and the previous one
+            result = ((lastFeatureIdx, (x + lastX) / 2), accumFreqs.clone) +: result
+            accumFreqs = Array.fill(nLabels)(0L)
+          }
+          
+          lastFeatureIdx = featureIdx
+          lastX = x
+          lastFreqs = freqs
+          accumFreqs = (accumFreqs, freqs).zipped.map(_ + _)
+        }
+       
+        // Evaluate the last point in this partition with the first one in the next partition
+        val lastPoint = if (index < (numPartitions - 1)) {
+          bcFirsts.value(index + 1) match {
+            case Some((featureIdx, x)) => if (featureIdx != lastFeatureIdx) lastX else (x + lastX) / 2
+            case None => lastX // last point in the attribute
+          }
+        }else{
+          lastX // last point in the dataset
+        }                    
+        (((lastFeatureIdx, lastPoint), accumFreqs.clone) +: result).reverse.toIterator
+      } else {
+        Iterator.empty
+      }             
+    })
+  }
+  
 
   /**
     * @param points all unique points
