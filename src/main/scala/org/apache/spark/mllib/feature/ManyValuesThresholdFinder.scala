@@ -19,6 +19,7 @@ package org.apache.spark.mllib.feature
 
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable
+import ThresholdFinder.calcCriterionValue
 
 
 /**
@@ -44,7 +45,7 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
   def findThresholds(candidates: RDD[(Float, Array[Long])]): Seq[Float] = {
 
     // Get the number of partitions according to the maximum size established by partition
-    val partitions = { x: Long => math.ceil(x.toFloat / elementsByPart).toInt }
+    def partitions(x: Long) = math.ceil(x.toFloat / elementsByPart).toInt
 
     // Insert the extreme values in the stack (recursive iteration)
     val stack = new mutable.Queue[((Float, Float), Option[Float])]
@@ -54,10 +55,12 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
     while (stack.nonEmpty && result.size < maxBins){
       val (bounds, lastThresh) = stack.dequeue
       // Filter the candidates between the last limits added to the stack
-      var cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
-      val nCands = cands.count
-      if (nCands > 0) {
-        cands = cands.coalesce(partitions(nCands))
+      val cands = candidates.filter({ case (th, _) => th > bounds._1 && th < bounds._2 })
+      //val nCands = cands.count
+      if (!cands.isEmpty()) {
+        // There does not seem to be an advantage to doing this here, and it can give different results
+        // Possibly because of SPARK-14393?
+        //cands = cands.coalesce(partitions(nCands))
         // Selects one threshold among the candidates and returns two partitions to recurse
         evalThresholds(cands, lastThresh) match {
           case Some(th) =>
@@ -86,9 +89,11 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
     val sc = candidates.sparkContext
 
     // Compute the accumulated frequencies by partition
-    val totalsByPart = sc.runJob(candidates, { case it =>
+    val totalsByPart = sc.runJob(candidates, { it =>
       val accum = Array.fill(nLabels)(0L)
-      for ((_, freqs) <- it) {for (i <- 0 until nLabels) accum(i) += freqs(i)}
+      for ((_, freqs) <- it) {
+        for (i <- 0 until nLabels) accum(i) += freqs(i)
+      }
       accum
     }: (Iterator[(Float, Array[Long])]) => Array[Long])
 
@@ -125,7 +130,7 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
         }
         if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
     })
-    // Select among the list of accepted candidate, that with the minimum weightedHs
-    if (finalCandidates.count > 0) Some(finalCandidates.min._2) else None
+    // Select the candidate with the minimum weightedHs from among the list of accepted candidates.
+    if (!finalCandidates.isEmpty()) Some(finalCandidates.min._2) else None
   }
 }

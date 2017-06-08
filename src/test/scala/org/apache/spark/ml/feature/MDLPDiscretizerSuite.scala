@@ -15,7 +15,7 @@ import TestHelper._
 @RunWith(classOf[JUnitRunner])
 class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
 
-  var sqlContext: SQLContext = null
+  var sqlContext: SQLContext = _
 
   override def beforeAll(): Unit = {
     sqlContext = new SQLContext(SPARK_CTX)
@@ -100,7 +100,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  /** Lowering the stopping criterion should result in more splits */
+  /** Lowering the stopping criterion should result in more splits. This sometimes fails due to #14.  */
   test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100, stoppingCriterion = -1e-2)") {
 
     val df = readCarsData(sqlContext)
@@ -163,7 +163,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
-        |-Infinity, 1.44359817E12, Infinity
+        |-Infinity, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
         model.splits.map(a => a.mkString(", ")).mkString(";")
     }

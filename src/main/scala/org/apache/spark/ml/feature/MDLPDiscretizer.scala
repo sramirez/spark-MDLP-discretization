@@ -86,6 +86,7 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
     "but some applications may find it useful to prevent bins with just a very small number of instances." +
     " A value of 0.1% is reasonable, but it depends somewhat on the value of maxBins.",
     ParamValidators.inRange(0, 5.0))
+  setDefault(minBinPercentage -> 0)
 
   /** @group getParam */
   def getMinBinPercentage: Double = getOrDefault(minBinPercentage)
