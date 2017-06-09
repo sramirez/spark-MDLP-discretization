@@ -90,6 +90,15 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
 
   /** @group getParam */
   def getMinBinPercentage: Double = getOrDefault(minBinPercentage)
+  
+  /** @group getParam */  
+  val approximate = new BooleanParam(this, "approximate",
+    "If approximative DMDLP is executed. This version is faster but non-deterministic. " +
+    "The final set of cut points may be slightly affected by this option. " +
+    "The default is true, faster execution is preferable in large-scale environments. ")
+  setDefault(approximate -> false)
+  
+  def getApproximate: Boolean = getOrDefault(approximate)
 }
 
 /**
@@ -122,6 +131,9 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
   
   /** @group setParam */
   def setLabelCol(value: String): this.type = set(labelCol, value)
+  
+  /** @group setParam */
+  def setApproximate(value: Boolean): this.type = set(approximate, value)
 
   /**
    * Computes a [[DiscretizerModel]] that contains the cut points (splits) for each input feature.
@@ -135,8 +147,8 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
         case Row(label: Double, features: Vector) =>
           OldLabeledPoint(label, OldVectors.fromML(features))
       }.cache() // cache the input to avoid performance warning (see issue #18)
-    val discretizer = feature.MDLPDiscretizer.train(
-        input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage))
+    val discretizer = feature.MDLPDiscretizer.train(input, None, 
+        $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage), $(approximate))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
   

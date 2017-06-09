@@ -62,9 +62,9 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
   private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
     val finder = new InitialThresholdsFinder()    
     if(approximate)
-      finder.findInitialThresholds(points, nLabels, maxByPart)
+      finder.findFastInitialThresholds(points, nLabels, maxByPart)      
     else
-      finder.findFastInitialThresholds(points, nLabels, maxByPart)
+      finder.findInitialThresholds(points, nLabels, maxByPart)
   }
 
   /**
@@ -330,6 +330,7 @@ object MDLPDiscretizer {
       stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
       minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
       approximate: Boolean = true) = {
-    new MDLPDiscretizer(input, stoppingCriterion, maxByPart, minBinPercentage).runAll(continuousFeaturesIndexes, maxBins)
+    new MDLPDiscretizer(input, stoppingCriterion, maxByPart, minBinPercentage, approximate)
+      .runAll(continuousFeaturesIndexes, maxBins)
   }
 }
