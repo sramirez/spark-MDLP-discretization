@@ -8,11 +8,11 @@ object ProjectBuild extends Build {
     base = file("."),
     settings = Defaults.coreDefaultSettings ++ Seq(
       	name := "spark-MDLP-discretization",
-	version := "0.2-SPARK-2.1.0-SNAPSHOT",
+	version := "0.2-SPARK-2.1.1-SNAPSHOT",
 	organization := "org.apache.spark",
 	scalaVersion := "2.11.6",
 	spName := "apache/spark-MDLP-discretization",
-	sparkVersion := "2.1.0",
+	sparkVersion := "2.1.1",
 	sparkComponents += "mllib",
 	publishMavenStyle := true,
 	licenses += "Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"),
