@@ -477,7 +477,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     }
   }
 
-  // This dataset as 2 columns (5 and 6) with all 0 values.
+  // This dataset has 2 columns (5 and 6) with all 0 values.
   test("Run MDLPD on all columns in red_train data (label = outcome, maxBins = 100)") {
 
     val df = readRedTrainData(sqlContext)
