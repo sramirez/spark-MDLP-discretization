@@ -22,9 +22,8 @@ import org.apache.spark.storage.StorageLevel
 import org.apache.spark.internal.Logging
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd._
-import org.apache.spark.sql.{Dataset, SparkSession}
-//import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.linalg._
+import org.apache.spark.sql.Dataset
+import org.apache.spark.ml.linalg._
 import MDLPDiscretizer._
 import org.apache.spark.broadcast.Broadcast
 

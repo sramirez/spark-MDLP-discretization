@@ -123,22 +123,6 @@ object TestHelper {
 
     sqlContext.createDataFrame(rows, schema)
   }
-  
-  /** @return the dates data as a dataframe. */
-  def readDatesData(sqlContext: SQLContext): DataFrame = {
-    val datesData = SPARK_CTX.textFile(FILE_PREFIX + "dates.data")
-    val nullable = true
-
-    // txt, date
-    val schema = StructType(List(
-      StructField("txt", StringType, nullable),
-      StructField("date", DoubleType, nullable)
-    ))
-    val rows = datesData.map(line => line.split(",").map(elem => elem.trim))
-      .map(x => Row.fromSeq(Seq(asString(x(0)), asDateDouble(x(1)))))
-
-    sqlContext.createDataFrame(rows, schema)
-  }
 
   /** @return the dates data as a dataframe. */
   def readDatesData(sqlContext: SQLContext): DataFrame = {
