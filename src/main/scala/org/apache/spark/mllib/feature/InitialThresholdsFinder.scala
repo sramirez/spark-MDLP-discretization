@@ -110,11 +110,11 @@ class InitialThresholdsFinder() extends Serializable{
 
 
   /**
-    * Computes the initial candidate cut points by feature (non-determinism and faster version).
+    * Computes the initial candidate cut points by feature. This is a non-deterministic, but and faster version.
     * This version may generate some non-boundary points when processing limits in partitions (related to issue #14).
-    * This approximative solution may slightly affect the final set of cutpoints, which will provoke
-    * that some unit tests failed. It should not be relevant in large scenarios, where peformance is more valuable.
-    * If you prefer a determinism solution, please try 'findInitialThresholds' (totallys exact but slower).
+    * This approximate solution may slightly affect the final set of cutpoints, which will provoke
+    * some unit tests to fail. It should not be relevant in large scenarios, where peformance is more valuable.
+    * If you prefer a deterministic solution, please try 'findInitialThresholds' (which is totally exact but slower).
     *
     * @param sortedValues RDD with distinct points by feature ((feature, point), class values).
     * @param nLabels number of class labels

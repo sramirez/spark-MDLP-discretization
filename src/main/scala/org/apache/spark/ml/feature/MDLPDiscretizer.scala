@@ -145,7 +145,7 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
     }
     input.rdd.cache() // cache the input to avoid performance warning (see issue #18)
     val discretizer = org.apache.spark.mllib.feature.MDLPDiscretizer
-        .train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage))
+        .train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage), $(approximate))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
 

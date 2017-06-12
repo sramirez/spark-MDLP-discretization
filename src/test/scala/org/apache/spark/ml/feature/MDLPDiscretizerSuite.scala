@@ -163,7 +163,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, 2.5, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
-        |-Infinity, 1.44359817E12, Infinity
+        |-Infinity, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
         model.splits.map(a => a.mkString(", ")).mkString(";")
     }
