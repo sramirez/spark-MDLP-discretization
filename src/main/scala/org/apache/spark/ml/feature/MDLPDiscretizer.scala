@@ -197,10 +197,11 @@ class DiscretizerModel private[ml] (
    */
   @Since("2.1.0")
   override def transform(dataset: Dataset[_]): DataFrame = {
-    transformSchema(dataset.schema, logging = true)
+    val newSchema = transformSchema(dataset.schema, logging = true)
+    val metadata = newSchema.fields.last.metadata
     val discModel = new feature.DiscretizerModel(splits)
     val discOp = udf { discModel.transform _ }
-    dataset.withColumn($(outputCol), discOp(col($(inputCol))))
+    dataset.withColumn($(outputCol), discOp(col($(inputCol))).as($(outputCol), metadata))
   }
 
   override def transformSchema(schema: StructType): StructType = {
@@ -212,7 +213,7 @@ class DiscretizerModel private[ml] (
     val newAttributeGroup = new AttributeGroup($(outputCol), featureAttributes.toArray)
     val outputFields = schema.fields :+ newAttributeGroup.toStructField()
     StructType(outputFields)
-  }
+  }  
 
   override def copy(extra: ParamMap): DiscretizerModel = {
     val copied = new DiscretizerModel(uid, splits)
