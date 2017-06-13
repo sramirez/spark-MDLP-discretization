@@ -19,13 +19,13 @@ package org.apache.spark.mllib.feature
 
 import org.apache.spark.rdd.RDD
 import scala.collection.mutable
-import ThresholdFinder.calcCriterionValue
+import ThresholdFinder.{calcCriterionValue, sumByColumn}
 
 
 /**
-  * Use this version when the feature to discretize has more values that will fix in a partition (see maxByPart param).
+  * Use this version when the feature to discretize has more values that will fit in a partition (see maxByPart param).
   * @param nLabels the number of class labels
-  * @param maxBins Maximum number of points to select
+  * @param maxBins Maximum number of cpoints to select
   * @param minBinWeight don't generate bins with fewer than this many records.
   * @param elementsByPart Maximum number of elements to evaluate in each partition.
   * @param stoppingCriterion influences when to stop recursive splits
@@ -90,23 +90,18 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
 
     // Compute the accumulated frequencies by partition
     val totalsByPart = sc.runJob(candidates, { it =>
-      val accum = Array.fill(nLabels)(0L)
-      for ((_, freqs) <- it) {
-        for (i <- 0 until nLabels) accum(i) += freqs(i)
-      }
-      accum
+      val frequencies: Array[Array[Long]] = it.map(_._2).toArray
+      sumByColumn(frequencies, nLabels)
     }: (Iterator[(Float, Array[Long])]) => Array[Long])
 
     // Compute the total frequency for all partitions
-    var totals = Array.fill(nLabels)(0L)
-    for (t <- totalsByPart) totals = (totals, t).zipped.map(_ + _)
+    var totals = sumByColumn(totalsByPart, nLabels)
     val bcTotalsByPart = sc.broadcast(totalsByPart)
     val bcTotals = sc.broadcast(totals)
 
     val result = candidates.mapPartitionsWithIndex({ (slice, it) =>
       // Accumulate frequencies from the left to the current partition
-      var leftTotal = Array.fill(nLabels)(0L)
-      for (i <- 0 until slice) leftTotal = (leftTotal, bcTotalsByPart.value(i)).zipped.map(_ + _)
+      var leftTotal = sumByColumn(bcTotalsByPart, slice, nLabels)
       var entropyFreqs = Seq.empty[(Float, Array[Long], Array[Long], Array[Long])]
       // ... and from the current partition to the rightmost partition
       for ((cand, freqs) <- it) {
@@ -122,13 +117,17 @@ class ManyValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double,
     // select the best threshold according to MDLP
     val finalCandidates = result.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
-        var criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
-        lastSelected match {
-          case None =>
-          case Some(last) => criterion = criterion && (cand != last)
+        val duplicate = lastSelected match {
+          case None => false
+          case Some(last) =>  cand == last
         }
-        if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
+        // avoid entropy calculation if dupe
+        if (duplicate) Seq.empty[(Double, Float)]
+        else {
+          val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+          var criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
+          if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
+        }
     })
     // Select the candidate with the minimum weightedHs from among the list of accepted candidates.
     if (!finalCandidates.isEmpty()) Some(finalCandidates.min._2) else None

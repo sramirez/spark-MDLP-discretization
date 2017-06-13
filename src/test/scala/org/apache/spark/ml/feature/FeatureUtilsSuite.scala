@@ -1,8 +1,6 @@
 package org.apache.spark.ml.feature
 
-import org.apache.spark.ml.feature.TestHelper._
-import org.apache.spark.mllib.feature.{FeatureUtils, FewValuesThresholdFinder}
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.mllib.feature.{FeatureUtils}
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
@@ -15,8 +13,6 @@ import org.scalatest.{BeforeAndAfterAll, FunSuite}
   */
 @RunWith(classOf[JUnitRunner])
 class FeatureUtilsSuite extends FunSuite {
-
-
 
   test("Test entropy calc (typical 1)") {
 

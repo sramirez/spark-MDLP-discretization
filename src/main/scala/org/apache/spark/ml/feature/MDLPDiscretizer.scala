@@ -19,6 +19,7 @@ package org.apache.spark.ml.feature
 
 import org.apache.hadoop.fs.Path
 import org.apache.spark.annotation.{Experimental, Since}
+import org.apache.spark.ml._
 import org.apache.spark.ml.param._
 import org.apache.spark.ml.param.shared._
 import org.apache.spark.ml.util._
@@ -28,12 +29,6 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.ml.attribute._
-import org.apache.spark.mllib.linalg.{Vectors => OldVectors}
-import org.apache.spark.ml.Estimator
-import org.apache.spark.ml.Model
-import org.apache.spark.rdd.RDD
-import org.apache.spark.mllib.regression.{LabeledPoint => OldLabeledPoint}
-import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 
 /**
  * Params for [[MDLPDiscretizer]] and [[DiscretizerModel]].
@@ -41,7 +36,7 @@ import org.apache.spark.sql.types.{DoubleType, StructField, StructType}
 private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol with HasOutputCol with HasLabelCol {
 
   /**
-   * Maximum number of buckets into which data points are grouped. 
+   * Maximum number of buckets into which data points are grouped.
    * Must be >= 2. default: 2
    *
    * @group param
@@ -53,10 +48,10 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
 
   /** @group getParam */
   def getMaxBins: Int = getOrDefault(maxBins)
-  
+
   /**
-   * Maximum number of elements to evaluate in each partition. 
-   * If this parameter is bigger then the evaluation phase will be sequentially performed. 
+   * Maximum number of elements to evaluate in each partition.
+   * If this parameter is bigger then the evaluation phase will be sequentially performed.
    * Should be >= 10,000, but it is allowed to go as low as 100 for testing purposes.
    * default: 10,000
    * @group param
@@ -90,14 +85,14 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
 
   /** @group getParam */
   def getMinBinPercentage: Double = getOrDefault(minBinPercentage)
-  
-  /** @group getParam */  
+
+  /** @group getParam */
   val approximate = new BooleanParam(this, "approximate",
     "If approximative DMDLP is executed. This version is faster but non-deterministic. " +
     "The final set of cut points may be slightly affected by this option. " +
     "The default is true, faster execution is preferable in large-scale environments. ")
   setDefault(approximate -> false)
-  
+
   def getApproximate: Boolean = getOrDefault(approximate)
 }
 
@@ -108,12 +103,12 @@ private[feature] trait MDLPDiscretizerParams extends Params with HasInputCol wit
 @Experimental
 class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerModel] with MDLPDiscretizerParams
   with DefaultParamsWritable {
-  
+
   def this() = this(Identifiable.randomUID("MDLPDiscretizer"))
 
   /** @group setParam */
   def setMaxBins(value: Int): this.type = set(maxBins, value)
-  
+
   /** @group setParam */
   def setMaxByPart(value: Int): this.type = set(maxByPart, value)
 
@@ -128,30 +123,32 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
 
   /** @group setParam */
   def setOutputCol(value: String): this.type = set(outputCol, value)
-  
+
   /** @group setParam */
   def setLabelCol(value: String): this.type = set(labelCol, value)
-  
+
   /** @group setParam */
   def setApproximate(value: Boolean): this.type = set(approximate, value)
+
 
   /**
    * Computes a [[DiscretizerModel]] that contains the cut points (splits) for each input feature.
    */
   @Since("2.1.0")
   override def fit(dataset: Dataset[_]): DiscretizerModel = {
-    
+
     transformSchema(dataset.schema, logging = true)
-    val input: RDD[OldLabeledPoint] =
-      dataset.select(col($(labelCol)).cast(DoubleType), col($(inputCol))).rdd.map {
-        case Row(label: Double, features: Vector) =>
-          OldLabeledPoint(label, OldVectors.fromML(features))
-      }.cache() // cache the input to avoid performance warning (see issue #18)
-    val discretizer = feature.MDLPDiscretizer.train(input, None, 
-        $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage), $(approximate))
+    import dataset.sparkSession.implicits._
+    val input = dataset.select($(labelCol), $(inputCol)).map {
+      case Row(label: Double, features: Vector) =>
+        LabeledPoint(label, features)
+    }
+    input.rdd.cache() // cache the input to avoid performance warning (see issue #18)
+    val discretizer = org.apache.spark.mllib.feature.MDLPDiscretizer
+        .train(input, None, $(maxBins), $(maxByPart), $(stoppingCriterion), $(minBinPercentage), $(approximate))
     copyValues(new DiscretizerModel(uid, discretizer.thresholds).setParent(this))
   }
-  
+
   @Since("1.6.0")
   override def transformSchema(schema: StructType): StructType = {
     val inputType = schema($(inputCol)).dataType
@@ -159,10 +156,10 @@ class MDLPDiscretizer (override val uid: String) extends Estimator[DiscretizerMo
       s"Input column ${$(inputCol)} must be a vector column")
     require(!schema.fieldNames.contains($(outputCol)),
       s"Output column ${$(outputCol)} already exists.")
-    val outputFields = schema.fields :+ StructField($(outputCol), new VectorUDT, false)
+    val outputFields = schema.fields :+ StructField($(outputCol), new VectorUDT, nullable = false)
     StructType(outputFields)
   }
-  
+
   override def copy(extra: ParamMap): MDLPDiscretizer = defaultCopy(extra)
 }
 
@@ -184,7 +181,7 @@ class DiscretizerModel private[ml] (
     override val uid: String,
     val splits: Array[Array[Float]])
   extends Model[DiscretizerModel] with MDLPDiscretizerParams with MLWritable {
-  
+
   import DiscretizerModel._
 
   /** @group setParam */
@@ -200,36 +197,19 @@ class DiscretizerModel private[ml] (
    */
   @Since("2.1.0")
   override def transform(dataset: Dataset[_]): DataFrame = {
-    val newSchema = transformSchema(dataset.schema, logging = true)
-    val metadata = newSchema.fields.last.metadata
+    transformSchema(dataset.schema, logging = true)
     val discModel = new feature.DiscretizerModel(splits)
-    val discOp = udf ( (mlVector: Vector) => discModel.transform(OldVectors.fromML(mlVector)).asML )
-    dataset.withColumn($(outputCol), discOp(col($(inputCol))).as($(outputCol), metadata))
+    val discOp = udf { discModel.transform _ }
+    dataset.withColumn($(outputCol), discOp(col($(inputCol))))
   }
 
   override def transformSchema(schema: StructType): StructType = {
-    val origAttrGroup = AttributeGroup.fromStructField(schema($(inputCol)))
-    val origFeatureAttributes: Array[Attribute] = if (origAttrGroup.attributes.nonEmpty) {
-      origAttrGroup.attributes.get.zipWithIndex.map(_._1)
-    } else {
-      Array.fill[Attribute](origAttrGroup.size)(NominalAttribute.defaultAttr)
-    }
-
+    //validateParams()
     val buckets = splits.map(_.sliding(2).map(bucket => bucket.mkString(", ")).toArray)
-
-    val newFeatureAttributes: Seq[org.apache.spark.ml.attribute.Attribute] = if (origAttrGroup.attributes.nonEmpty) {
-      for (i <- splits.indices) yield new NominalAttribute(
-        name = origFeatureAttributes(i).name,
-        index = origFeatureAttributes(i).index,
+    val featureAttributes: Seq[attribute.Attribute] = for(i <- splits.indices) yield new NominalAttribute(
         isOrdinal = Some(true),
         values = Some(buckets(i)))
-    } else {
-      for (i <- splits.indices) yield new NominalAttribute(
-        isOrdinal = Some(true),
-        values = Some(buckets(i)))
-    }
-
-    val newAttributeGroup = new AttributeGroup($(outputCol), newFeatureAttributes.toArray)
+    val newAttributeGroup = new AttributeGroup($(outputCol), featureAttributes.toArray)
     val outputFields = schema.fields :+ newAttributeGroup.toStructField()
     StructType(outputFields)
   }

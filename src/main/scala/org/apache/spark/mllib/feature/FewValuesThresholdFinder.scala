@@ -23,7 +23,7 @@ import ThresholdFinder.calcCriterionValue
 /**
   * Use this version when the feature to discretize has relatively few unique values.
   * @param nLabels the number of class labels
-  * @param maxBins Maximum number of points to select.
+  * @param maxBins Maximum number of cut points to select.
   * @param minBinWeight don't generate bins with fewer than this many records.
   * @param stoppingCriterion influences when to stop recursive splits
   */
@@ -51,10 +51,8 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
         th > bounds._1 && th < bounds._2
       })
       if (newCandidates.length > 0) {
-        //println("evaluating newCandidates = " + newCandidates.map(x=>x._1 + ": " + x._2.mkString(", ")).mkString(";   ") + "   lastThresh= " + lastThresh)
         evalThresholds(newCandidates, lastThresh, nLabels) match {
           case Some(th) =>
-            //println("added "+ th + " to " + result)
             result = th +: result
             stack.enqueue(((bounds._1, th), Some(th)))
             stack.enqueue(((th, bounds._2), Some(th)))
@@ -82,6 +80,7 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
     // Calculate the total frequencies by label
     val totals = candidates.map(_._2).reduce((freq1, freq2) => (freq1, freq2).zipped.map(_ + _))
 
+
     // Compute the accumulated frequencies (both left and right) by label
     var leftAccum = Array.fill(nLabels)(0L)
     var entropyFreqs = Seq.empty[(Float, Array[Long], Array[Long], Array[Long])]
@@ -91,22 +90,24 @@ class FewValuesThresholdFinder(nLabels: Int, stoppingCriterion: Double, maxBins:
       val rightTotal = (totals, leftAccum).zipped.map(_ - _)
       entropyFreqs = (cand, freq, leftAccum, rightTotal) +: entropyFreqs
     }
-    //println(entropyFreqs.map(x => " cand=" + x._1 + "   f="+ x._2.mkString(", ") + "   left="+ x._3.mkString(", ") + "   right="+ x._4.mkString(", ") ).mkString("\n"))
 
     val bucketInfo = new BucketInfo(totals)
 
     // select best threshold according to the criteria
     val finalCandidates = entropyFreqs.flatMap({
       case (cand, _, leftFreqs, rightFreqs) =>
-        val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
-        var criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
 
-        lastSelected match {
-          case None =>
-          case Some(last) => criterion = criterion && (cand != last)
+        val duplicate = lastSelected match {
+          case None => false
+          case Some(last) => cand == last
         }
-
-        if (criterion) Seq((weightedHs, cand)) else Seq.empty[(Double, Float)]
+        // avoid computing entropy if we have a dupe
+        if (duplicate) None
+        else {
+          val (criterionValue, weightedHs, leftSum, rightSum) = calcCriterionValue(bucketInfo, leftFreqs, rightFreqs)
+          val criterion = criterionValue > stoppingCriterion && leftSum > minBinWeight && rightSum > minBinWeight
+          if (criterion) Some((weightedHs, cand)) else None
+        }
     })
     // Select among the list of accepted candidate, that with the minimum weightedHs
     if (finalCandidates.nonEmpty) Some(finalCandidates.min._2) else None

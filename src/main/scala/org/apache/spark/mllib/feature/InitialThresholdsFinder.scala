@@ -49,16 +49,17 @@ class InitialThresholdsFinder() extends Serializable{
     *
     * @param points RDD with distinct points by feature ((feature, point), class values).
     * @param nLabels number of class labels
+    * @param nFeatures expected number of features
     * @param maxByPart maximum number of values allowed in a partition
     * @return RDD of candidate points.
     */
-  def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nLabels: Int, maxByPart: Int) = {
+  def findInitialThresholds(points: RDD[((Int, Float), Array[Long])], nFeatures: Int, nLabels: Int, maxByPart: Int) = {
 
-    val featureInfo = createFeatureInfoList(points, maxByPart)
+    val featureInfo = createFeatureInfoList(points, maxByPart, nFeatures)
     val totalPartitions = featureInfo.last._5 + featureInfo.last._6
 
     // Get the first element cuts and their order index by partition for the boundary points evaluation
-    val pointsWithIndex = points.zipWithIndex().map(  v => ((v._1._1._1, v._1._1._2, v._2), v._1._2))
+    val pointsWithIndex = points.zipWithIndex().map( v => ((v._1._1._1, v._1._1._2, v._2), v._1._2))
 
     /** This custom partitioner will partition by feature and subdivide features into smaller partitions if large */
     class FeaturePartitioner[V]()
@@ -106,16 +107,16 @@ class InitialThresholdsFinder() extends Serializable{
     })
     result
   }
-  
-  
+
+
   /**
-    * Computes the initial candidate cut points by feature (non-determinism and faster version).
-    * This version may generate some non-boundary points when processing limits in partitions (related to issue #14). 
-    * This approximative solution may slightly affect the final set of cutpoints, which will provoke 
-    * that some unit tests failed. It should not be relevant in large scenarios, where peformance is more valuable.
-    * If you prefer a determinism solution, please try 'findInitialThresholds' (totallys exact but slower).
-    * 
-    * @param points RDD with distinct points by feature ((feature, point), class values).
+    * Computes the initial candidate cut points by feature. This is a non-deterministic, but and faster version.
+    * This version may generate some non-boundary points when processing limits in partitions (related to issue #14).
+    * This approximate solution may slightly affect the final set of cutpoints, which will provoke
+    * some unit tests to fail. It should not be relevant in large scenarios, where peformance is more valuable.
+    * If you prefer a deterministic solution, please try 'findInitialThresholds' (which is totally exact but slower).
+    *
+    * @param sortedValues RDD with distinct points by feature ((feature, point), class values).
     * @param nLabels number of class labels
     * @param maxByPart maximum number of values allowed in a partition
     * @return RDD of candidate points.
@@ -124,18 +125,17 @@ class InitialThresholdsFinder() extends Serializable{
     val numPartitions = sortedValues.partitions.length
     val sc = sortedValues.context
      // Get the first elements by partition for the boundary points evaluation
-    val firstElements = sc.runJob(sortedValues, { case it =>
-      if (it.hasNext) Some(it.next()._1) else None
-    }: (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
+    val firstElements = sc.runJob(sortedValues, (it =>
+      if (it.hasNext) Some(it.next()._1) else None): (Iterator[((Int, Float), Array[Long])]) => Option[(Int, Float)])
 
     val bcFirsts = sc.broadcast(firstElements)
 
-    sortedValues.mapPartitionsWithIndex({ (index, it) =>      
+    sortedValues.mapPartitionsWithIndex({ (index, it) =>
       if (it.hasNext) {
         var ((lastFeatureIdx, lastX), lastFreqs) = it.next()
         var result = Seq.empty[((Int, Float), Array[Long])]
-        var accumFreqs = lastFreqs      
-        
+        var accumFreqs = lastFreqs
+
         for (((featureIdx, x), freqs) <- it) {
           if (featureIdx != lastFeatureIdx) {
             // new attribute: add last point from the previous one
@@ -146,13 +146,13 @@ class InitialThresholdsFinder() extends Serializable{
             result = ((lastFeatureIdx, (x + lastX) / 2), accumFreqs.clone) +: result
             accumFreqs = Array.fill(nLabels)(0L)
           }
-          
+
           lastFeatureIdx = featureIdx
           lastX = x
           lastFreqs = freqs
           accumFreqs = (accumFreqs, freqs).zipped.map(_ + _)
         }
-       
+
         // Evaluate the last point in this partition with the first one in the next partition
         val lastPoint = if (index < (numPartitions - 1)) {
           bcFirsts.value(index + 1) match {
@@ -161,25 +161,37 @@ class InitialThresholdsFinder() extends Serializable{
           }
         }else{
           lastX // last point in the dataset
-        }                    
+        }
         (((lastFeatureIdx, lastPoint), accumFreqs.clone) +: result).reverse.toIterator
       } else {
         Iterator.empty
-      }             
+      }
     })
   }
-  
+
 
   /**
     * @param points all unique points
     * @param maxByPart maximum number of values in a partition
+    * @param nFeatures expected number of features.
     * @return a list of info for each partition. The values in the info tuple are:
     *  (featureIdx, numUniqueValues, sumValsBeforeFirst, partitionSize, numPartitionsForFeature, sumPreviousPartitions)
     */
   def createFeatureInfoList(points: RDD[((Int, Float), Array[Long])],
-                            maxByPart: Int): List[(Int, Long, Long, Int, Int, Int)] = {
+                            maxByPart: Int, nFeatures: Int): IndexedSeq[(Int, Long, Long, Int, Int, Int)] = {
     // First find the number of points in each partition, ordered by featureIdx
-    val countsByFeatureIdx = points.map(_._1._1).countByValue().toList.sortBy(_._1)
+    var countsByFeatureIdx = points.map(_._1._1).countByValue().toArray
+    // if there are features not represented, add them manually.
+    // This can happen if there are some features with all 0 values (rare, but we need to handle it).
+    val representedFeatures = countsByFeatureIdx.map(_._1).toSet
+    if (countsByFeatureIdx.length < nFeatures) {
+      for (i <- 0 until nFeatures) {
+        if (!representedFeatures.contains(i)) {
+          countsByFeatureIdx +:= (i, 1L)  // (featureIdx, single 0 value)
+        }
+      }
+    }
+    countsByFeatureIdx = countsByFeatureIdx.sortBy(_._1)
 
     var lastCount: Long = 0
     var sum: Long = 0

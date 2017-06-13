@@ -21,6 +21,7 @@ class MDLPDiscretizerBigSuite extends FunSuite with BeforeAndAfterAll {
     sqlContext = new SQLContext(SPARK_CTX)
   }
 
+  // Demonstrates that the https://issues.apache.org/jira/browse/SPARK-16845 error does not happen in MDLP
   test("Run MDLPD on all columns in blockbuster data (label = State, maxBins = 10, maxByPart = 100000)") {
 
     val df = readBlockBusterData(sqlContext)

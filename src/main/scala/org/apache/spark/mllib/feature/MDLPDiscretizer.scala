@@ -17,12 +17,13 @@
 
 package org.apache.spark.mllib.feature
 
+import org.apache.spark.ml.feature.LabeledPoint
 import org.apache.spark.storage.StorageLevel
 import org.apache.spark.internal.Logging
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd._
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.mllib.linalg._
+import org.apache.spark.sql.Dataset
+import org.apache.spark.ml.linalg._
 import MDLPDiscretizer._
 import org.apache.spark.broadcast.Broadcast
 
@@ -32,11 +33,11 @@ import scala.collection.Map
 /**
  * Entropy minimization discretizer based on Minimum Description Length Principle (MDLP)
  * proposed by Fayyad and Irani in 1993 [1].
- * 
- * [1] Fayyad, U., & Irani, K. (1993). 
+ *
+ * [1] Fayyad, U., & Irani, K. (1993).
  * "Multi-interval discretization of continuous-valued attributes for classification learning."
- * 
- * Note: Approximate version may generate some non-boundary points when processing limits in partitions (related to issue #14). 
+ *
+ * Note: Approximate version may generate some non-boundary points when processing limits in partitions (related to issue #14).
  * Please refer to mllib.feature.InitialThresholdsFinder.findFastInitialThresholds for more information.
  *
  * @param data RDD of LabeledPoint
@@ -44,32 +45,34 @@ import scala.collection.Map
  * @param minBinPercentage (optional) minimum percent of total dataset allowed in a single bin.
  * @param approximate If true, boundary points are computed faster but in an approximate manner.
  */
-private class MDLPDiscretizer (val data: RDD[LabeledPoint],
+private class MDLPDiscretizer (val data: Dataset[LabeledPoint],
             stoppingCriterion: Double = DEFAULT_STOPPING_CRITERION,
             maxByPart: Int = DEFAULT_MAX_BY_PART,
             minBinPercentage: Double = DEFAULT_MIN_BIN_PERCENTAGE,
             approximate: Boolean = true) extends Serializable with Logging {
 
+  import data.sparkSession.implicits._
   private val labels2Int = data.map(_.label).distinct.collect.zipWithIndex.toMap
   private val nLabels = labels2Int.size
 
   /**
    * Computes the initial candidate points by feature.
-   * 
+   *
    * @param points RDD with distinct points by feature ((feature, point), class values).
+   * @param nFeatures the number of continuous features to bin
    * @return RDD of candidate points.
    */
-  private def initialThresholds(points: RDD[((Int, Float), Array[Long])]) = {
-    val finder = new InitialThresholdsFinder()    
+  private def initialThresholds(points: RDD[((Int, Float), Array[Long])], nFeatures: Int) = {
+    val finder = new InitialThresholdsFinder()
     if(approximate)
-      finder.findFastInitialThresholds(points, nLabels, maxByPart)      
+      finder.findFastInitialThresholds(points, nLabels, maxByPart)
     else
-      finder.findInitialThresholds(points, nLabels, maxByPart)
+      finder.findInitialThresholds(points, nFeatures, nLabels, maxByPart)
   }
 
   /**
    * Run the entropy minimization discretizer on input data.
-   * 
+   *
    * @param contFeat Indices to discretize (if not specified, the algorithm tries to figure it out).
    * @param maxBins Maximum number of thresholds per feature.
    * @return A discretization model with the thresholds by feature.
@@ -78,21 +81,22 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
       contFeat: Option[Seq[Int]],
       maxBins: Int): DiscretizerModel = {
 
-    if (data.getStorageLevel == StorageLevel.NONE)
+    if (data.rdd.getStorageLevel == StorageLevel.NONE)
       logWarning("The input data is not directly cached, which may hurt performance if its"
         + " parent RDDs are also uncached.")
 
-    if (!data.filter(_.label.isNaN).isEmpty())
+    if (!data.rdd.filter(_.label.isNaN).isEmpty())
       throw new IllegalArgumentException("Some NaN values have been found in the labelColumn."
           + " This problem must be fixed before continuing with discretization.")
 
     // Basic info. about the dataset
-    val sc = data.context
+    val sc = data.sparkSession.sparkContext
     val bLabels2Int = sc.broadcast(labels2Int)
-    val classDistrib = data.map(d => bLabels2Int.value(d.label)).countByValue()
+    import data.sparkSession.implicits._
+    val classDistrib = data.map(d => bLabels2Int.value(d.label)).rdd.countByValue()
     val bclassDistrib = sc.broadcast(classDistrib)
     val (dense, nFeatures) = data.first.features match {
-      case v: DenseVector => 
+      case v: DenseVector =>
         (true, v.size)
       case v: SparseVector =>
         (false, v.size)
@@ -100,10 +104,10 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     val continuousVars = processContinuousAttributes(contFeat, nFeatures)
     logInfo("Number of continuous attributes: " + continuousVars.distinct.length)
-    logInfo("Total number of attributes: " + nFeatures)      
+    logInfo("Total number of attributes: " + nFeatures)
     if (continuousVars.isEmpty) logWarning("Discretization aborted. " +
       "No continuous attributes in the dataset")
-    
+
     // Generate pairs ((feature, point), class histogram)
     sc.broadcast(continuousVars)
     val featureValues =
@@ -118,9 +122,9 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
             for (i <- sv.indices.indices) yield ((sv.indices(i), sv.values(i).toFloat), c)
         })
 
-    val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues)
+    val sortedValues = getSortedDistinctValues(bclassDistrib, featureValues.rdd)
 
-    // Filter those features selected by the user
+    // Filter those features selected for binning by the user
     assert (nFeatures > 0, "The number of features to bin must be greater than 0")
     val arr = Array.fill(nFeatures) { false }
     continuousVars.foreach(arr(_) = true)
@@ -128,7 +132,7 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
 
     // Get only boundary points from the whole set of distinct values
     val start = System.currentTimeMillis()
-    val initialCandidates = initialThresholds(sortedValues)
+    val initialCandidates = initialThresholds(sortedValues, nFeatures)
       .map{case ((featureIdx, cutpoint), freqs) => (featureIdx, (cutpoint, freqs))}
       .filter({case (featureIdx, _) => barr.value(featureIdx)})
       .cache() // It will be iterated for "big" features
@@ -254,16 +258,13 @@ private class MDLPDiscretizer (val data: RDD[LabeledPoint],
     // Update the full list of features with the thresholds calculated
     val thresholds = Array.fill(nFeatures)(Array.empty[Float]) // Nominal values (empty)
     // Not processed continuous attributes
-    continuousVars.foreach(f => thresholds(f) = Array(Float.PositiveInfinity))
+    continuousVars.foreach(f => thresholds(f) = Array(Float.NegativeInfinity, Float.PositiveInfinity))
     // Continuous attributes (> 0 cut point)
     allThresholds.foreach({ case (k, vth) =>
-      thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.PositiveInfinity)
+      thresholds(k) = if (nFeatures > 0) vth.toArray else Array(Float.NegativeInfinity, Float.PositiveInfinity)
     })
     logInfo("Number of features with thresholds computed: " + allThresholds.length)
-    
-
-    
-    ("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
+    logDebug("thresholds = " + thresholds.map(_.mkString(", ")).mkString(";\n"))
 
     new DiscretizerModel(thresholds)
   }
@@ -311,10 +312,10 @@ object MDLPDiscretizer {
 
   /**
    * Train a entropy minimization discretizer given an RDD of LabeledPoints.
-   * 
+   *
    * @param input RDD of LabeledPoint's.
-   * @param continuousFeaturesIndexes Indexes of features to be discretized. 
-   * If it is not provided, the algorithm selects those features with more than 
+   * @param continuousFeaturesIndexes Indexes of features to be discretized.
+   * If it is not provided, the algorithm selects those features with more than
    * 256 (byte range) distinct values.
    * @param maxBins Maximum number of thresholds to select per feature.
    * @param maxByPart Maximum number of elements by partition.
@@ -323,7 +324,7 @@ object MDLPDiscretizer {
    * @return A DiscretizerModel with the subsequent thresholds.
    */
   def train(
-      input: RDD[LabeledPoint],
+      input: Dataset[LabeledPoint],
       continuousFeaturesIndexes: Option[Seq[Int]] = None,
       maxBins: Int = 15,
       maxByPart: Int = DEFAULT_MAX_BY_PART,

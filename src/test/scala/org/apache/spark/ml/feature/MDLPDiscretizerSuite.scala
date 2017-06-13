@@ -42,7 +42,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       model.splits(0).mkString(", ")
     }
   }
-  
+
   /** Do entropy based binning on a dataset with no continuous columns to bin.
     * We expect an assert error as there must be some columns to bin  */
   test("Run MDLPD on date_test (maxBins = 10)") {
@@ -56,7 +56,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
       case err: AssertionError => // expected
       case ex: Throwable => fail("Unexpected exception :"+ ex.printStackTrace());
     }
-  }  
+  }
 
   /** Do entropy based binning of cars data for all the numeric columns using origin as target. */
   test("Run MDLPD on all columns in cars data (label = origin, maxBins = 100)") {
@@ -126,7 +126,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
     val df = readCarsData(sqlContext)
     val model = getDiscretizerModel(df,
       Array("mpg", "cylinders", "cubicinches", "horsepower", "weightlbs", "time to sixty", "year"),
-      "brand", 100)
+      "brand", maxByPart = 100)
 
     assertResult(
       """-Infinity, 21.05, Infinity;
@@ -462,6 +462,28 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity;
+        |-Infinity, Infinity
+        |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
+      model.splits.map(a => a.mkString(", ")).mkString(";")
+    }
+  }
+
+  // This dataset has 2 columns (5 and 6) with all 0 values.
+  test("Run MDLPD on all columns in red_train data (label = outcome, maxBins = 100)") {
+
+    val df = readRedTrainData(sqlContext)
+    val model = getDiscretizerModel(df,
+      Array("col1", "col2", "col3", "col4", "col5", "col6", "col7", "col8", "col9"), "outcome", maxByPart = 100)
+
+    assertResult(
+      """-Infinity, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;
         |-Infinity, Infinity;

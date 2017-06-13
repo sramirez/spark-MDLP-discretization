@@ -22,13 +22,13 @@ import FeatureUtils._
 /**
   * @param totals frequency totals for unique values in the bucket
   */
-class BucketInfo(totals: Array[Long]) extends Serializable {
+class BucketInfo(totals: IndexedSeq[Long]) extends Serializable {
   // number of elements in bucket
-  val s = totals.sum
+  lazy val s: Long = totals.sum
 
   // calculated entropy for the bucket
-  val hs = entropy(totals.toSeq, s)
+  lazy val hs: Double = entropy(totals, s)
 
   // number of distinct classes in bucket
-  val k = totals.count(_ != 0)
+  lazy val k: Long = totals.count(_ != 0)
 }
