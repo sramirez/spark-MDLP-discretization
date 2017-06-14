@@ -32,7 +32,8 @@ object TestHelper {
                              maxBins: Int = 100,
                              maxByPart: Int = 10000,
                              stoppingCriterion: Double = 0,
-                             minBinPercentage: Double = 0): DiscretizerModel = {
+                             minBinPercentage: Double = 0,
+                             approximate: Boolean = false): DiscretizerModel = {
     val featureAssembler = new VectorAssembler()
       .setInputCols(inputCols)
       .setOutputCol("features")
@@ -46,6 +47,7 @@ object TestHelper {
       .setInputCol("features") // this must be a feature vector
       .setLabelCol(labelColumn + INDEX_SUFFIX)
       .setOutputCol("bucketFeatures")
+      .setApproximate(approximate)
 
     discretizer.fit(processedDf)
   }
@@ -60,9 +62,11 @@ object TestHelper {
                           maxBins: Int = 100,
                           maxByPart: Int = 10000,
                           stoppingCriterion: Double = 0,
-                          minBinPercentage: Double = 0): DiscretizerModel = {
+                          minBinPercentage: Double = 0, 
+                          approximate: Boolean = false): DiscretizerModel = {
     val processedDf = cleanLabelCol(dataframe, labelColumn)
-    createDiscretizerModel(processedDf, inputCols, labelColumn, maxBins, maxByPart, stoppingCriterion, minBinPercentage)
+    createDiscretizerModel(processedDf, inputCols, labelColumn, 
+        maxBins, maxByPart, stoppingCriterion, minBinPercentage, approximate)
   }
 
 

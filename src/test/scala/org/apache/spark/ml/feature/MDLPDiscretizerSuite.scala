@@ -260,7 +260,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, Infinity;
         |-Infinity, 0.5, Infinity;
         |-Infinity, Infinity;
-        |-Infinity, 1.44359817E12, Infinity
+        |-Infinity, 1.4435658E12, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -294,7 +294,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, Infinity;
         |-Infinity, 0.5, Infinity;
         |-Infinity, Infinity;
-        |-Infinity, 1.44359817E12, Infinity
+        |-Infinity, 1.4435658E12, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
@@ -331,7 +331,7 @@ class MDLPDiscretizerSuite extends FunSuite with BeforeAndAfterAll {
         |-Infinity, 13.825001, 28.2, 41.9896, 47.0, 51.67085, 152.50626, Infinity;
         |-Infinity, 2.5, Infinity;
         |-Infinity, Infinity;
-        |-Infinity, 1.44359817E12, Infinity
+        |-Infinity, 1.4435658E12, Infinity
         |""".stripMargin.replaceAll(System.lineSeparator(), "")) {
       model.splits.map(a => a.mkString(", ")).mkString(";")
     }
