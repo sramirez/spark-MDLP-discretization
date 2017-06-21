@@ -29,6 +29,7 @@ import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.ml.attribute._
+import org.apache.spark.mllib.linalg.{Vectors => OldVectors}
 
 /**
  * Params for [[MDLPDiscretizer]] and [[DiscretizerModel]].
@@ -200,7 +201,7 @@ class DiscretizerModel private[ml] (
     val newSchema = transformSchema(dataset.schema, logging = true)
     val metadata = newSchema.fields.last.metadata
     val discModel = new feature.DiscretizerModel(splits)
-    val discOp = udf { discModel.transform _ }
+    val discOp = udf { x:Vector=>discModel.transform(OldVectors.fromML(x))}
     dataset.withColumn($(outputCol), discOp(col($(inputCol))).as($(outputCol), metadata))
   }
 
