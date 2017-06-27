@@ -201,7 +201,7 @@ class DiscretizerModel private[ml] (
     val newSchema = transformSchema(dataset.schema, logging = true)
     val metadata = newSchema.fields.last.metadata
     val discModel = new feature.DiscretizerModel(splits)
-    val discOp = udf { x:Vector=>discModel.transform(OldVectors.fromML(x))}
+    val discOp = udf { x:Vector=>discModel.transform(OldVectors.fromML(x)).asML}
     dataset.withColumn($(outputCol), discOp(col($(inputCol))).as($(outputCol), metadata))
   }
 
