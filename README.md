@@ -5,6 +5,10 @@ This method implements Fayyad's discretizer [1] based on Minimum Description Len
 
 Spark package: http://spark-packages.org/package/sramirez/spark-MDLP-discretization
 
+Please cite as: 
+
+Ramírez‐Gallego Sergio, García Salvador, Mouriño‐Talín Héctor, Martínez‐Rego David, Bolón‐Canedo Verónica, Alonso‐Betanzos Amparo, Benítez José Manuel, Herrera Francisco. "Data discretization: taxonomy and big data challenge". WIREs Data Mining Knowl Discov 2016, 6: 5-21. doi: 10.1002/widm.1173 
+
 ## Improvements:
 
 * Version for ml library.
@@ -19,7 +23,6 @@ This software has been proved with two large real-world datasets such as:
 
 Design doc: https://docs.google.com/document/d/1HOaPL_HJzTbL2tVdzbTjhr5wxVvPe9e-23S7rc2VcsY/edit?usp=sharing
 
-Publication: S. Ramírez-Gallego, S. García, H. Mouriño-Talin, D. Martínez-Rego, V. Bolón, A. Alonso-Betanzos, J.M. Benitez, F. Herrera. "Data Discretization: Taxonomy and Big Data Challenge", WIRES Data Mining and Knowledge Discovery. In press, 2015.  
 
 ## Example (ml):
 
