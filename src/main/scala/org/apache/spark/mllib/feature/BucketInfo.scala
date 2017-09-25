@@ -17,7 +17,7 @@
 
 package org.apache.spark.mllib.feature
 
-import FeatureUtils._
+import DiscretizationUtils._
 
 /**
   * @param totals frequency totals for unique values in the bucket

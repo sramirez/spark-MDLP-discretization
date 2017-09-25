@@ -17,9 +17,10 @@
 
 package org.apache.spark.mllib.feature
 
-import FeatureUtils._
+
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.internal.Logging
+import DiscretizationUtils._
 
 object ThresholdFinder {
 

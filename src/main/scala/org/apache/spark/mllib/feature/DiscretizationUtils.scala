@@ -26,7 +26,7 @@ import scala.collection.mutable
  * Feature utils for selector methods.
  */
 @Experimental
-object FeatureUtils {
+object DiscretizationUtils {
 
 
   private val LOG2 = math.log(2)
