@@ -258,7 +258,7 @@ object DiscretizerModel extends MLReadable[DiscretizerModel] {
       val Row(splits: Array[Array[Float]]) =
           sqlContext.read.parquet(dataPath)
             .select("splits")
-            .head()
+            .head().getAs[Seq[Seq[Float]]](0).map(arr => arr.toArray).toArray
       val model = new DiscretizerModel(metadata.uid, splits)
       DefaultParamsReader.getAndSetParams(model, metadata)
       model
