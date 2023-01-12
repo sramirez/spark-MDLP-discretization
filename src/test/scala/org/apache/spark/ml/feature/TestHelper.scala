@@ -37,6 +37,8 @@ object TestHelper {
     val featureAssembler = new VectorAssembler()
       .setInputCols(inputCols)
       .setOutputCol("features")
+      .setHandleInvalid("keep")
+
     val processedDf = featureAssembler.transform(dataframe)
 
     val discretizer = new MDLPDiscretizer()

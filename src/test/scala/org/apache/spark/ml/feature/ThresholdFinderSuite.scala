@@ -1,6 +1,6 @@
 package org.apache.spark.ml.feature
 
-import org.apache.spark.mllib.feature.{BucketInfo, FeatureUtils, ThresholdFinder}
+import org.apache.spark.mllib.feature.{BucketInfo, ThresholdFinder}
 import org.apache.spark.sql.SQLContext
 import org.junit.runner.RunWith
 import org.scalatest.{BeforeAndAfterAll, FunSuite}
