@@ -260,7 +260,7 @@ object DiscretizerModel extends MLReadable[DiscretizerModel] {
             .select("splits")
             .head()
       val model = new DiscretizerModel(metadata.uid, splits)
-      DefaultParamsReader.getAndSetParams(model, metadata)
+      metadata.getAndSetParams(model)
       model
     }
   }
